@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V10 المثالي ]]
+-- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V12 الأوتوماتيكي ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -21,6 +21,9 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 3
 MainFrame.Active = true
 MainFrame.Draggable = true
+
+-- جدول نقاط الحفظ المشترك بين الشرائح
+local savedLocations = {}
 
 -- نظام ألوان الحواف لشريحة الإعدادات
 local rainbowConnection
@@ -84,10 +87,10 @@ for i, name in ipairs(tabs) do
     end)
 end
 
--- === [ شريحة 1: اعدادات الماب (مدمج معها ملاحق الإنزال الجوي) ] ===
+-- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
 
--- زر خيار الماب مضوي بالكامل
+-- زر الفول برايت
 local BrightBtn = Instance.new("TextButton", MapPage)
 BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 10)
 BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -100,50 +103,65 @@ BrightBtn.MouseButton1Click:Connect(function()
     brightActive = not brightActive
     BrightBtn.BackgroundColor3 = brightActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
     if brightActive then
-        Lighting.Brightness = 4
-        Lighting.Ambient = Color3.fromRGB(255, 255, 255)
-        Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+        Lighting.Brightness = 4 Lighting.Ambient = Color3.fromRGB(255, 255, 255) Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
     else
-        Lighting.Brightness = originalBrightness
-        Lighting.Ambient = originalAmbient
+        Lighting.Brightness = originalBrightness Lighting.Ambient = originalAmbient
     end
 end)
 
--- زر ملاحق الإنزال الجوي (AirDrop) التلقائي
-local DropBtn = Instance.new("TextButton", MapPage)
-DropBtn.Size = UDim2.new(0.9, 0, 0, 35) DropBtn.Position = UDim2.new(0.05, 0, 0, 50)
-DropBtn.Text = "تفعيل ملاحق الإنزال الجوي تلقائياً" DropBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 0)
-DropBtn.TextColor3 = Color3.fromRGB(255, 255, 255) DropBtn.Font = Enum.Font.SourceSansBold DropBtn.TextSize = 13
-local dropActive = false
+-- الزر الجديد الزائد: توصيل الصناديق السريع والأوتوماتيكي (من أسرارك)
+local SingleDeliveryBtn = Instance.new("TextButton", MapPage)
+SingleDeliveryBtn.Size = UDim2.new(0.9, 0, 0, 40) 
+SingleDeliveryBtn.Position = UDim2.new(0.05, 0, 0, 52)
+SingleDeliveryBtn.Text = "توصيل الصناديق السريع [أوتوماتيك]"
+SingleDeliveryBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) -- لون مميز للزر الجديد
+SingleDeliveryBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SingleDeliveryBtn.Font = Enum.Font.SourceSansBold
+SingleDeliveryBtn.TextSize = 13
 
-DropBtn.MouseButton1Click:Connect(function()
-    dropActive = not dropActive
-    DropBtn.BackgroundColor3 = dropActive and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 0, 0)
+-- الإحداثيات السرية المستخرجة من الصورة 1000000886.jpg
+local BoxLocations = {
+    CFrame.new(-213.542047, 73.2739944, -2543.59131, 0.999607503, 0, 0.0280152336, 0, 1, 0, -0.0280152336, 0, 0.999607503),
+    CFrame.new(-263.750427, 73.2739944, -2542.646, 0.998816729, 0, -0.0486327633, 0, 1, 0, 0.0486327633, 0, 0.998816729)
+}
+
+local DeliveryPoints = {
+    CFrame.new(364.754425, 73.2696381, -2792.82397, -0.898638666, 5.53675381e-08, 1, -5.01138651e-08, -1, -5.43868953, -2.89107476e-08, -0.898638666),
+    CFrame.new(-87.3092346, 72.9999924, -2713.91992, -0.960549295, 0, -0.278109878, 0, 1, 0, -0.278109878, 0, -0.960549295),
+    CFrame.new(-391.991913, 72.9999924, -2659.02031, -0.882352471, -4.57078541e-08, 1, -1.55811204e-08, -0.470589161, -4.06085832e-08, -0.882352471)
+}
+
+local deliveryActive = false
+SingleDeliveryBtn.MouseButton1Click:Connect(function()
+    deliveryActive = not deliveryActive
+    SingleDeliveryBtn.BackgroundColor3 = deliveryActive and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(120, 0, 120)
+    SingleDeliveryBtn.Text = deliveryActive and "تعطيل التوصيل السريع [شغال]" or "توصيل الصناديق السريع [أوتوماتيك]"
     
-    if dropActive then
+    if deliveryActive then
         task.spawn(function()
-            while dropActive do
-                for _, obj in ipairs(workspace:GetDescendants()) do
-                    if (obj.Name:lower():find("airdrop") or obj.Name:lower():find("drop") or obj.Name:lower():find("chest") or obj.Name:lower():find("balloon")) and obj:IsA("BasePart") then
-                        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-                            Player.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 6, 0)
-                            wait(0.5)
-                        end
-                    end
+            while deliveryActive do
+                if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                    -- 1. انتقال فوري لمكان الصناديق
+                    Player.Character.HumanoidRootPart.CFrame = BoxLocations[math.random(1, #BoxLocations)]
+                    task.wait(0.3)
+                    
+                    -- 2. انتقال فوري للتسليم (محكمة، إدارة، نافورة) عشوائياً للتمويه والتأمين
+                    Player.Character.HumanoidRootPart.CFrame = DeliveryPoints[math.random(1, #DeliveryPoints)]
+                    task.wait(1.5)
                 end
-                wait(1.5) -- يقوم بمسح السيرفر باستمرار كل ثانية ونصف
+                task.wait(0.1)
             end
         end)
     end
 end)
 
--- أزرار تغيير لون الإطار المخصصة داخل شريحة الإعدادات
+-- أزرار الألوان داخل شريحة الإعدادات (تم تعديل مكانها لتنزل لأسفل الزر الجديد)
 local colors = {"Rainbow", "Red", "Yellow", "Blue"}
 local colorNames = {Rainbow = "حواف قوس قزح", Red = "حواف حمراء", Yellow = "حواف صفراء", Blue = "حواف زرقاء"}
 for idx, mode in ipairs(colors) do
     local cBtn = Instance.new("TextButton", MapPage)
     cBtn.Size = UDim2.new(0.42, 0, 0, 32)
-    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 95 or 135)
+    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 105 or 145)
     cBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) cBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
@@ -175,11 +193,7 @@ end)
 SpeedBtn.MouseButton1Click:Connect(function()
     speedActive = not speedActive
     SpeedBtn.BackgroundColor3 = speedActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
-    if speedActive then
-        Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65
-    else
-        Player.Character.Humanoid.WalkSpeed = 16
-    end
+    if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
 end)
 
 local JumpLabel = Instance.new("TextLabel", PlayerPage)
@@ -205,29 +219,20 @@ end)
 JumpBtn.MouseButton1Click:Connect(function()
     jumpActive = not jumpActive
     JumpBtn.BackgroundColor3 = jumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
-    if jumpActive then
-        Player.Character.Humanoid.JumpPower = tonumber(JumpInput.Text) or 120
-    else
-        Player.Character.Humanoid.JumpPower = 50
-    end
+    if jumpActive then Player.Character.Humanoid.JumpPower = tonumber(JumpInput.Text) or 120 else Player.Character.Humanoid.JumpPower = 50 end
 end)
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage)
 NoclipBtn.Size = UDim2.new(0.9, 0, 0, 32) NoclipBtn.Position = UDim2.new(0.05, 0, 0, 105)
 NoclipBtn.Text = "تفعيل اختراق الجدران (Noclip)" NoclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) NoclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-local noclipActive = false
-local noclipConnection
+local noclipActive = false local noclipConnection
 
 NoclipBtn.MouseButton1Click:Connect(function()
     noclipActive = not noclipActive
     NoclipBtn.BackgroundColor3 = noclipActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
     if noclipActive then
         noclipConnection = RunService.Stepped:Connect(function()
-            if Player.Character then
-                for _, part in ipairs(Player.Character:GetChildren()) do
-                    if part:IsA("BasePart") then part.CanCollide = false end
-                end
-            end
+            if Player.Character then for _, part in ipairs(Player.Character:GetChildren()) do if part:IsA("BasePart") then part.CanCollide = false end end end
         end)
     else
         if noclipConnection then noclipConnection:Disconnect() noclipConnection = nil end
@@ -240,15 +245,10 @@ InfJumpBtn.Text = "تفعيل القفز اللانهائي (Inf Jump)" InfJumpB
 local infJumpActive = false
 
 UserInputService.JumpRequest:Connect(function()
-    if infJumpActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then
-        Player.Character.Humanoid:ChangeState("Jumping")
-    end
+    if infJumpActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid:ChangeState("Jumping") end
 end)
 
-InfJumpBtn.MouseButton1Click:Connect(function()
-    infJumpActive = not infJumpActive
-    InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
-end)
+InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
 -- === [ شريحة 3: الاستهداف ] ===
 local TargetPage = Pages[3]
@@ -262,15 +262,12 @@ TeleBtn.Text = "انتقال فوري" TeleBtn.BackgroundColor3 = Color3.fromRGB
 TeleBtn.MouseButton1Click:Connect(function()
     local tName = NameBox.Text:lower()
     for _, p in ipairs(PlayersService:GetPlayers()) do
-        if p.Name:lower():sub(1, #tName) == tName and p.Character then
-            Player.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-        end
+        if p.Name:lower():sub(1, #tName) == tName and p.Character then Player.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3) end
     end
 end)
 
 -- === [ شريحة 4: نقاط الحفظ ] ===
 local CheckpointPage = Pages[4]
-local savedLocations = {}
 
 local CPInput = Instance.new("TextBox", CheckpointPage)
 CPInput.Size = UDim2.new(0.55, 0, 0, 32) CPInput.Position = UDim2.new(0.05, 0, 0, 10)
@@ -291,9 +288,7 @@ local function updateCPList()
         local GoBtn = Instance.new("TextButton", ItemFrame)
         GoBtn.Size = UDim2.new(0.8, 0, 1, 0) GoBtn.Text = name
         GoBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45) GoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        GoBtn.MouseButton1Click:Connect(function()
-            if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then Player.Character.HumanoidRootPart.CFrame = cframe end
-        end)
+        GoBtn.MouseButton1Click:Connect(function() if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then Player.Character.HumanoidRootPart.CFrame = cframe end end)
         
         local DelBtn = Instance.new("TextButton", ItemFrame)
         DelBtn.Size = UDim2.new(0.18, 0, 1, 0) DelBtn.Position = UDim2.new(0.82, 0, 0, 0)
@@ -314,77 +309,32 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 5: شريحة البارتكلز والتأثيرات بنظام الأدوات (Tools) لتظهر للكل ] ===
+-- === [ شريحة 5: شريحة البارتكلز والتأثيرات بنظام الأدوات (Tools) ] ===
 local EffectsPage = Pages[5]
 
 local function clearAllEffects()
-    for _, item in ipairs(Backpack:GetChildren()) do
-        if item.Name == "Fire" or item.Name == "Highlight" or item.Name == "Yellow Particles" or item.Name == "Red Particles" then
-            item:Destroy()
-        end
-    end
-    if Player.Character then
-        for _, item in ipairs(Player.Character:GetChildren()) do
-            if item.Name == "Fire" or item.Name == "Highlight" or item.Name == "Yellow Particles" or item.Name == "Red Particles" or item:IsA("Highlight") then
-                item:Destroy()
-            end
-        end
-    end
+    for _, item in ipairs(Backpack:GetChildren()) do if item.Name == "Fire" or item.Name == "Highlight" or item.Name == "Yellow Particles" or item.Name == "Red Particles" then item:Destroy() end end
+    if Player.Character then for _, item in ipairs(Player.Character:GetChildren()) do if item.Name == "Fire" or item.Name == "Highlight" or item.Name == "Yellow Particles" or item.Name == "Red Particles" or item:IsA("Highlight") then item:Destroy() end end end
 end
 
 local function giveServerToolEffect(effectName, effectType, customColor)
     clearAllEffects()
-    
-    local Tool = Instance.new("Tool")
-    Tool.Name = effectName
-    Tool.RequiresHandle = true
-    
-    local Handle = Instance.new("Part")
-    Handle.Name = "Handle"
-    Handle.Size = Vector3.new(1, 1, 1)
-    Handle.Transparency = 1
-    Handle.CanCollide = false
-    Handle.Parent = Tool
+    local Tool = Instance.new("Tool") Tool.Name = effectName Tool.RequiresHandle = true
+    local Handle = Instance.new("Part") Handle.Name = "Handle" Handle.Size = Vector3.new(1, 1, 1) Handle.Transparency = 1 Handle.CanCollide = false Handle.Parent = Tool
     
     if effectType == "Fire" then
-        local f = Instance.new("Fire")
-        f.Size = 12
-        f.Heat = 18
-        f.Parent = Handle
+        local f = Instance.new("Fire") f.Size = 12 f.Heat = 18 f.Parent = Handle
     elseif effectType == "Highlight" then
-        Tool.Equipped:Connect(function()
-            if Player.Character and not Player.Character:FindFirstChild("BackpackHighlight") then
-                local hl = Instance.new("Highlight")
-                hl.Name = "BackpackHighlight"
-                hl.FillColor = customColor
-                hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-                hl.Parent = Player.Character
-            end
-        end)
-        Tool.Unequipped:Connect(function()
-            if Player.Character and Player.Character:FindFirstChild("BackpackHighlight") then
-                Player.Character.BackpackHighlight:Destroy()
-            end
-        end)
+        Tool.Equipped:Connect(function() if Player.Character and not Player.Character:FindFirstChild("BackpackHighlight") then local hl = Instance.new("Highlight") hl.Name = "BackpackHighlight" hl.FillColor = customColor hl.OutlineColor = Color3.fromRGB(255, 255, 255) hl.Parent = Player.Character end end)
+        Tool.Unequipped:Connect(function() if Player.Character and Player.Character:FindFirstChild("BackpackHighlight") then Player.Character.BackpackHighlight:Destroy() end end)
     elseif effectType == "Particles" then
-        local pe = Instance.new("ParticleEmitter")
-        pe.Color = ColorSequence.new(customColor)
-        pe.Speed = NumberRange.new(10, 15)
-        pe.Rate = 95
-        pe.Lifetime = NumberRange.new(1, 2)
-        pe.Size = NumberSequence.new(0.6, 0)
-        pe.Parent = Handle
+        local pe = Instance.new("ParticleEmitter") pe.Color = ColorSequence.new(customColor) pe.Speed = NumberRange.new(10, 15) pe.Rate = 95 pe.Lifetime = NumberRange.new(1, 2) pe.Size = NumberSequence.new(0.6, 0) pe.Parent = Handle
     end
-    
     Tool.Parent = Backpack
 end
 
 local function createEffectBtn(text, yPos, color, callback)
-    local btn = Instance.new("TextButton", EffectsPage)
-    btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, yPos)
-    btn.BackgroundColor3 = color btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Text = text btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
-    btn.MouseButton1Click:Connect(callback)
+    local btn = Instance.new("TextButton", EffectsPage) btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, yPos) btn.BackgroundColor3 = color btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.Text = text btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13 btn.MouseButton1Click:Connect(callback)
 end
 
 createEffectBtn("إعطائي أداة النار (تظهر في حقيبتك للجميع)", 10, Color3.fromRGB(210, 90, 0), function() giveServerToolEffect("Fire", "Fire") end)
@@ -394,7 +344,4 @@ createEffectBtn("إعطائي أداة الشظايا الحمراء (Red Partic
 createEffectBtn("إزالة كافة الأدوات والتأثيرات من الحقيبة", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
 -- زر إغلاق القائمة (X)
-local CloseBtn = Instance.new("TextButton", MainFrame)
-CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4)
-CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
+local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
