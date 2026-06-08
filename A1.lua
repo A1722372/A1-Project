@@ -1,42 +1,27 @@
--- تعريف المتغيرات للحالات (خارج الدوال)
-local isSpeedEnabled = false
-local isJumpEnabled = false
-local isInvisible = false
+-- المطور الأسطوري أيهم - تصميم واجهة احترافي
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local playerGui = player:WaitForChild("PlayerGui")
 
--- 1. دالة السرعة (مع التبديل)
--- استبدل زر السرعة الحالي بهذا المنطق
-speedBtn.MouseButton1Click:Connect(function()
-    isSpeedEnabled = not isSpeedEnabled -- عكس الحالة
-    if isSpeedEnabled then
-        humanoid.WalkSpeed = tonumber(speedInput.Text) or 100 -- السرعة عند التفعيل
-        speedBtn.Text = "السرعة: ON"
-    else
-        humanoid.WalkSpeed = 16 -- السرعة الافتراضية عند الإيقاف
-        speedBtn.Text = "السرعة: OFF"
-    end
-end)
+-- إنشاء الواجهة
+local screenGui = Instance.new("ScreenGui", playerGui)
+screenGui.Name = "RavenMilitaryUI"
 
--- 2. دالة القفز (مع التبديل)
-jumpBtn.MouseButton1Click:Connect(function()
-    isJumpEnabled = not isJumpEnabled
-    if isJumpEnabled then
-        humanoid.UseJumpPower = true
-        humanoid.JumpPower = 100 -- قوة القفز المطلوبة
-        jumpBtn.Text = "القفز: ON"
-    else
-        humanoid.UseJumpPower = true
-        humanoid.JumpPower = 50 -- القيمة الطبيعية للقفز
-        jumpBtn.Text = "القفز: OFF"
-    end
-end)
+-- إطار الإخفاء
+local hideBtnContainer = Instance.new("Frame", screenGui)
+hideBtnContainer.Size = UDim2.new(0, 40, 0, 40)
+hideBtnContainer.Position = UDim2.new(0, 55, 0, 100)
+hideBtnContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Instance.new("UICorner", hideBtnContainer)
 
--- 3. دالة الاختفاء (مع التبديل)
-invisibleBtn.MouseButton1Click:Connect(function()
-    isInvisible = not isInvisible
-    for _, part in pairs(character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.Transparency = isInvisible and 1 or 0
-        end
-    end
-    invisibleBtn.Text = isInvisible and "الاختفاء: ON" or "الاختفاء: OFF"
-end)
+local hideBtn = Instance.new("TextButton", hideBtnContainer)
+hideBtn.Size = UDim2.new(1, 0, 1, 0)
+hideBtn.BackgroundTransparency = 1
+hideBtn.Text = "X"
+hideBtn.TextColor3 = Color3.new(1, 1, 1)
+
+-- الإطار الرئيسي
+local mainFrame = Instance.new("Frame", screenGui)
+mainFrame.Size = UDim2.new(0, 500, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -250, 0.5,
