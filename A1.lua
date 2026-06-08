@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - نسخة V5.2 المصححة والمطورة بالكامل ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة الأصلية المستقرة V5.0 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
@@ -104,20 +104,20 @@ local function updateMenuTheme(themeName)
 end
 
 -----------------------------------------
--- 4. إنشاء التبويبات القوائم
+-- 4. إنشاء التبويبات القوائم (النسخة الأصلية بـ 4 تبويبات)
 -----------------------------------------
 local Pages = {}
-local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "انميشن"}
+local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ"}
 
 for i, name in ipairs(menuNames) do
     local TabBtn = Instance.new("TextButton")
-    TabBtn.Size = UDim2.new(0.9, 0, 0, 32)
-    TabBtn.Position = UDim2.new(0.05, 0, 0, (i-1) * 36 + 10)
+    TabBtn.Size = UDim2.new(0.9, 0, 0, 35)
+    TabBtn.Position = UDim2.new(0.05, 0, 0, (i-1) * 40 + 15)
     TabBtn.BackgroundColor3 = Color3.fromRGB(220, 180, 0)
     TabBtn.Text = name
     TabBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
     TabBtn.Font = Enum.Font.SourceSansBold
-    TabBtn.TextSize = 12
+    TabBtn.TextSize = 13
     TabBtn.Parent = SideMenu
 
     local PageFrame = Instance.new("Frame")
@@ -411,39 +411,31 @@ loadPoints()
 refreshList()
 
 -----------------------------------------
--- [[ تصحيح القائمة 5: نقل وإدخال كافة عناصر انميشن داخل الإطار الرئيسي ]]
+-- 5. إنشاء الأزرار السفلية (كلبشة، الهوية، تحية، الجلوس) الخارجية الأصلية
 -----------------------------------------
-local AnimationPage = Pages[5]
+local bottomButtons = {"الجلوس", "تحية", "الهوية", "كلبشة"}
+for i, bName in ipairs(bottomButtons) do
+    local BBtn = Instance.new("TextButton")
+    BBtn.Size = UDim2.new(0, 65, 0, 35)
+    -- وضعها بالأسفل بناءً على التصميم الأولي القديم
+    BBtn.Position = UDim2.new(0, 140 + (i-1) * 72, 0, 235)
+    BBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    BBtn.Text = bName
+    BBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    BBtn.Font = Enum.Font.SourceSansBold
+    BBtn.TextSize = 14
+    BBtn.Parent = MainFrame
 
--- إنشاء قائمة تمرير داخل تبويب انميشن لترتيب الأزرار بشكل مثالي ومنظم لمنع تداخلها
-local AnimTabScroll = Instance.new("ScrollingFrame")
-AnimTabScroll.Size = UDim2.new(1, 0, 1, 0)
-AnimTabScroll.BackgroundTransparency = 1
-AnimTabScroll.CanvasSize = UDim2.new(0, 0, 0, 260)
-AnimTabScroll.ScrollBarThickness = 5
-AnimTabScroll.Parent = AnimationPage
-
-local TabListLayout = Instance.new("UIListLayout")
-TabListLayout.Padding = UDim.new(0, 8)
-TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-TabListLayout.Parent = AnimTabScroll
-
--- 1. الزر الواحد الأساسي والموحد لفتح واجهة الأنميشن الشفافة المستقلة
-local OpenAnimMenuBtn = Instance.new("TextButton")
-OpenAnimMenuBtn.Size = UDim2.new(0.9, 0, 0, 35)
-OpenAnimMenuBtn.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
-OpenAnimMenuBtn.Text = "افتح قائمة الأنيميشن"
-OpenAnimMenuBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-OpenAnimMenuBtn.Font = Enum.Font.SourceSansBold
-OpenAnimMenuBtn.TextSize = 14
-OpenAnimMenuBtn.LayoutOrder = 1
-OpenAnimMenuBtn.Parent = AnimTabScroll
-
-local OpenBtnCorner = Instance.new("UICorner")
-OpenBtnCorner.CornerRadius = UDim.new(0, 6)
-OpenBtnCorner.Parent = OpenAnimMenuBtn
-
--- 2. إدخال وتصحيح مكان أزرار القدرات لتكون داخل صفحة انميشن ومنظمة بدلاً من تشتتها بالخارج
-local function createTabAbilityButton(text, order, onClick)
-    local Btn = I
+    local active = false
+    BBtn.MouseButton1Click:Connect(function()
+        active = not active
+        BBtn.BackgroundColor3 = active and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(40, 40, 40)
+        BBtn.TextColor3 = active and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 255, 255)
+        
+        if bName == "الجلوس" then
+            local char = Player.Character
+            local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+            if humanoid then humanoid.Sit = active end
+        end
+    end)
+end
