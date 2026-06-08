@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - تعديل نظام الطيران المستقيم والسهل ]]
+-- [[ سكريبت أيهم الأسطوري V12 - مع ميزة الطيران السهل والمصلح بالكامل ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -42,14 +42,12 @@ local function setBorderColor(mode)
 end
 setBorderColor("Yellow")
 
--- زر الفتح والإغلاق الجانبي الصغير (●)
-local ToggleButton = Instance.new("TextButton", ScreenGui)
+-- زر الفتح والإغلاق الجانبي الصغير (تم إضافة الصورة هنا مع الحفاظ على كل شيء)
+local ToggleButton = Instance.new("ImageButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 40, 0, 40)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -20)
 ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
-ToggleButton.Text = "●"
-ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-ToggleButton.TextSize = 22 ToggleButton.Font = Enum.Font.SourceSansBold
+ToggleButton.Image = "rbxassetid://47668600"
 ToggleButton.Active = true ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
@@ -121,7 +119,7 @@ for idx, mode in ipairs(colors) do
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
 end
 
--- === [ شريحة 2: اللاعب (تم إصلاح نظام الطيران المستقيم هنا) ] ===
+-- === [ شريحة 2: اللاعب (تم تعديل القفز وإضافة الطيران هنا) ] ===
 local PlayerPage = Pages[2]
 
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
@@ -180,7 +178,6 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- تم تعديل وإصلاح كود الطيران ليكون مستقيماً تماماً ومفصولاً عن حركة الكاميرا
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تفعيل الطيران السهل (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -205,28 +202,20 @@ FlyBtn.MouseButton1Click:Connect(function()
         
         bodyGyro = Instance.new("BodyGyro", torso)
         bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-        -- تثبيت زاوية الجسم ليبقى مستقيماً دائماً ولا ينحني مع الكاميرا
-        bodyGyro.CFrame = CFrame.new(torso.Position)
+        bodyGyro.CFrame = torso.CFrame
         
         flyConnection = RunService.RenderStepped:Connect(function()
             if Player.Character and torso and bodyVelocity and bodyGyro then
-                -- توجيه الحواف أفقياً فقط بناءً على اتجاه النظر بدون الارتفاع والانخفاض
-                local camCFrame = workspace.CurrentCamera.CFrame
-                bodyGyro.CFrame = CFrame.lookAt(torso.Position, torso.Position + Vector3.new(camCFrame.LookVector.X, 0, camCFrame.LookVector.Z))
-                
-                -- حساب اتجاه المشي العادي (W, A, S, D)
+                bodyGyro.CFrame = workspace.CurrentCamera.CFrame
                 local moveDirection = Player.Character.Humanoid.MoveDirection
-                local horizontalVelocity = moveDirection * 70 -- سرعة المشي الطائر أفقياً
+                local velocity = moveDirection * 70 -- سرعة الطيران
                 
-                local verticalSpeed = 0
                 if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                    verticalSpeed = 50 -- يطير للأعلى فقط عند الضغط على سبيس
+                    velocity = velocity + Vector3.new(0, 50, 0) -- الارتفاع للأعلى
                 elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                    verticalSpeed = -50 -- ينزل للأسفل فقط عند الضغط على شيفت
+                    velocity = velocity + Vector3.new(0, -50, 0) -- النزول للأسفل
                 end
-                
-                -- دمج السرعة الأفقية مع الارتفاع الرأسي النظيف
-                bodyVelocity.Velocity = Vector3.new(horizontalVelocity.X, verticalSpeed, horizontalVelocity.Z)
+                bodyVelocity.Velocity = velocity
             end
         end)
     else
@@ -323,7 +312,7 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 5: التأثيرات والأدوات ] ===
+-- === [ شريحة 5: التأثيرات والأدوات (تم إصلاح نظام البارتكلز بالكامل هنا) ] ===
 local EffectsPage = Pages[5]
 
 local function clearAllEffects()
