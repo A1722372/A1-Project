@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V10.0 ]]
+-- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V10 المثالي ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -38,7 +38,7 @@ local function setBorderColor(mode)
 end
 setBorderColor("Yellow")
 
--- زر الففتح والإغلاق الجانبي (●)
+-- زر الفتح والإغلاق الجانبي (●)
 local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 40, 0, 40)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -20)
@@ -84,9 +84,10 @@ for i, name in ipairs(tabs) do
     end)
 end
 
--- === [ شريحة 1: اعدادات الماب ] ===
+-- === [ شريحة 1: اعدادات الماب (مدمج معها ملاحق الإنزال الجوي) ] ===
 local MapPage = Pages[1]
 
+-- زر خيار الماب مضوي بالكامل
 local BrightBtn = Instance.new("TextButton", MapPage)
 BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 10)
 BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -108,12 +109,41 @@ BrightBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- زر ملاحق الإنزال الجوي (AirDrop) التلقائي
+local DropBtn = Instance.new("TextButton", MapPage)
+DropBtn.Size = UDim2.new(0.9, 0, 0, 35) DropBtn.Position = UDim2.new(0.05, 0, 0, 50)
+DropBtn.Text = "تفعيل ملاحق الإنزال الجوي تلقائياً" DropBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 0)
+DropBtn.TextColor3 = Color3.fromRGB(255, 255, 255) DropBtn.Font = Enum.Font.SourceSansBold DropBtn.TextSize = 13
+local dropActive = false
+
+DropBtn.MouseButton1Click:Connect(function()
+    dropActive = not dropActive
+    DropBtn.BackgroundColor3 = dropActive and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 0, 0)
+    
+    if dropActive then
+        task.spawn(function()
+            while dropActive do
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if (obj.Name:lower():find("airdrop") or obj.Name:lower():find("drop") or obj.Name:lower():find("chest") or obj.Name:lower():find("balloon")) and obj:IsA("BasePart") then
+                        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                            Player.Character.HumanoidRootPart.CFrame = obj.CFrame + Vector3.new(0, 6, 0)
+                            wait(0.5)
+                        end
+                    end
+                end
+                wait(1.5) -- يقوم بمسح السيرفر باستمرار كل ثانية ونصف
+            end
+        end)
+    end
+end)
+
+-- أزرار تغيير لون الإطار المخصصة داخل شريحة الإعدادات
 local colors = {"Rainbow", "Red", "Yellow", "Blue"}
 local colorNames = {Rainbow = "حواف قوس قزح", Red = "حواف حمراء", Yellow = "حواف صفراء", Blue = "حواف زرقاء"}
 for idx, mode in ipairs(colors) do
     local cBtn = Instance.new("TextButton", MapPage)
     cBtn.Size = UDim2.new(0.42, 0, 0, 32)
-    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 60 or 105)
+    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 95 or 135)
     cBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) cBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
@@ -288,7 +318,6 @@ end)
 local EffectsPage = Pages[5]
 
 local function clearAllEffects()
-    -- مسح الأدوات القديمة من حقيبة اللاعب واليد
     for _, item in ipairs(Backpack:GetChildren()) do
         if item.Name == "Fire" or item.Name == "Highlight" or item.Name == "Yellow Particles" or item.Name == "Red Particles" then
             item:Destroy()
@@ -306,27 +335,23 @@ end
 local function giveServerToolEffect(effectName, effectType, customColor)
     clearAllEffects()
     
-    -- إنشاء أداة (Tool) يراها السيرفر بالكامل في حقيبتك
     local Tool = Instance.new("Tool")
     Tool.Name = effectName
     Tool.RequiresHandle = true
     
-    -- إنشاء المقبض الأساسي للأداة ليحمله اللاعب بيده
     local Handle = Instance.new("Part")
     Handle.Name = "Handle"
     Handle.Size = Vector3.new(1, 1, 1)
-    Handle.Transparency = 1 -- المقبض مخفي تماماً عشان ما يخرب الشكل
+    Handle.Transparency = 1
     Handle.CanCollide = false
     Handle.Parent = Tool
     
-    -- إضافة التأثير المطلوب داخل المقبض لكي يراه الجميع فوراً عند تفعيل الأداة
     if effectType == "Fire" then
         local f = Instance.new("Fire")
         f.Size = 12
         f.Heat = 18
         f.Parent = Handle
     elseif effectType == "Highlight" then
-        -- لتأثير الإضاءة المشعة يتم حاقنها لتغطي جسم الشخصية
         Tool.Equipped:Connect(function()
             if Player.Character and not Player.Character:FindFirstChild("BackpackHighlight") then
                 local hl = Instance.new("Highlight")
