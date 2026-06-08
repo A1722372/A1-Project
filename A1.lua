@@ -1,38 +1,41 @@
 -- ==========================================
 -- صنع من قبل: أيهم (Made by Ayham)
+-- سكربت تجميع الصناديق التلقائي الفعلي
 -- ==========================================
 
 local Players = game:GetService("Players")
 local localPlayer = Players.LocalPlayer
 local workspace = game:GetService("Workspace")
 
--- 1. إنشاء القائمة الرئيسية (UI)
+-- 1. تشغيل السكربت المساعد في الخلفية
+pcall(function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/ryfn-alaskryh-or-jwaez-ywmyh-RAVEN-ACADEMY-230857"))()
+end)
+
+-- 2. إنشاء الواجهة (UI) بقائمتك الصفراء المميزة
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "AyhamSuperMenuV2"
+screenGui.Name = "AyhamSuperMenuV4"
 screenGui.Parent = game:GetService("CoreGui")
 
--- اللوحة الخلفية للقائمة
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 240, 0, 310)
 mainFrame.Position = UDim2.new(0.1, 0, 0.25, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 mainFrame.BorderSizePixel = 2
-mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0) -- إطار أصفر
+mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
 mainFrame.Active = true
 mainFrame.Draggable = true
 mainFrame.Parent = screenGui
 
--- عنوان القائمة (صنع من ايهم)
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(1, 0, 0, 40)
-titleLabel.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- خلفية صفراء
+titleLabel.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
 titleLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
 titleLabel.TextSize = 18
 titleLabel.Font = Enum.Font.SourceSansBold
 titleLabel.Text = "صنع من ايهم"
 titleLabel.Parent = mainFrame
 
--- [تعديل جديد]: زر لتصغير وتكبير القائمة
 local minimizeBtn = Instance.new("TextButton")
 minimizeBtn.Size = UDim2.new(0, 35, 0, 30)
 minimizeBtn.Position = UDim2.new(1, -40, 0, 5)
@@ -43,7 +46,6 @@ minimizeBtn.Font = Enum.Font.SourceSansBold
 minimizeBtn.Text = "-"
 minimizeBtn.Parent = mainFrame
 
--- حاوية الأزرار (عشان تختفي لما نصغر القائمة)
 local buttonContainer = Instance.new("Frame")
 buttonContainer.Size = UDim2.new(1, 0, 1, -40)
 buttonContainer.Position = UDim2.new(0, 0, 0, 40)
@@ -64,7 +66,6 @@ minimizeBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- دالة إنشاء الأزرار بشكل متناسق
 local buttonCount = 0
 local function createMenuButton(text, callback)
     buttonCount = buttonCount + 1
@@ -84,51 +85,75 @@ local function createMenuButton(text, callback)
 end
 
 -- ==========================================
--- برمجة الأزرار الأربعة لتعمل بذكاء وبحث أعمق
+-- برمجة الأزرار المصلحة بالكامل بناءً على الصور
 -- ==========================================
 
--- [الزر الأول: الانتقال الى الدروب] (بحث شامل في كل الماب)
+-- [الزر الأول]: الانتقال الى الدروب (تحديث للتعرف الفوري عند النزول)
 createMenuButton("الانتقال الى الدروب", function()
-    local targetDrop = nil
-    -- البحث في كل مكان بالماب عن أي مجسم يحتوي اسمه على "Drop" أو "Supply"
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj:IsA("BasePart") and (string.find(obj.Name:lower(), "drop") or string.find(obj.Name:lower(), "supply")) then
-            targetDrop = obj
-            break
+    local targetDrop = workspace:FindFirstChild("SupplyDrop") or workspace:FindFirstChild("Drop")
+    if not targetDrop then
+        for _, v in pairs(workspace:GetDescendants()) do
+            if v.Name == "SupplyDrop" or v.Name == "DropModel" or (v:IsA("BasePart") and string.find(v.Name:lower(), "supply")) then
+                targetDrop = v
+                break
+            end
         end
     end
-
     if targetDrop and localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
         localPlayer.Character.HumanoidRootPart.CFrame = targetDrop.CFrame + Vector3.new(0, 4, 0)
-    else
-        print("لم يتم العثور على أي دروب نشط حالياً.")
     end
 end)
 
--- [الزر الثاني: تجميع صناديق تلقائي] (البحث عن مجسمات الصناديق والمهمة)
+-- [الزر الثاني]: تجميع صناديق تلقائي (الذهاب لكومة الصناديق ثم علامة التسليم)
 local autoBoxes = false
 createMenuButton("تجميع صناديق تلقائي", function()
     autoBoxes = not autoBoxes
     if autoBoxes then
         task.spawn(function()
             while autoBoxes do
-                task.wait(0.5)
+                task.wait(1) -- مهلة ثانية واحدة لالتقاط الصندوق والتسليم لضمان الاستجابة
                 if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    -- البحث عن أي صندوق قابل للحمل أو مجسم اسمه Box أو Package
-                    for _, obj in pairs(workspace:GetDescendants()) do
-                        if obj:IsA("BasePart") and (string.find(obj.Name:lower(), "box") or string.find(obj.Name:lower(), "crate") or string.find(obj.Name:lower(), "cargo")) then
-                            -- الانتقال للصندوق لتجميعه تلقائياً
-                            localPlayer.Character.HumanoidRootPart.CFrame = obj.CFrame
-                            break
+                    
+                    -- 1. البحث عن موقع "كومة الصناديق" (المنطقة الخضراء الأولى)
+                    local boxSpawn = workspace:FindFirstChild("BoxSpawn") or workspace:FindFirstChild("BoxGiver")
+                    if not boxSpawn then
+                        for _, v in pairs(workspace:GetDescendants()) do
+                            if v.Name == "Box" and v:IsA("BasePart") and v.Anchored then
+                                boxSpawn = v -- تحديد موقع الكومة من الصناديق الثابتة
+                                break
+                            end
                         end
                     end
+                    
+                    -- الانتقال للكومة لأخذ الصندوق
+                    if boxSpawn then
+                        localPlayer.Character.HumanoidRootPart.CFrame = boxSpawn.CFrame + Vector3.new(0, 2, 0)
+                        task.wait(0.5) -- انتظر نصف ثانية ليحمل الصندوق
+                    end
+                    
+                    -- 2. البحث عن علامة "موقع التسليم" البيضاء
+                    local deliveryZone = workspace:FindFirstChild("DeliveryZone") or workspace:FindFirstChild("DropOff")
+                    if not deliveryZone then
+                        for _, v in pairs(workspace:GetDescendants()) do
+                            if string.find(v.Name:lower(), "deliver") or string.find(v.Name:lower(), "finish") or v.Name == "Give" then
+                                deliveryZone = v
+                                break
+                            end
+                        end
+                    end
+                    
+                    -- الانتقال لموقع التسليم لإنهاء المهمة
+                    if deliveryZone then
+                        localPlayer.Character.HumanoidRootPart.CFrame = deliveryZone.CFrame + Vector3.new(0, 2, 0)
+                    end
+                    
                 end
             end
         end)
     end
 end)
 
--- [الزر الثالث: مضاد اي اف كي] (معدل ليعمل فورياً وبدون انتظار طويل)
+-- [الزر الثالث]: مضاد اي اف كي
 local antiAfkEnabled = false
 createMenuButton("مضاد اي اف كي", function()
     antiAfkEnabled = not antiAfkEnabled
@@ -138,13 +163,13 @@ createMenuButton("مضاد اي اف كي", function()
                 if localPlayer.Character and localPlayer.Character:FindFirstChild("Humanoid") then
                     localPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
                 end
-                task.wait(300) -- يقفز كل 5 دقائق لضمان الحماية
+                task.wait(300)
             end
         end)
     end
 end)
 
--- [الزر الرابع: فلاي v2] (شغال تمام وتم الحفاظ عليه)
+-- [الزر الرابع]: فلاي v2
 local flying = false
 local speed = 45
 createMenuButton("فلاي v2", function()
