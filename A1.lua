@@ -42,12 +42,12 @@ local function setBorderColor(mode)
 end
 setBorderColor("Yellow")
 
--- زر الفتح والإغلاق الجانبي الصغير (تم إضافة الصورة هنا مع الحفاظ على كل شيء)
+-- زر الفتح والإغلاق الجانبي الصغير (تم استبدال النقطة بالجمجمة)
 local ToggleButton = Instance.new("ImageButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 40, 0, 40)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -20)
 ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
-ToggleButton.Image = "rbxassetid://47668600"
+ToggleButton.Image = "rbxassetid://10672689531"
 ToggleButton.Active = true ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
@@ -148,6 +148,7 @@ SpeedBtn.MouseButton1Click:Connect(function()
     if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
 end)
 
+-- تم تعديل نظام القفز هنا ليدعم الـ JumpHeight والـ JumpPower معاً لحل المشكلة نهائياً
 local JumpLabel = Instance.new("TextLabel", PlayerPage)
 JumpLabel.Size = UDim2.new(0.3, 0, 0, 30) JumpLabel.Position = UDim2.new(0.05, 0, 0, 60)
 JumpLabel.Text = "القفز:" JumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255) JumpLabel.BackgroundTransparency = 1
@@ -178,6 +179,7 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- زر الطيران الجديد والسهل
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تفعيل الطيران السهل (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
