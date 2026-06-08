@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V16 - النسخة المصلحة والمضمونة بالكامل ]]
+-- [[ سكريبت أيهم الأسطوري V15 - نظام الألوان الموحد + طيران الكاميرا + شريحة رقصات R6 المستقرة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
@@ -6,81 +6,64 @@ local PlayersService = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 
--- تنظيف الشاشة من أي نسخة قديمة لتجنب التعليق
-if PlayerGui:FindFirstChild("AihamSuperMenu") then 
-    PlayerGui.AihamSuperMenu:Destroy() 
-end
+-- تنظيف النسخ القديمة لضمان عمل السكريبت بنجاح
+if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamSuperMenu"
 ScreenGui.ResetOnSpawn = false
 
--- الإطار الرئيسي للمنيو (تم تحسين الأبعاد لتناسب الموبايل والكمبيوتر)
+-- الإطار الرئيسي
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 490, 0, 330)
-MainFrame.Position = UDim2.new(0.5, -245, 0.5, -165)
+MainFrame.Size = UDim2.new(0, 480, 0, 320)
+MainFrame.Position = UDim2.new(0.5, -240, 0.5, -160)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 3
 MainFrame.Active = true
 MainFrame.Draggable = true
 
--- زر الفتح والإغلاق الجانبي المتنقل (●)
+-- زر الففتح والإغلاق الجانبي (●)
 local ToggleButton = Instance.new("TextButton", ScreenGui)
-ToggleButton.Size = UDim2.new(0, 45, 0, 45)
-ToggleButton.Position = UDim2.new(0, 10, 0.5, -22)
+ToggleButton.Size = UDim2.new(0, 40, 0, 40)
+ToggleButton.Position = UDim2.new(0, 10, 0.5, -20)
 ToggleButton.Text = "●"
 ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-ToggleButton.TextSize = 24 
-ToggleButton.Font = Enum.Font.SourceSansBold
-ToggleButton.Active = true 
-ToggleButton.Draggable = true
-ToggleButton.MouseButton1Click:Connect(function() 
-    MainFrame.Visible = not MainFrame.Visible 
-end)
+ToggleButton.TextSize = 22 ToggleButton.Font = Enum.Font.SourceSansBold
+ToggleButton.Active = true ToggleButton.Draggable = true
+ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
--- العنوان العلوي الثابت بنفس النص
+-- العنوان العلوي
 local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 38) 
-Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Title.Size = UDim2.new(1, 0, 0, 35) Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Title.Text = "صنع من قبل المطور الأسطوري أيهم"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255) 
-Title.TextSize = 16 
-Title.Font = Enum.Font.SourceSansBold
+Title.TextColor3 = Color3.fromRGB(255, 255, 255) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
 
--- القائمة الجانبية للتنقل (توسيع العرض لسهولة الضغط)
+-- القائمة الجانبية للتنقل (توسيع الحجم ليتناسب مع الخانة السادسة)
 local SideMenu = Instance.new("Frame", MainFrame)
-SideMenu.Size = UDim2.new(0, 140, 1, -38) 
-SideMenu.Position = UDim2.new(0, 0, 0, 38)
+SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 
--- منطقة عرض محتويات الشرائح
 local ContentArea = Instance.new("Frame", MainFrame)
-ContentArea.Size = UDim2.new(1, -140, 1, -38) 
-ContentArea.Position = UDim2.new(0, 140, 0, 38)
+ContentArea.Size = UDim2.new(1, -130, 1, -35) ContentArea.Position = UDim2.new(0, 130, 0, 35)
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
 local MenuButtons = {} 
-local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "كل حركات R6"}
+local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "الرقصات R6"}
 
--- بناء وتفعيل الشرائح والأزرار الجانبية بشكل دقيق
+-- بناء وتفعيل الصفحات والشرائح بالكامل
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
-    btn.Size = UDim2.new(0.92, 0, 0, 36) 
-    btn.Position = UDim2.new(0.04, 0, 0, (i-1) * 41 + 10)
-    btn.Text = name 
-    btn.TextColor3 = Color3.fromRGB(0, 0, 0)
-    btn.Font = Enum.Font.SourceSansBold 
-    btn.TextSize = 13
+    -- تقليل الارتفاع والمسافات قليلاً لكي تتسع الـ 6 أزرار بشكل ممتاز بدون خربطة
+    btn.Size = UDim2.new(0.9, 0, 0, 34) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 39 + 8)
+    btn.Text = name btn.TextColor3 = Color3.fromRGB(0, 0, 0)
+    btn.Font = Enum.Font.SourceSansBold btn.TextSize = 12
     table.insert(MenuButtons, btn)
     
     local page = Instance.new("ScrollingFrame", ContentArea)
-    page.Size = UDim2.new(1, 0, 1, 0) 
-    page.BackgroundTransparency = 1
-    page.CanvasSize = UDim2.new(0, 0, 0, 500) 
-    page.ScrollBarThickness = 5
-    page.Visible = (i == 1) 
-    Pages[i] = page
+    page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
+    page.CanvasSize = UDim2.new(0, 0, 0, 450) page.ScrollBarThickness = 5
+    page.Visible = (i == 1) Pages[i] = page
     
     btn.MouseButton1Click:Connect(function()
         for _, p in ipairs(Pages) do p.Visible = false end
@@ -88,14 +71,12 @@ for i, name in ipairs(tabs) do
     end)
 end
 
--- [[ نظام الألوان الموحد الشامل المضمون ]]
+-- [[ نظام الألوان الموحد الشامل ]]
 local rainbowConnection
 local function setGlobalColor(mode)
     if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
     local function applyColor(color)
-        MainFrame.BorderColor3 = color 
-        ToggleButton.BackgroundColor3 = color 
-        Title.TextColor3 = color
+        MainFrame.BorderColor3 = color ToggleButton.BackgroundColor3 = color Title.TextColor3 = color
         for _, btn in ipairs(MenuButtons) do btn.BackgroundColor3 = color end
     end
     if mode == "Red" then applyColor(Color3.fromRGB(255, 0, 0))
@@ -108,7 +89,7 @@ local function setGlobalColor(mode)
         end)
     end
 end
-setGlobalColor("Yellow") -- اللون الافتراضي والأساسي للمنيو عند التشغيل
+setGlobalColor("Yellow")
 
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
@@ -145,7 +126,7 @@ JumpBtn.MouseButton1Click:Connect(function()
     if Player.Character and Player.Character:FindFirstChild("Humanoid") then local val = tonumber(JumpInput.Text) or 120 if jumpActive then Player.Character.Humanoid.UseJumpPower = false Player.Character.Humanoid.JumpHeight = val Player.Character.Humanoid.JumpPower = val else Player.Character.Humanoid.UseJumpPower = true Player.Character.Humanoid.JumpPower = 50 end end
 end)
 
--- طيران الكاميرا الحر والمستقر
+-- طيران الكاميرا المطور والحر 
 local FlyBtn = Instance.new("TextButton", PlayerPage) FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105) FlyBtn.Text = "تفعيل طيران الكاميرا الحر (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local flying, flyConnection, bodyVelocity, bodyGyro
 FlyBtn.MouseButton1Click:Connect(function()
@@ -225,52 +206,52 @@ createEffectBtn("تفعيل تأثير الإضاءة المشعة الشامل�
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 90, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
 -- =========================================================
--- === [ الشريحة 6 المستقرة بالكامل: كل حركات R6 المأخوذة من صورك ] ===
+-- === [ الشريحة 6 الجديدة بالكامل: رقصات وحركات الـ R6 المستقرة ] ===
 -- =========================================================
 local DancePage = Pages[6]
-DancePage.CanvasSize = UDim2.new(0, 0, 0, 820) -- مساحة تمرير أوسع لتسجيل كافة الرقصات
 
+-- جدول يحتوي على أسماء الرقصات الرسمية وأرقام الـ Animation الموثوقة لها في روبلوكس
 local Emotes = {
-    {Name = "Many Punch", ID = "rbxassetid://313762630"},
-    {Name = "T", ID = "rbxassetid://215384312"},
-    {Name = "Arms Up", ID = "rbxassetid://248065057"},
-    {Name = "Backpack Head", ID = "rbxassetid://248065431"},
-    {Name = "cheer", ID = "rbxassetid://129424490"},
-    {Name = "Dab", ID = "rbxassetid://248064619"},
-    {Name = "Dino Walk", ID = "rbxassetid://144558231"},
-    {Name = "point", ID = "rbxassetid://128778041"},
-    {Name = "Dance 2013", ID = "rbxassetid://182436842"},
-    {Name = "Drink Anim", ID = "rbxassetid://248065261"},
-    {Name = "Laying down", ID = "rbxassetid://180611870"},
-    {Name = "Tool Lunge", ID = "rbxassetid://128778396"},
-    {Name = "Head Throw", ID = "rbxassetid://129423131"},
-    {Name = "Moving Dance", ID = "rbxassetid://182435965"},
-    {Name = "Spinner", ID = "rbxassetid://215384594"},
-    {Name = "Crouch", ID = "rbxassetid://180612154"},
-    {Name = "Floor Crawl", ID = "rbxassetid://282574440"},
-    {Name = "Levitate", ID = "rbxassetid://313762908"},
-    {Name = "Right Head Position", ID = "rbxassetid://128777973"}
+    {Name = "dance (رقصة 1)", ID = "rbxassetid://182435965"},
+    {Name = "dance2 (رقصة 2)", ID = "rbxassetid://182436411"},
+    {Name = "dance3 (رقصة 3)", ID = "rbxassetid://182436842"},
+    {Name = "laugh (الضحكة الأسطورية)", ID = "rbxassetid://129423131"},
+    {Name = "wave (التحية باليد)", ID = "rbxassetid://128777973"},
+    {Name = "cheer (حركة التشجيع)", ID = "rbxassetid://129424490"}
 }
 
-local currentTrack = nil
+local currentTrack = nil -- متغير لتخزين الرقصة الشغالة حالياً لإيقافها عند تشغيل رقصة أخرى
 
 local function playEmote(animID)
     local character = Player.Character
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
     
     if humanoid then
-        -- تصحيح برميجي: إيقاف وإلغاء الأنيميشينات القديمة تماماً لتجنب الكراش والتعليق
-        if currentTrack then 
-            currentTrack:Stop() 
-            currentTrack:Destroy()
-            currentTrack = nil 
-        end
+        -- إيقاف الرقصة السابقة فوراً لمنع تداخل الحركات
+        if currentTrack then currentTrack:Stop() currentTrack = nil end
         
+        -- إنشاء كائن الحركة المخصص
         local anim = Instance.new("Animation")
         anim.AnimationId = animID
         
+        -- تحميل الحركة داخل جسم اللاعب
         local success, track = pcall(function() return humanoid:LoadAnimation(anim) end)
         if success and track then
             currentTrack = track
-            -- ضمان استمرار الحركة مع المشي والتحرك بحرية في الماب
-            track.Priority = Enum.AnimationPriorit
+            -- السر الأسطوري: ضبط الأولوية لـ Action لتتمكن من المشي أثناء الرقص!
+            track.Priority = Enum.AnimationPriority.Action
+            track:Play()
+        end
+    end
+end
+
+-- زر لإيقاف الرقصة الحالية فوراً
+local StopDanceBtn = Instance.new("TextButton", DancePage)
+StopDanceBtn.Size = UDim2.new(0.9, 0, 0, 32) StopDanceBtn.Position = UDim2.new(0.05, 0, 0, 10)
+StopDanceBtn.Text = "🛑 إيقاف الرقصة الحالية فوراً" StopDanceBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0) StopDanceBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+StopDanceBtn.Font = Enum.Font.SourceSansBold StopDanceBtn.TextSize = 13
+StopDanceBtn.MouseButton1Click:Connect(function() if currentTrack then currentTrack:Stop() currentTrack = nil end end)
+
+-- إنشاء أزرار الرقصات تلقائياً وترتيبها في قائمة مريحة
+for idx, emote in ipairs(Emotes) do
+    local dBtn = Instance.new("TextButton", Dance
