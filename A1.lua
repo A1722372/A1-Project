@@ -69,7 +69,7 @@ ContentArea.Size = UDim2.new(1, -130, 1, -35) ContentArea.Position = UDim2.new(0
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
-local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "الصناديق"}
+local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "الصناديق", "الرقصات"}
 
 -- بناء وتفعيل الصفحات
 for i, name in ipairs(tabs) do
@@ -286,7 +286,7 @@ createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particl
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
--- === [ شريحة 6: الصناديق (تمت الإضافة) ] ===
+-- === [ شريحة 6: الصناديق ] ===
 local ChestPage = Pages[6]
 local chestData = {
     {name = "TE1", pos = CFrame.new(364.75, 72.27, -2792.82)},
@@ -308,6 +308,33 @@ for i, data in ipairs(chestData) do
             Player.Character.HumanoidRootPart.CFrame = data.pos
         end
     end)
+end
+
+-- === [ شريحة 7: الرقصات ] ===
+local EmotePage = Pages[7]
+local function playEmote(id)
+    local char = Player.Character
+    if char and char:FindFirstChild("Humanoid") then
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://" .. id
+        local track = char.Humanoid:LoadAnimation(anim)
+        track:Play()
+    end
+end
+
+local emoteList = {
+    {name = "الرقصة 1", id = "0000000000"}, -- استبدل الأصفار بالـ ID
+    {name = "الرقصة 2", id = "0000000000"}
+}
+
+for i, data in ipairs(emoteList) do
+    local eBtn = Instance.new("TextButton", EmotePage)
+    eBtn.Size = UDim2.new(0.9, 0, 0, 40)
+    eBtn.Position = UDim2.new(0.05, 0, 0, (i-1) * 50 + 10)
+    eBtn.Text = data.name
+    eBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    eBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    eBtn.MouseButton1Click:Connect(function() playEmote(data.id) end)
 end
 
 -- زر إغلاق القائمة
