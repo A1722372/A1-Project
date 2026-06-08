@@ -1,128 +1,119 @@
--- [[ هيكل سكربت واجهة المستخدم (Roblox GUI Structure) ]]
--- [[ تم إنشاؤه بناءً على التصميم في الصور المرفقة ]]
+-- [[ سكربت تشغيل الواجهة والأزرار - يتم وضعه داخل LocalScript ]]
 
--- 1. تعريف المتغيرات والخدمات الأساسية
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
--- 2. إنشاء الواجهة الرسومية الرئيسية (ScreenGui)
-local MainGui = Instance.new("ScreenGui")
-MainGui.Name = "Aiham_Military_Menu_GUI"
-MainGui.Parent = PlayerGui
+-- إنشاء الواجهة بشكل يضمن ظهورها على الشاشة فوراً
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AihamCommands"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
 
--- 3. إنشاء الإطار الرئيسي (Main Frame) باللون الأسود
+-- الإطار الرئيسي للسكربت (باللون الأسود الغامق)
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 500, 0, 300) -- مقاس تقريبي مناسب
-MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20) -- أسود غامق
-MainFrame.Parent = MainGui
+MainFrame.Size = UDim2.new(0, 550, 0, 350)
+MainFrame.Position = UDim2.new(0.5, -275, 0.5, -175)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0) -- إطار ذهبي خفيف
+MainFrame.Parent = ScreenGui
 
--- (إضافة تفاصيل الصورة الشخصية والنصوص "صنع من قبل..." كما في الصور)
--- [[ الكود الخاص بهذه العناصر الجمالية يتم وضعه هنا، ولكن تم حذفه للتركيز على الهيكل الوظيفي ]]
+-- عنوان الواجهة (صنع من قبل المطور الأسطوري أيهم)
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, 0, 0, 40)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+TitleLabel.Text = "صنع من قبل المطور الأسطوري أيهم"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+TitleLabel.TextSize = 20
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Parent = MainFrame
 
--- 4. إنشاء قائمة الأزرار الرئيسية (التبويبات) على اليمين
-local TabsFrame = Instance.new("Frame")
-TabsFrame.Name = "TabsFrame"
-TabsFrame.Size = UDim2.new(0, 150, 1, 0)
-TabsFrame.Position = UDim2.new(1, -150, 0, 0)
-TabsFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- لون خلفية أزرار التبويب
-TabsFrame.Parent = MainFrame
+-- قائمة الأزرار الصفراء (اليمين)
+local SideMenu = Instance.new("Frame")
+SideMenu.Size = UDim2.new(0, 160, 1, -40)
+SideMenu.Position = UDim2.new(0, 0, 0, 40)
+SideMenu.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+SideMenu.Parent = MainFrame
 
--- 5. إنشاء لوحات المحتوى (المخفية) على اليسار
-local PagesFrame = Instance.new("Frame")
-PagesFrame.Name = "PagesFrame"
-PagesFrame.Size = UDim2.new(1, -150, 1, 0)
-PagesFrame.Position = UDim2.new(0, 0, 0, 0)
-PagesFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-PagesFrame.Parent = MainFrame
+-- منطقة عرض القدرات (اليسار)
+local ContentArea = Instance.new("Frame")
+ContentArea.Size = UDim2.new(1, -160, 1, -40)
+ContentArea.Position = UDim2.new(0, 160, 0, 40)
+ContentArea.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ContentArea.Parent = MainFrame
 
--- [[ جدول لتخزين لوحات المحتوى لسهولة الوصول إليها ]]
-local Pages = {}
+-- الجداول لتخزين القوائم والقدرات
+local Menus = {}
+local CurrentMenu = nil
 
--- 6. دالة لإنشاء القوائم الخمس وكل قائمة بها 5 أزرار قدرات
-local function CreateMenuList()
-	for i = 1, 5 do
-		-- أ. إنشاء زر القائمة الرئيسي (الأصفر)
-		local TabButton = Instance.new("TextButton")
-		TabButton.Name = "Tab_Button_" .. i
-		TabButton.Size = UDim2.new(0.9, 0, 0, 40)
-		TabButton.Position = UDim2.new(0.05, 0, 0, (i-1)*50 + 10)
-		TabButton.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- أصفر ذهبي كما في الصور
-		TabButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-		TabButton.TextSize = 18
-		TabButton.Text = "قائمة ميزة " .. i -- يمكنك تغيير الاسم
-		TabButton.Parent = TabsFrame
+-- أسماء القوائم الخمسة كما في تصميمك
+local menuNames = {"قائمة الماب", "القفز", "التحية", "الأسلحة", "الجلوس"}
 
-		-- ب. إنشاء لوحة المحتوى المرتبطة بهذا الزر (تكون مخفية في البداية)
-		local Page = Instance.new("Frame")
-		Page.Name = "Page_" .. i
-		Page.Size = UDim2.new(1, 0, 1, 0)
-		Page.Position = UDim2.new(0, 0, 0, 0)
-		Page.BackgroundColor3 = PagesFrame.BackgroundColor3
-		Page.Visible = false
-		Page.Parent = PagesFrame
-		Pages[i] = Page -- تخزينها في الجدول
-
-		-- ج. إنشاء 5 أزرار قدرات داخل هذه اللوحة (رمادية)
-		for j = 1, 5 do
-			local CapabilityButton = Instance.new("TextButton")
-			CapabilityButton.Name = "Cap_" .. i .. "_" .. j
-			CapabilityButton.Size = UDim2.new(0.8, 0, 0, 40)
-			CapabilityButton.Position = UDim2.new(0.1, 0, 0, (j-1)*50 + 20)
-			CapabilityButton.BackgroundColor3 = Color3.fromRGB(169, 169, 169) -- رمادي افتراضي
-			CapabilityButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-			CapabilityButton.TextSize = 16
-			CapabilityButton.Text = "قدرة " .. i .. "." .. j -- اسم مؤقت
-			CapabilityButton.Parent = Page
+-- دالة لتغيير حالة ولون زر القدرة
+local function setupAbilityButton(button)
+	local isActive = false
+	button.MouseButton1Click:Connect(function()
+		isActive = not isActive
+		if isActive then
+			button.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- يضوي بالأخضر عند التفعيل
+			button.TextColor3 = Color3.fromRGB(0, 0, 0)
+			-- [[ هنا سنضع كود القدرة لاحقاً ]]
+			print("تم تفعيل: " .. button.Text)
+		else
+			button.BackgroundColor3 = Color3.fromRGB(200, 200, 200) -- يعود للرمادي عند الإطفاء
+			button.TextColor3 = Color3.fromRGB(0, 0, 0)
+			-- [[ هنا سنضع كود إيقاف القدرة لاحقاً ]]
+			print("تم تعطيل: " .. button.Text)
 		end
-	end
+	end)
 end
 
--- 7. تشغيل الدالة لإنشاء العناصر
-CreateMenuList()
+-- إنشاء القوائم والأزرار تلقائياً لتجنب الأخطاء
+for i = 1, 5 do
+	-- 1. إنشاء الزر الأصفر على اليمين
+	local MenuButton = Instance.new("TextButton")
+	MenuButton.Size = UDim2.new(0.9, 0, 0, 45)
+	MenuButton.Position = UDim2.new(0.05, 0, 0, (i-1) * 55 + 10)
+	MenuButton.BackgroundColor3 = Color3.fromRGB(220, 180, 0) -- اللون الأصفر الظاهر بالصورة
+	MenuButton.Text = menuNames[i]
+	MenuButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+	MenuButton.Font = Enum.Font.SourceSansBold
+	MenuButton.TextSize = 16
+	MenuButton.Parent = SideMenu
 
--- 8. وظيفة التنقل بين القوائم (Tabs)
-for i, button in pairs(TabsFrame:GetChildren()) do
-	if button:IsA("TextButton") then
-		button.MouseButton1Click:Connect(function()
-			-- إخفاء جميع اللوحات أولاً
-			for j, page in pairs(Pages) do
-				page.Visible = false
-			end
-			-- إظهار اللوحة الخاصة بالزر الذي تم ضغطه
-			Pages[i].Visible = true
-		end
+	-- 2. إنشاء لوحة القدرات الخاصة بهذا الزر (تكون مخفية)
+	local AbilityFrame = Instance.new("Frame")
+	AbilityFrame.Size = UDim2.new(1, 0, 1, 0)
+	AbilityFrame.BackgroundTransparency = 1
+	AbilityFrame.Visible = false
+	AbilityFrame.Parent = ContentArea
+	Menus[i] = AbilityFrame
+
+	-- 3. إنشاء 5 أزرار داخل كل قائمة
+	for j = 1, 5 do
+		local AbilityButton = Instance.new("TextButton")
+		AbilityButton.Size = UDim2.new(0.9, 0, 0, 40)
+		AbilityButton.Position = UDim2.new(0.05, 0, 0, (j-1) * 50 + 15)
+		AbilityButton.BackgroundColor3 = Color3.fromRGB(200, 200, 200) -- رمادي افتراضي
+		AbilityButton.Text = menuNames[i] .. " - ميزة " .. j
+		AbilityButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+		AbilityButton.Font = Enum.Font.SourceSans
+		AbilityButton.TextSize = 16
+		AbilityButton.Parent = AbilityFrame
+		
+		-- تفعيل ميزة الإضاءة الخضراء للزر
+		setupAbilityButton(AbilityButton)
 	end
+
+	-- ربط الزر الأصفر بإظهار قائمته وإخفاء الباقي
+	MenuButton.MouseButton1Click:Connect(function()
+		if CurrentMenu then CurrentMenu.Visible = false end
+		AbilityFrame.Visible = true
+		CurrentMenu = AbilityFrame
+	end)
 end
 
--- ========================================================
--- [[ الجزء القادم هو مكان وضع القدرات ]]
--- ========================================================
-
--- دالة لتغيير لون الزر إلى الأخضر عند تفعيله
-local function ToggleButtonColor(button, state)
-	if state then
-		button.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- أخضر ساطع
-	else
-		button.BackgroundColor3 = Color3.fromRGB(169, 169, 169) -- رمادي (اللون الأصلي)
-	end
-end
-
--- مثال لاستخدام هذه الدالة مع زر القدرة الأول في القائمة الأولى ( Cap_1_1 )
--- local Cap1_1_Active = false
--- Pages[1]["Cap_1_1"].MouseButton1Click:Connect(function()
---	Cap1_1_Active = not Cap1_1_Active -- عكس الحالة
---	ToggleButtonColor(Pages[1]["Cap_1_1"], Cap1_1_Active) -- تغيير اللون
---	-- [[ هنا تضع الكود الخاص بالقدرة ]]
---	if Cap1_1_Active then
---		print("تم تفعيل القدرة 1.1")
---	else
---		print("تم إيقاف القدرة 1.1")
---	end
--- end)
-
--- ========================================================
--- [[ نهاية الهيكل ]]
--- ========================================================
-  
+-- إظهار القائمة الأولى بشكل تلقائي عند الفتح
+Menus[1].Visible = true
+CurrentMenu = Menus[1]
