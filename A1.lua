@@ -1,28 +1,28 @@
 -- ==========================================
 -- صنع من قبل: أيهم (Made by Ayham)
--- سكربت تجميع الصناديق التلقائي الفعلي
+-- دمج القائمة السوداء مع القائمة الصفراء المحدثة
 -- ==========================================
 
 local Players = game:GetService("Players")
 local localPlayer = Players.LocalPlayer
 local workspace = game:GetService("Workspace")
 
--- 1. تشغيل السكربت المساعد في الخلفية
+-- 1. تشغيل السكربت الأساسي (القائمة السوداء Raven Academy) تلقائياً
 pcall(function()
     loadstring(game:HttpGet("https://rawscripts.net/raw/ryfn-alaskryh-or-jwaez-ywmyh-RAVEN-ACADEMY-230857"))()
 end)
 
--- 2. إنشاء الواجهة (UI) بقائمتك الصفراء المميزة
+-- 2. إنشاء قائمتك الصفراء المخصصة (تظهر بجانب القائمة السوداء)
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "AyhamSuperMenuV4"
+screenGui.Name = "AyhamComboMenu"
 screenGui.Parent = game:GetService("CoreGui")
 
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 240, 0, 310)
-mainFrame.Position = UDim2.new(0.1, 0, 0.25, 0)
+mainFrame.Position = UDim2.new(0.05, 0, 0.25, 0) -- موقع مناسب على الشاشة لعدم التداخل
 mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 mainFrame.BorderSizePixel = 2
-mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
+mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0) -- إطار أصفر
 mainFrame.Active = true
 mainFrame.Draggable = true
 mainFrame.Parent = screenGui
@@ -85,10 +85,10 @@ local function createMenuButton(text, callback)
 end
 
 -- ==========================================
--- برمجة الأزرار المصلحة بالكامل بناءً على الصور
+-- الأزرار المحدثة بناءً على طلبك
 -- ==========================================
 
--- [الزر الأول]: الانتقال الى الدروب (تحديث للتعرف الفوري عند النزول)
+-- [الزر الأول]: الانتقال الى الدروب
 createMenuButton("الانتقال الى الدروب", function()
     local targetDrop = workspace:FindFirstChild("SupplyDrop") or workspace:FindFirstChild("Drop")
     if not targetDrop then
@@ -104,52 +104,40 @@ createMenuButton("الانتقال الى الدروب", function()
     end
 end)
 
--- [الزر الثاني]: تجميع صناديق تلقائي (الذهاب لكومة الصناديق ثم علامة التسليم)
-local autoBoxes = false
-createMenuButton("تجميع صناديق تلقائي", function()
-    autoBoxes = not autoBoxes
-    if autoBoxes then
-        task.spawn(function()
-            while autoBoxes do
-                task.wait(1) -- مهلة ثانية واحدة لالتقاط الصندوق والتسليم لضمان الاستجابة
-                if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    
-                    -- 1. البحث عن موقع "كومة الصناديق" (المنطقة الخضراء الأولى)
-                    local boxSpawn = workspace:FindFirstChild("BoxSpawn") or workspace:FindFirstChild("BoxGiver")
-                    if not boxSpawn then
-                        for _, v in pairs(workspace:GetDescendants()) do
-                            if v.Name == "Box" and v:IsA("BasePart") and v.Anchored then
-                                boxSpawn = v -- تحديد موقع الكومة من الصناديق الثابتة
-                                break
-                            end
-                        end
-                    end
-                    
-                    -- الانتقال للكومة لأخذ الصندوق
-                    if boxSpawn then
-                        localPlayer.Character.HumanoidRootPart.CFrame = boxSpawn.CFrame + Vector3.new(0, 2, 0)
-                        task.wait(0.5) -- انتظر نصف ثانية ليحمل الصندوق
-                    end
-                    
-                    -- 2. البحث عن علامة "موقع التسليم" البيضاء
-                    local deliveryZone = workspace:FindFirstChild("DeliveryZone") or workspace:FindFirstChild("DropOff")
-                    if not deliveryZone then
-                        for _, v in pairs(workspace:GetDescendants()) do
-                            if string.find(v.Name:lower(), "deliver") or string.find(v.Name:lower(), "finish") or v.Name == "Give" then
-                                deliveryZone = v
-                                break
-                            end
-                        end
-                    end
-                    
-                    -- الانتقال لموقع التسليم لإنهاء المهمة
-                    if deliveryZone then
-                        localPlayer.Character.HumanoidRootPart.CFrame = deliveryZone.CFrame + Vector3.new(0, 2, 0)
-                    end
-                    
+-- [تعديل الزر الثاني]: ينقلك مرة واحدة للكومة ثم التسليم وينتهي (بدون تعليق)
+createMenuButton("تجميع صناديق (مرة واحدة)", function()
+    if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        
+        -- 1. الانتقال لكومة الصناديق (المنطقة الخضراء الأولى) لتقوم بحمل الصندوق
+        local boxSpawn = workspace:FindFirstChild("BoxSpawn") or workspace:FindFirstChild("BoxGiver")
+        if not boxSpawn then
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v.Name == "Box" and v:IsA("BasePart") and v.Anchored then
+                    boxSpawn = v
+                    break
                 end
             end
-        end)
+        end
+        
+        if boxSpawn then
+            localPlayer.Character.HumanoidRootPart.CFrame = boxSpawn.CFrame + Vector3.new(0, 2, 0)
+            task.wait(0.7) -- مهلة بسيطة ليتأكد اللعبة أنك أخذت الصندوق
+        end
+        
+        -- 2. الانتقال فوراً لعلامة التسليم البيضاء (المنطقة الخضراء الثانية) لتسليمه وينتهي السكربت
+        local deliveryZone = workspace:FindFirstChild("DeliveryZone") or workspace:FindFirstChild("DropOff")
+        if not deliveryZone then
+            for _, v in pairs(workspace:GetDescendants()) do
+                if string.find(v.Name:lower(), "deliver") or string.find(v.Name:lower(), "finish") or v.Name == "Give" then
+                    deliveryZone = v
+                    break
+                end
+            end
+        end
+        
+        if deliveryZone then
+            localPlayer.Character.HumanoidRootPart.CFrame = deliveryZone.CFrame + Vector3.new(0, 2, 0)
+        end
     end
 end)
 
