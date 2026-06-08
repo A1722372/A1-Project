@@ -1,33 +1,60 @@
--- المطور: المطور الأسطوري أيهم
--- الوصف: واجهة مخصصة لماب ريفن العسكرية
-
+-- المطور الأسطوري أيهم - تصميم واجهة مخصص
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- إنشاء الحاوية الرئيسية
+-- إنشاء الواجهة
 local screenGui = Instance.new("ScreenGui", playerGui)
 screenGui.Name = "RavenMilitaryUI"
 
--- إنشاء إطار التجمع (Frame)
+-- الإطار الرئيسي (الخلفية الداكنة والإطار الأصفر)
 local mainFrame = Instance.new("Frame", screenGui)
-mainFrame.Size = UDim2.new(0, 200, 0, 300)
-mainFrame.Position = UDim2.new(0.05, 0, 0.5, -150)
-mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 0) -- اللون الأصفر
+mainFrame.Size = UDim2.new(0, 500, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
 mainFrame.BorderSizePixel = 2
 
--- إضافة عنوان الحقوق
+-- العنوان العلوي
 local title = Instance.new("TextLabel", mainFrame)
-title.Size = UDim2.new(1, 0, 0, 40)
+title.Size = UDim2.new(1, 0, 0, 30)
 title.Text = "صنع من قبل المطور الأسطوري أيهم"
-title.TextScaled = true
-title.BackgroundColor3 = Color3.fromRGB(200, 200, 0)
+title.TextColor3 = Color3.fromRGB(255, 215, 0)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 18
 
--- دالة لإنشاء الأزرار الـ 5
+-- القائمة الجانبية (الأزرار الصفراء)
+local sideMenu = Instance.new("Frame", mainFrame)
+sideMenu.Size = UDim2.new(0.35, 0, 0.85, 0)
+sideMenu.Position = UDim2.new(0.02, 0, 0.12, 0)
+sideMenu.BackgroundTransparency = 1
+
 for i = 1, 5 do
-    local button = Instance.new("TextButton", mainFrame)
-    button.Size = UDim2.new(0.8, 0, 0, 40)
-    button.Position = UDim2.new(0.1, 0, 0, 50 + (i * 45))
-    button.Text = "الزر رقم " .. i
-    button.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- أبيض لتباين الأزرار
-    button.Font = Enum.Font.SourceSansBold
+    local btn = Instance.new("TextButton", sideMenu)
+    btn.Size = UDim2.new(1, 0, 0.16, 0)
+    btn.Position = UDim2.new(0, 0, (i-1) * 0.2, 0)
+    btn.BackgroundColor3 = Color3.fromRGB(200, 160, 0) -- أصفر غامق
+    btn.Text = "الأمر " .. (i == 1 and "الأول" or i == 2 and "الثاني" or i == 3 and "الثالث" or i == 4 and "الرابع" or "الخامس")
+    btn.Font = Enum.Font.SourceSansBold
 end
+
+-- منطقة معلومات اللاعب (يمين)
+local infoFrame = Instance.new("Frame", mainFrame)
+infoFrame.Size = UDim2.new(0.6, 0, 0.85, 0)
+infoFrame.Position = UDim2.new(0.38, 0, 0.12, 0)
+infoFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+
+-- صورة اللاعب
+local userImage = Instance.new("ImageLabel", infoFrame)
+userImage.Size = UDim2.new(0.3, 0, 0.4, 0)
+userImage.Position = UDim2.new(0.05, 0, 0.05, 0)
+userImage.Image = game.Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+
+-- نص الترحيب
+local welcomeText = Instance.new("TextLabel", infoFrame)
+welcomeText.Size = UDim2.new(0.9, 0, 0.5, 0)
+welcomeText.Position = UDim2.new(0.05, 0, 0.45, 0)
+welcomeText.Text = "مرحباً بك في واجهة أوامر ماب ريفن العسكرية الخاصة بالمطور الأسطوري أيهم!\nتصفح الشرائح (الأوامر) في القائمة الجانبية"
+welcomeText.TextColor3 = Color3.fromRGB(255, 215, 0)
+welcomeText.BackgroundTransparency = 1
+welcomeText.TextWrapped = true
