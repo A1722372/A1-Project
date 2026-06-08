@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - نسخة V5 المطورة مع خانة الأنيميشن R15 ]]
+-- [[ سكريبت أيهم الأسطوري - نسخة V5.2 المصححة والمطورة بالكامل ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
@@ -104,7 +104,7 @@ local function updateMenuTheme(themeName)
 end
 
 -----------------------------------------
--- 4. إنشاء التبويبات القوائم (تم إضافة انميشن كخانة خامسة)
+-- 4. إنشاء التبويبات القوائم
 -----------------------------------------
 local Pages = {}
 local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "انميشن"}
@@ -411,43 +411,39 @@ loadPoints()
 refreshList()
 
 -----------------------------------------
--- [[ الخانة 5 الجديدة: انميشن (R15) ]]
+-- [[ تصحيح القائمة 5: نقل وإدخال كافة عناصر انميشن داخل الإطار الرئيسي ]]
 -----------------------------------------
 local AnimationPage = Pages[5]
-local currentTrack = nil
 
--- دالة لتشغيل أي أنيميشن بشكل آمن وإيقاف القديم
-local function playCustomAnimation(animationId)
-    local char = Player.Character
-    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        if currentTrack then currentTrack:Stop() end
-        local anim = Instance.new("Animation")
-        anim.AnimationId = "rbxassetid://" .. tostring(animationId)
-        currentTrack = humanoid:LoadAnimation(anim)
-        currentTrack:Play()
-    end
-end
+-- إنشاء قائمة تمرير داخل تبويب انميشن لترتيب الأزرار بشكل مثالي ومنظم لمنع تداخلها
+local AnimTabScroll = Instance.new("ScrollingFrame")
+AnimTabScroll.Size = UDim2.new(1, 0, 1, 0)
+AnimTabScroll.BackgroundTransparency = 1
+AnimTabScroll.CanvasSize = UDim2.new(0, 0, 0, 260)
+AnimTabScroll.ScrollBarThickness = 5
+AnimTabScroll.Parent = AnimationPage
 
--- دالة لإيقاف الأنميشن الحالي
-local function stopAnimation()
-    if currentTrack then currentTrack:Stop(); currentTrack = nil end
-end
+local TabListLayout = Instance.new("UIListLayout")
+TabListLayout.Padding = UDim.new(0, 8)
+TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+TabListLayout.Parent = AnimTabScroll
 
--- الإعداد لـ واجهة الرقصات المجانية الشفافة (Sub-Window)
-local EmotesWindow = Instance.new("Frame")
-EmotesWindow.Name = "EmotesWindow"
-EmotesWindow.Size = UDim2.new(0, 200, 0, 200)
-EmotesWindow.Position = UDim2.new(0.5, -100, 0.5, -100)
-EmotesWindow.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-EmotesWindow.BackgroundTransparency = 0.4 -- صفحة شفافة كما طلبت!
-EmotesWindow.BorderSizePixel = 2
-EmotesWindow.BorderColor3 = Color3.fromRGB(255, 215, 0)
-EmotesWindow.Visible = false
-EmotesWindow.Parent = ScreenGui
+-- 1. الزر الواحد الأساسي والموحد لفتح واجهة الأنميشن الشفافة المستقلة
+local OpenAnimMenuBtn = Instance.new("TextButton")
+OpenAnimMenuBtn.Size = UDim2.new(0.9, 0, 0, 35)
+OpenAnimMenuBtn.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+OpenAnimMenuBtn.Text = "افتح قائمة الأنيميشن"
+OpenAnimMenuBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+OpenAnimMenuBtn.Font = Enum.Font.SourceSansBold
+OpenAnimMenuBtn.TextSize = 14
+OpenAnimMenuBtn.LayoutOrder = 1
+OpenAnimMenuBtn.Parent = AnimTabScroll
 
-local EmoteTitle = Instance.new("TextLabel")
-EmoteTitle.Size = UDim2.new(1, 0, 0, 25)
-EmoteTitle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-EmoteTitle.BackgroundTransparency = 0.5
-EmoteTitle.Text = "قائمة الرقصات المجانية"
+local OpenBtnCorner = Instance.new("UICorner")
+OpenBtnCorner.CornerRadius = UDim.new(0, 6)
+OpenBtnCorner.Parent = OpenAnimMenuBtn
+
+-- 2. إدخال وتصحيح مكان أزرار القدرات لتكون داخل صفحة انميشن ومنظمة بدلاً من تشتتها بالخارج
+local function createTabAbilityButton(text, order, onClick)
+    local Btn = I
