@@ -1,12 +1,14 @@
 -- المطور الأسطوري أيهم - تصميم واجهة احترافي
 local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
 local playerGui = player:WaitForChild("PlayerGui")
 
 -- إنشاء الواجهة
 local screenGui = Instance.new("ScreenGui", playerGui)
 screenGui.Name = "RavenMilitaryUI"
 
--- الأيقونة المنفصلة (للإخفاء)
+-- إطار الإخفاء
 local hideBtnContainer = Instance.new("Frame", screenGui)
 hideBtnContainer.Size = UDim2.new(0, 40, 0, 40)
 hideBtnContainer.Position = UDim2.new(0, 55, 0, 100)
@@ -32,44 +34,56 @@ hideBtn.MouseButton1Click:Connect(function()
 	mainFrame.Visible = not mainFrame.Visible
 end)
 
--- العنوان
-local title = Instance.new("TextLabel", mainFrame)
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "صنع من قبل المطور الأسطوري أيهم"
-title.TextColor3 = Color3.fromRGB(255, 215, 0)
-title.BackgroundTransparency = 1
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 18
-
--- القائمة الجانبية مع الأسماء الجديدة
-local btnNames = {"الركض", "القفز", "التحية", "الأسلحة", "الجلوس"}
+-- القائمة الجانبية
+local btnNames = {"قائمة ألعاب", "القفز", "التحية", "الأسلحة", "الجلوس"}
 local sideMenu = Instance.new("Frame", mainFrame)
 sideMenu.Size = UDim2.new(0.35, 0, 0.85, 0)
 sideMenu.Position = UDim2.new(0.02, 0, 0.12, 0)
 sideMenu.BackgroundTransparency = 1
 
--- منطقة المعلومات
 local infoFrame = Instance.new("Frame", mainFrame)
 infoFrame.Size = UDim2.new(0.6, 0, 0.85, 0)
 infoFrame.Position = UDim2.new(0.38, 0, 0.12, 0)
 infoFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 Instance.new("UICorner", infoFrame)
 
-local userImage = Instance.new("ImageLabel", infoFrame)
-userImage.Size = UDim2.new(0.3, 0, 0.4, 0)
-userImage.Position = UDim2.new(0.05, 0, 0.05, 0)
-userImage.Image = game.Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
-Instance.new("UICorner", userImage)
+-- الوظائف البرمجية (داخل منطقة المعلومات)
+local function createGameButtons()
+	infoFrame:ClearAllChildren()
+	
+	-- زر السرعة
+	local speedBtn = Instance.new("TextButton", infoFrame)
+	speedBtn.Size = UDim2.new(0.8, 0, 0.2, 0)
+	speedBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
+	speedBtn.Text = "زيادة السرعة"
+	speedBtn.MouseButton1Click:Connect(function()
+		humanoid.WalkSpeed = 50
+	end)
+	
+	-- زر القفز
+	local jumpBtn = Instance.new("TextButton", infoFrame)
+	jumpBtn.Size = UDim2.new(0.8, 0, 0.2, 0)
+	jumpBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
+	jumpBtn.Text = "زيادة القفز"
+	jumpBtn.MouseButton1Click:Connect(function()
+		humanoid.JumpPower = 100
+	end)
+	
+	-- زر الاختفاء
+	local invisibleBtn = Instance.new("TextButton", infoFrame)
+	invisibleBtn.Size = UDim2.new(0.8, 0, 0.2, 0)
+	invisibleBtn.Position = UDim2.new(0.1, 0, 0.7, 0)
+	invisibleBtn.Text = "اختفاء اللاعب"
+	invisibleBtn.MouseButton1Click:Connect(function()
+		for _, part in pairs(character:GetDescendants()) do
+			if part:IsA("BasePart") or part:IsA("Decal") then
+				part.Transparency = 1
+			end
+		end
+	end)
+end
 
-local welcomeText = Instance.new("TextLabel", infoFrame)
-welcomeText.Size = UDim2.new(0.9, 0, 0.5, 0)
-welcomeText.Position = UDim2.new(0.05, 0, 0.45, 0)
-welcomeText.Text = "مرحباً بك في واجهة أوامر ماب ريفن العسكرية الخاصة بالمطور الأسطوري أيهم! تصفح الشرائح (الأوامر) في القائمة الجانبية"
-welcomeText.TextColor3 = Color3.fromRGB(255, 215, 0)
-welcomeText.BackgroundTransparency = 1
-welcomeText.TextWrapped = true
-
--- إنشاء الأزرار
+-- إنشاء الأزرار الجانبية
 for i = 1, 5 do
 	local btn = Instance.new("TextButton", sideMenu)
 	btn.Size = UDim2.new(1, 0, 0.16, 0)
@@ -78,4 +92,9 @@ for i = 1, 5 do
 	btn.Text = btnNames[i]
 	btn.Font = Enum.Font.SourceSansBold
 	Instance.new("UICorner", btn)
+	
+	-- عند الضغط على "قائمة ألعاب" يفتح الأزرار الثلاثة
+	if i == 1 then
+		btn.MouseButton1Click:Connect(createGameButtons)
+	end
 end
