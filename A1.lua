@@ -1,8 +1,10 @@
--- [[ سكريبت أيهم الأسطوري - نسخة الهواتف المطورة مع ميزة تحديد مستويات السرعة والقفز ]]
+-- [[ سكريبت أيهم الأسطوري - نسخة الهواتف المطورة مع نظام نقاط الحفظ الدائم ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 local PlayersService = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local HttpService = game:GetService("HttpService")
 
 -- تنظيف الشاشة من أي نسخة قديمة
 if PlayerGui:FindFirstChild("AihamSuperMenu") then
@@ -37,8 +39,8 @@ ToggleButton.Draggable = true
 -----------------------------------------
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 450, 0, 280)
-MainFrame.Position = UDim2.new(0.5, -225, 0.5, -140)
+MainFrame.Size = UDim2.new(0, 460, 0, 280)
+MainFrame.Position = UDim2.new(0.5, -230, 0.5, -140)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 2
 MainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
@@ -102,20 +104,20 @@ local function updateMenuTheme(themeName)
 end
 
 -----------------------------------------
--- 4. إنشاء التبويبات (الإعدادات، اللاعب، الاستهداف)
+-- 4. إنشاء التبويبات (تحديث لأربع قوائم)
 -----------------------------------------
 local Pages = {}
-local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف"}
+local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ"}
 
 for i, name in ipairs(menuNames) do
     local TabBtn = Instance.new("TextButton")
-    TabBtn.Size = UDim2.new(0.9, 0, 0, 40)
-    TabBtn.Position = UDim2.new(0.05, 0, 0, (i-1) * 45 + 10)
+    TabBtn.Size = UDim2.new(0.9, 0, 0, 35)
+    TabBtn.Position = UDim2.new(0.05, 0, 0, (i-1) * 40 + 10)
     TabBtn.BackgroundColor3 = Color3.fromRGB(220, 180, 0)
     TabBtn.Text = name
     TabBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
     TabBtn.Font = Enum.Font.SourceSansBold
-    TabBtn.TextSize = 14
+    TabBtn.TextSize = 13
     TabBtn.Parent = SideMenu
 
     local PageFrame = Instance.new("Frame")
@@ -131,7 +133,6 @@ for i, name in ipairs(menuNames) do
     end)
 end
 
--- دالة عامة لإنشاء الأزرار العادية
 local function createAbilityButton(parent, text, position, onClick)
     local Btn = Instance.new("TextButton")
     Btn.Size = UDim2.new(0.9, 0, 0, 35)
@@ -181,72 +182,41 @@ ChangeColorBtn.MouseButton1Click:Connect(function()
 end)
 
 -----------------------------------------
--- القائمة 2: اللاعب (تعديل إضافة صناديق الأرقام للمستويات)
+-- القائمة 2: اللاعب
 -----------------------------------------
 local PlayerPage = Pages[2]
 
--- دالة لإنشاء زر قدرة وبجانبه صندوق لتغيير القيمة الرقمية (السرعة والنط)
 local function createCustomValueButton(parent, buttonText, defaultNumber, positionY, onToggle)
     local isBtnActive = false
-    
-    -- الزر الرئيسي
     local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(0.65, 0, 0, 35) -- متاح مساحة بجانبه للصندوق
-    Btn.Position = UDim2.new(0.05, 0, 0, positionY)
-    Btn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-    Btn.Text = buttonText
-    Btn.TextColor3 = Color3.fromRGB(0, 0, 0)
-    Btn.Font = Enum.Font.SourceSansBold
-    Btn.TextSize = 14
-    Btn.Parent = parent
+    Btn.Size = UDim2.new(0.65, 0, 0, 35); Btn.Position = UDim2.new(0.05, 0, 0, positionY); Btn.BackgroundColor3 = Color3.fromRGB(200, 200, 200); Btn.Text = buttonText; Btn.TextColor3 = Color3.fromRGB(0, 0, 0); Btn.Font = Enum.Font.SourceSansBold; Btn.TextSize = 14; Btn.Parent = parent
 
-    -- صندوق كتابة وتغيير الرقم (المستوى)
     local NumInput = Instance.new("TextBox")
-    NumInput.Size = UDim2.new(0.2, 0, 0, 35)
-    NumInput.Position = UDim2.new(0.75, 0, 0, positionY)
-    NumInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    NumInput.TextColor3 = Color3.fromRGB(255, 255, 0) -- النص بالأصفر ليكون واضحاً
-    NumInput.Text = tostring(defaultNumber)
-    NumInput.Font = Enum.Font.SourceSansBold
-    NumInput.TextSize = 16
-    NumInput.ClearTextOnFocus = false
-    NumInput.Parent = parent
+    NumInput.Size = UDim2.new(0.2, 0, 0, 35); NumInput.Position = UDim2.new(0.75, 0, 0, positionY); NumInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45); NumInput.TextColor3 = Color3.fromRGB(255, 255, 0); NumInput.Text = tostring(defaultNumber); NumInput.Font = Enum.Font.SourceSansBold; NumInput.TextSize = 16; NumInput.ClearTextOnFocus = false; NumInput.Parent = parent
 
     Btn.MouseButton1Click:Connect(function()
         isBtnActive = not isBtnActive
         Btn.BackgroundColor3 = isBtnActive and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(200, 200, 200)
-        
-        -- أخذ الرقم المكتوب حالياً في الصندوق وتحويله لقيمة برمجية
         local currentNum = tonumber(NumInput.Text) or defaultNumber
         onToggle(isBtnActive, currentNum)
     end)
 
-    -- تحديث القوة مباشرة إذا قام اللاعب بتغيير الرقم والزر شغال
     NumInput.FocusLost:Connect(function()
         local currentNum = tonumber(NumInput.Text) or defaultNumber
-        if isBtnActive then
-            onToggle(true, currentNum)
-        end
+        if isBtnActive then onToggle(true, currentNum) end
     end)
 end
 
--- [ 1. زر السرعة مع صندوق تغيير المستوى ]
 createCustomValueButton(PlayerPage, "تفعيل السرعة الفائقة", 60, 10, function(isActive, speedValue)
     local char = Player.Character
-    if char and char:FindFirstChild("Humanoid") then
-        char.Humanoid.WalkSpeed = isActive and speedValue or 16
-    end
+    if char and char:FindFirstChild("Humanoid") then char.Humanoid.WalkSpeed = isActive and speedValue or 16 end
 end)
 
--- [ 2. زر القفز مع صندوق تغيير المستوى ]
 createCustomValueButton(PlayerPage, "تفعيل القفز العالي", 120, 50, function(isActive, jumpValue)
     local char = Player.Character
-    if char and char:FindFirstChild("Humanoid") then
-        char.Humanoid.JumpPower = isActive and jumpValue or 50
-    end
+    if char and char:FindFirstChild("Humanoid") then char.Humanoid.JumpPower = isActive and jumpValue or 50 end
 end)
 
--- [ 3. الطيران ]
 local flying = false
 local flyConnection = nil
 createAbilityButton(PlayerPage, "تفعيل الطيران", UDim2.new(0.05, 0, 0, 90), function(isActive)
@@ -271,7 +241,6 @@ createAbilityButton(PlayerPage, "تفعيل الطيران", UDim2.new(0.05, 0, 
     end
 end)
 
--- [ 4. الاختفاء ]
 createAbilityButton(PlayerPage, "تفعيل الاختفاء", UDim2.new(0.05, 0, 0, 130), function(isActive)
     local char = Player.Character
     if char then
@@ -280,6 +249,21 @@ createAbilityButton(PlayerPage, "تفعيل الاختفاء", UDim2.new(0.05, 0
                 if part.Name ~= "HumanoidRootPart" then part.Transparency = isActive and 1 or 0 end
             end
         end
+    end
+end)
+
+local infiniteJumpEnabled = false
+local jumpConnection = nil
+createAbilityButton(PlayerPage, "تفعيل القفز اللانهائي", UDim2.new(0.05, 0, 0, 170), function(isActive)
+    infiniteJumpEnabled = isActive
+    if infiniteJumpEnabled then
+        jumpConnection = UserInputService.JumpRequest:Connect(function()
+            local char = Player.Character
+            local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+            if humanoid and infiniteJumpEnabled then humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end
+        end)
+    else
+        if jumpConnection then jumpConnection:Disconnect(); jumpConnection = nil end
     end
 end)
 
@@ -331,3 +315,140 @@ SpectateBtn.MouseButton1Click:Connect(function()
         if myChar and myChar:FindFirstChild("Humanoid") then cam.CameraSubject = myChar.Humanoid end
     end
 end)
+
+-----------------------------------------
+-- القائمة 4: نقاط الحفظ والتشيك بوينت الدائمة
+-----------------------------------------
+local CheckpointPage = Pages[4]
+
+-- صندوق كتابة اسم النقطة
+local CPNameInput = Instance.new("TextBox")
+CPNameInput.Size = UDim2.new(0.9, 0, 0, 35)
+CPNameInput.Position = UDim2.new(0.05, 0, 0, 10)
+CPNameInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+CPNameInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+CPNameInput.Text = ""
+CPNameInput.PlaceholderText = "اكتب اسم النقطة (مثل: الملك)..."
+CPNameInput.Font = Enum.Font.SourceSans
+CPNameInput.TextSize = 14
+CPNameInput.Parent = CheckpointPage
+
+-- زر الحفظ
+local SaveCPBtn = Instance.new("TextButton")
+SaveCPBtn.Size = UDim2.new(0.9, 0, 0, 35)
+SaveCPBtn.Position = UDim2.new(0.05, 0, 0, 50)
+SaveCPBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+SaveCPBtn.Text = "حفظ النقطة الحالية"
+SaveCPBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SaveCPBtn.Font = Enum.Font.SourceSansBold
+SaveCPBtn.TextSize = 14
+SaveCPBtn.Parent = CheckpointPage
+
+-- قائمة النقاط المحفوظة القابلة للتمرير
+local CPListFrame = Instance.new("ScrollingFrame")
+CPListFrame.Size = UDim2.new(0.9, 0, 0, 135)
+CPListFrame.Position = UDim2.new(0.05, 0, 0, 95)
+CPListFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+CPListFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+CPListFrame.ScrollBarThickness = 6
+CPListFrame.Parent = CheckpointPage
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.Parent = CPListFrame
+
+-- نظام تحميل وحفظ البيانات برمجياً (الملفات الافتراضية للسكريبتات)
+local savedPoints = {}
+local filename = "AihamCheckpoints_Raven.json"
+
+local function loadPoints()
+    if isfile and isfile(filename) then
+        local success, data = pcall(function() return HttpService:JSONDecode(readfile(filename)) end)
+        if success and type(data) == "table" then savedPoints = data end
+    end
+end
+
+local function savePointsToFile()
+    if writefile then pcall(function() writefile(filename, HttpService:JSONEncode(savedPoints)) end) end
+end
+
+local refreshList -- تعريف دالة التحديث لاحقاً
+
+refreshList = function()
+    -- مسح العناصر القديمة من القائمة لإعادة بنائها
+    for _, child in ipairs(CPListFrame:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+    
+    local count = 0
+    for name, posData in pairs(savedPoints) do
+        count = count + 1
+        
+        local ItemFrame = Instance.new("Frame")
+        ItemFrame.Size = UDim2.new(0.98, 0, 0, 30)
+        ItemFrame.BackgroundTransparency = 1
+        ItemFrame.Parent = CPListFrame
+        
+        -- زر الانتقال للنقطة
+        local GoBtn = Instance.new("TextButton")
+        GoBtn.Size = UDim2.new(0.8, 0, 1, 0)
+        GoBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        GoBtn.Text = name
+        GoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        GoBtn.Font = Enum.Font.SourceSansBold
+        GoBtn.TextSize = 14
+        GoBtn.Parent = ItemFrame
+        
+        GoBtn.MouseButton1Click:Connect(function()
+            local char = Player.Character
+            local root = char and char:FindFirstChild("HumanoidRootPart")
+            if root then
+                root.CFrame = CFrame.new(posData.X, posData.Y, posData.Z)
+                print("تم الانتقال إلى النقطة: " .. name)
+            end
+        end)
+        
+        -- زر الحذف (X)
+        local DelBtn = Instance.new("TextButton")
+        DelBtn.Size = UDim2.new(0.15, 0, 1, 0)
+        DelBtn.Position = UDim2.new(0.85, 0, 0, 0)
+        DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        DelBtn.Text = "X"
+        DelBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        DelBtn.Font = Enum.Font.SourceSansBold
+        DelBtn.TextSize = 14
+        DelBtn.Parent = ItemFrame
+        
+        DelBtn.MouseButton1Click:Connect(function()
+            savedPoints[name] = nil
+            savePointsToFile()
+            refreshList()
+            print("تم حذف النقطة: " .. name)
+        end)
+    end
+    CPListFrame.CanvasSize = UDim2.new(0, 0, 0, count * 35)
+end
+
+-- كود عمل زر الحفظ
+SaveCPBtn.MouseButton1Click:Connect(function()
+    local name = CPNameInput.Text
+    if name == "" then print("الرجاء كتابة اسم أولاً!") return end
+    
+    local char = Player.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if root then
+        savedPoints[name] = {
+            X = root.Position.X,
+            Y = root.Position.Y,
+            Z = root.Position.Z
+        }
+        savePointsToFile()
+        refreshList()
+        CPNameInput.Text = "" -- تفريغ المربع بعد الحفظ
+        print("تم حفظ النقطة بنجاح باسم: " .. name)
+    end
+end)
+
+-- تحميل النقاط المحفوظة تلقائياً عند بدء تشغيل السكريبت
+loadPoints()
+refreshList()
