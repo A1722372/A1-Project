@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - نسخة الهواتف المطورة مع ميزة اختراق الجدران ]]
+-- [[ سكريبت أيهم الأسطوري - نسخة V5 المطورة مع خانة الأنيميشن R15 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
@@ -104,20 +104,20 @@ local function updateMenuTheme(themeName)
 end
 
 -----------------------------------------
--- 4. إنشاء التبويبات القوائم الأربعة
+-- 4. إنشاء التبويبات القوائم (تم إضافة انميشن كخانة خامسة)
 -----------------------------------------
 local Pages = {}
-local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ"}
+local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "انميشن"}
 
 for i, name in ipairs(menuNames) do
     local TabBtn = Instance.new("TextButton")
-    TabBtn.Size = UDim2.new(0.9, 0, 0, 35)
-    TabBtn.Position = UDim2.new(0.05, 0, 0, (i-1) * 40 + 10)
+    TabBtn.Size = UDim2.new(0.9, 0, 0, 32)
+    TabBtn.Position = UDim2.new(0.05, 0, 0, (i-1) * 36 + 10)
     TabBtn.BackgroundColor3 = Color3.fromRGB(220, 180, 0)
     TabBtn.Text = name
     TabBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
     TabBtn.Font = Enum.Font.SourceSansBold
-    TabBtn.TextSize = 13
+    TabBtn.TextSize = 12
     TabBtn.Parent = SideMenu
 
     local PageFrame = Instance.new("Frame")
@@ -135,7 +135,7 @@ end
 
 local function createAbilityButton(parent, text, position, onClick)
     local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(0.9, 0, 0, 32) -- تقليل الحجم قليلاً لتناسب الشاشة المحمولة
+    Btn.Size = UDim2.new(0.9, 0, 0, 32)
     Btn.Position = position
     Btn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
     Btn.Text = text
@@ -148,7 +148,7 @@ local function createAbilityButton(parent, text, position, onClick)
     Btn.MouseButton1Click:Connect(function()
         active = not active
         Btn.BackgroundColor3 = active and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(200, 200, 200)
-        onClick(active)
+        onClick(active, Btn)
     end)
     return Btn
 end
@@ -182,11 +182,9 @@ ChangeColorBtn.MouseButton1Click:Connect(function()
 end)
 
 -----------------------------------------
--- القائمة 2: اللاعب (تمت إضافة ميزة اختراق الجدران والتحويل لقائمة قابلة للتمرير)
+-- القائمة 2: اللاعب
 -----------------------------------------
 local PlayerPage = Pages[2]
-
--- جعل صفحة اللاعب قابلة للتمرير لأن الأزرار أصبحت كثيرة وممتازة!
 local PlayerScroll = Instance.new("ScrollingFrame")
 PlayerScroll.Size = UDim2.new(1, 0, 1, 0)
 PlayerScroll.BackgroundTransparency = 1
@@ -275,33 +273,21 @@ createAbilityButton(PlayerScroll, "تفعيل القفز اللانهائي", UD
     end
 end)
 
--- [ 6. ميزة اختراق الجدران (Noclip) الجديدة ]
 local noclipEnabled = false
 local noclipConnection = nil
-
 createAbilityButton(PlayerScroll, "تفعيل اختراق الجدران", UDim2.new(0.05, 0, 0, 185), function(isActive)
     noclipEnabled = isActive
-    
     if noclipEnabled then
-        -- تشغيل حلقة برمجية تلغي تصادم الشخصية مع الجدران بشكل مستمر
         noclipConnection = RunService.Stepped:Connect(function()
             local char = Player.Character
             if char and noclipEnabled then
                 for _, part in ipairs(char:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
+                    if part:IsA("BasePart") then part.CanCollide = false end
                 end
             end
         end)
-        print("تم تفعيل اختراق الجدران!")
     else
-        -- إيقاف الميزة وإعادة التصادم الطبيعي
-        if noclipConnection then
-            noclipConnection:Disconnect()
-            noclipConnection = nil
-        end
-        print("تم تعطيل اختراق الجدران.")
+        if noclipConnection then noclipConnection:Disconnect(); noclipConnection = nil end
     end
 end)
 
@@ -359,7 +345,7 @@ end)
 -----------------------------------------
 local CheckpointPage = Pages[4]
 local CPNameInput = Instance.new("TextBox")
-CPNameInput.Size = UDim2.new(0.9, 0, 0, 35); CPNameInput.Position = UDim2.new(0.05, 0, 0, 10); CPNameInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45); CPNameInput.TextColor3 = Color3.fromRGB(255, 255, 255); CPNameInput.Text = ""; CPNameInput.PlaceholderText = "اكتب اسم النقطة (مثل: الملك)..."; CPNameInput.Font = Enum.Font.SourceSans; CPNameInput.TextSize = 14; CPNameInput.Parent = CheckpointPage
+CPNameInput.Size = UDim2.new(0.9, 0, 0, 35); CPNameInput.Position = UDim2.new(0.05, 0, 0, 10); CPNameInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45); CPNameInput.TextColor3 = Color3.fromRGB(255, 255, 255); CPNameInput.Text = ""; CPNameInput.PlaceholderText = "اكتب اسم النقطة..."; CPNameInput.Font = Enum.Font.SourceSans; CPNameInput.TextSize = 14; CPNameInput.Parent = CheckpointPage
 
 local SaveCPBtn = Instance.new("TextButton")
 SaveCPBtn.Size = UDim2.new(0.9, 0, 0, 35); SaveCPBtn.Position = UDim2.new(0.05, 0, 0, 50); SaveCPBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0); SaveCPBtn.Text = "حفظ النقطة الحالية"; SaveCPBtn.TextColor3 = Color3.fromRGB(255, 255, 255); SaveCPBtn.Font = Enum.Font.SourceSansBold; SaveCPBtn.TextSize = 14; SaveCPBtn.Parent = CheckpointPage
@@ -423,3 +409,45 @@ end)
 
 loadPoints()
 refreshList()
+
+-----------------------------------------
+-- [[ الخانة 5 الجديدة: انميشن (R15) ]]
+-----------------------------------------
+local AnimationPage = Pages[5]
+local currentTrack = nil
+
+-- دالة لتشغيل أي أنيميشن بشكل آمن وإيقاف القديم
+local function playCustomAnimation(animationId)
+    local char = Player.Character
+    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        if currentTrack then currentTrack:Stop() end
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://" .. tostring(animationId)
+        currentTrack = humanoid:LoadAnimation(anim)
+        currentTrack:Play()
+    end
+end
+
+-- دالة لإيقاف الأنميشن الحالي
+local function stopAnimation()
+    if currentTrack then currentTrack:Stop(); currentTrack = nil end
+end
+
+-- الإعداد لـ واجهة الرقصات المجانية الشفافة (Sub-Window)
+local EmotesWindow = Instance.new("Frame")
+EmotesWindow.Name = "EmotesWindow"
+EmotesWindow.Size = UDim2.new(0, 200, 0, 200)
+EmotesWindow.Position = UDim2.new(0.5, -100, 0.5, -100)
+EmotesWindow.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+EmotesWindow.BackgroundTransparency = 0.4 -- صفحة شفافة كما طلبت!
+EmotesWindow.BorderSizePixel = 2
+EmotesWindow.BorderColor3 = Color3.fromRGB(255, 215, 0)
+EmotesWindow.Visible = false
+EmotesWindow.Parent = ScreenGui
+
+local EmoteTitle = Instance.new("TextLabel")
+EmoteTitle.Size = UDim2.new(1, 0, 0, 25)
+EmoteTitle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+EmoteTitle.BackgroundTransparency = 0.5
+EmoteTitle.Text = "قائمة الرقصات المجانية"
