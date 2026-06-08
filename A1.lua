@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V11 الأصلي والمثالي ]]
+-- [[ سكريبت أيهم الأسطوري V12 - مع ميزة الطيران السهل والمصلح بالكامل ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -92,7 +92,6 @@ end
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
 
--- زر الفول برايت الأصلي
 local BrightBtn = Instance.new("TextButton", MapPage)
 BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 10)
 BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -111,7 +110,6 @@ BrightBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- أزرار الألوان الأصلية وتغيير الحواف (تمت إعادتها لأماكنها الأصلية الصحيحة)
 local colors = {"Rainbow", "Red", "Yellow", "Blue"}
 local colorNames = {Rainbow = "حواف قوس قزح", Red = "حواف حمراء", Yellow = "حواف صفراء", Blue = "حواف زرقاء"}
 for idx, mode in ipairs(colors) do
@@ -123,7 +121,7 @@ for idx, mode in ipairs(colors) do
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
 end
 
--- === [ شريحة 2: اللاعب ] ===
+-- === [ شريحة 2: اللاعب (تم تعديل القفز وإضافة الطيران هنا) ] ===
 local PlayerPage = Pages[2]
 
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
@@ -152,6 +150,7 @@ SpeedBtn.MouseButton1Click:Connect(function()
     if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
 end)
 
+-- تم تعديل نظام القفز هنا ليدعم الـ JumpHeight والـ JumpPower معاً لحل المشكلة نهائياً
 local JumpLabel = Instance.new("TextLabel", PlayerPage)
 JumpLabel.Size = UDim2.new(0.3, 0, 0, 30) JumpLabel.Position = UDim2.new(0.05, 0, 0, 60)
 JumpLabel.Text = "القفز:" JumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255) JumpLabel.BackgroundTransparency = 1
@@ -166,20 +165,72 @@ JumpBtn.Size = UDim2.new(0.35, 0, 0, 30) JumpBtn.Position = UDim2.new(0.6, 0, 0,
 JumpBtn.Text = "تفعيل القفز" JumpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) JumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local jumpActive = false
 
-JumpInput:GetPropertyChangedSignal("Text"):Connect(function()
-    if jumpActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then
-        Player.Character.Humanoid.JumpPower = tonumber(JumpInput.Text) or 120
-    end
-end)
-
 JumpBtn.MouseButton1Click:Connect(function()
     jumpActive = not jumpActive
     JumpBtn.BackgroundColor3 = jumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
-    if jumpActive then Player.Character.Humanoid.JumpPower = tonumber(JumpInput.Text) or 120 else Player.Character.Humanoid.JumpPower = 50 end
+    if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+        local val = tonumber(JumpInput.Text) or 120
+        if jumpActive then
+            Player.Character.Humanoid.UseJumpPower = false
+            Player.Character.Humanoid.JumpHeight = val
+            Player.Character.Humanoid.JumpPower = val
+        else
+            Player.Character.Humanoid.UseJumpPower = true
+            Player.Character.Humanoid.JumpPower = 50
+        end
+    end
+end)
+
+-- زر الطيران الجديد والسهل
+local FlyBtn = Instance.new("TextButton", PlayerPage)
+FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
+FlyBtn.Text = "تفعيل الطيران السهل (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyBtn.Font = Enum.Font.SourceSansBold FlyBtn.TextSize = 13
+
+local flying = false
+local flyConnection
+local bodyVelocity, bodyGyro
+
+FlyBtn.MouseButton1Click:Connect(function()
+    flying = not flying
+    FlyBtn.BackgroundColor3 = flying and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(120, 0, 120)
+    FlyBtn.Text = flying and "تعطيل الطيران" or "تفعيل الطيران السهل (Fly)"
+    
+    local torso = Player.Character and (Player.Character:FindFirstChild("UpperTorso") or Player.Character:FindFirstChild("HumanoidRootPart"))
+    if not torso then return end
+    
+    if flying then
+        bodyVelocity = Instance.new("BodyVelocity", torso)
+        bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        
+        bodyGyro = Instance.new("BodyGyro", torso)
+        bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+        bodyGyro.CFrame = torso.CFrame
+        
+        flyConnection = RunService.RenderStepped:Connect(function()
+            if Player.Character and torso and bodyVelocity and bodyGyro then
+                bodyGyro.CFrame = workspace.CurrentCamera.CFrame
+                local moveDirection = Player.Character.Humanoid.MoveDirection
+                local velocity = moveDirection * 70 -- سرعة الطيران
+                
+                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                    velocity = velocity + Vector3.new(0, 50, 0) -- الارتفاع للأعلى
+                elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+                    velocity = velocity + Vector3.new(0, -50, 0) -- النزول للأسفل
+                end
+                bodyVelocity.Velocity = velocity
+            end
+        end)
+    else
+        if flyConnection then flyConnection:Disconnect() flyConnection = nil end
+        if bodyVelocity then bodyVelocity:Destroy() end
+        if bodyGyro then bodyGyro:Destroy() end
+    end
 end)
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage)
-NoclipBtn.Size = UDim2.new(0.9, 0, 0, 32) NoclipBtn.Position = UDim2.new(0.05, 0, 0, 105)
+NoclipBtn.Size = UDim2.new(0.9, 0, 0, 32) NoclipBtn.Position = UDim2.new(0.05, 0, 0, 145)
 NoclipBtn.Text = "تفعيل اختراق الجدران (Noclip)" NoclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) NoclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local noclipActive = false local noclipConnection
 
@@ -196,7 +247,7 @@ NoclipBtn.MouseButton1Click:Connect(function()
 end)
 
 local InfJumpBtn = Instance.new("TextButton", PlayerPage)
-InfJumpBtn.Size = UDim2.new(0.9, 0, 0, 32) InfJumpBtn.Position = UDim2.new(0.05, 0, 0, 145)
+InfJumpBtn.Size = UDim2.new(0.9, 0, 0, 32) InfJumpBtn.Position = UDim2.new(0.05, 0, 0, 185)
 InfJumpBtn.Text = "تفعيل القفز اللانهائي (Inf Jump)" InfJumpBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InfJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local infJumpActive = false
 
@@ -265,39 +316,52 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 5: التأثيرات والأدوات ] ===
+-- === [ شريحة 5: التأثيرات والأدوات (تم إصلاح نظام البارتكلز بالكامل هنا) ] ===
 local EffectsPage = Pages[5]
 
 local function clearAllEffects()
-    for _, item in ipairs(Backpack:GetChildren()) do if item.Name == "Fire" or item.Name == "Highlight" or item.Name == "Yellow Particles" or item.Name == "Red Particles" then item:Destroy() end end
-    if Player.Character then for _, item in ipairs(Player.Character:GetChildren()) do if item.Name == "Fire" or item.Name == "Highlight" or item.Name == "Yellow Particles" or item.Name == "Red Particles" or item:IsA("Highlight") then item:Destroy() end end end
+    if Player.Character then
+        for _, item in ipairs(Player.Character:GetChildren()) do
+            if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end
+        end
+        local root = Player.Character:FindFirstChild("HumanoidRootPart")
+        if root then
+            for _, item in ipairs(root:GetChildren()) do
+                if item.Name == "PlayerParticles" or item:IsA("ParticleEmitter") then item:Destroy() end
+            end
+        end
+    end
 end
 
-local function giveServerToolEffect(effectName, effectType, customColor)
+local function giveDirectEffect(effectType, customColor)
     clearAllEffects()
-    local Tool = Instance.new("Tool") Tool.Name = effectName Tool.RequiresHandle = true
-    local Handle = Instance.new("Part") Handle.Name = "Handle" Handle.Size = Vector3.new(1, 1, 1) Handle.Transparency = 1 Handle.CanCollide = false Handle.Parent = Tool
+    local root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
     
-    if effectType == "Fire" then
-        local f = Instance.new("Fire") f.Size = 12 f.Heat = 18 f.Parent = Handle
-    elseif effectType == "Highlight" then
-        Tool.Equipped:Connect(function() if Player.Character and not Player.Character:FindFirstChild("BackpackHighlight") then local hl = Instance.new("Highlight") hl.Name = "BackpackHighlight" hl.FillColor = customColor hl.OutlineColor = Color3.fromRGB(255, 255, 255) hl.Parent = Player.Character end end)
-        Tool.Unequipped:Connect(function() if Player.Character and Player.Character:FindFirstChild("BackpackHighlight") then Player.Character.BackpackHighlight:Destroy() end end)
+    if effectType == "Highlight" then
+        local hl = Instance.new("Highlight")
+        hl.Name = "PlayerHighlight" hl.FillColor = customColor hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+        hl.Parent = Player.Character
     elseif effectType == "Particles" then
-        local pe = Instance.new("ParticleEmitter") pe.Color = ColorSequence.new(customColor) pe.Speed = NumberRange.new(10, 15) pe.Rate = 95 pe.Lifetime = NumberRange.new(1, 2) pe.Size = NumberSequence.new(0.6, 0) pe.Parent = Handle
+        local pe = Instance.new("ParticleEmitter")
+        pe.Name = "PlayerParticles" pe.Color = ColorSequence.new(customColor)
+        pe.Speed = NumberRange.new(8, 12) pe.Rate = 80 pe.Lifetime = NumberRange.new(1, 1.5)
+        pe.Size = NumberSequence.new(0.5, 0) pe.Parent = root
+    elseif effectType == "Fire" then
+        local f = Instance.new("Fire")
+        f.Name = "PlayerParticles" f.Size = 10 f.Heat = 15 f.Parent = root
     end
-    Tool.Parent = Backpack
 end
 
 local function createEffectBtn(text, yPos, color, callback)
     local btn = Instance.new("TextButton", EffectsPage) btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, yPos) btn.BackgroundColor3 = color btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.Text = text btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13 btn.MouseButton1Click:Connect(callback)
 end
 
-createEffectBtn("إعطائي أداة النار (تظهر في حقيبتك للجميع)", 10, Color3.fromRGB(210, 90, 0), function() giveServerToolEffect("Fire", "Fire") end)
-createEffectBtn("إعطائي أداة الإضاءة المشعة (Highlight Tool)", 48, Color3.fromRGB(0, 160, 160), function() giveServerToolEffect("Highlight", "Highlight", Color3.fromRGB(0, 255, 255)) end)
-createEffectBtn("إعطائي أداة الشظايا الصفراء (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveServerToolEffect("Yellow Particles", "Particles", Color3.fromRGB(255, 215, 0)) end)
-createEffectBtn("إعطائي أداة الشظايا الحمراء (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveServerToolEffect("Red Particles", "Particles", Color3.fromRGB(255, 0, 0)) end)
-createEffectBtn("إزالة كافة الأدوات والتأثيرات من الحقيبة", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
+createEffectBtn("تفعيل تأثير النار على الجسم فوراً", 10, Color3.fromRGB(210, 90, 0), function() giveDirectEffect("Fire") end)
+createEffectBtn("تفعيل تأثير الإضاءة المشعة الشاملة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
+createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
+createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
+createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
 -- زر إغلاق القائمة الرئيسي (X)
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
