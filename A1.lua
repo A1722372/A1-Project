@@ -1,100 +1,77 @@
--- المطور الأسطوري أيهم - تصميم واجهة احترافي
+-- المطور الأسطوري أيهم - سكربت الواجهة الاحترافي
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local playerGui = player:WaitForChild("PlayerGui")
 
--- إنشاء الواجهة
+-- 1. إنشاء الواجهة الرئيسية
 local screenGui = Instance.new("ScreenGui", playerGui)
-screenGui.Name = "RavenMilitaryUI"
+screenGui.Name = "VR7_Mercy_Script"
 
--- إطار الإخفاء
-local hideBtnContainer = Instance.new("Frame", screenGui)
-hideBtnContainer.Size = UDim2.new(0, 40, 0, 40)
-hideBtnContainer.Position = UDim2.new(0, 55, 0, 100)
-hideBtnContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Instance.new("UICorner", hideBtnContainer)
-
-local hideBtn = Instance.new("TextButton", hideBtnContainer)
-hideBtn.Size = UDim2.new(1, 0, 1, 0)
-hideBtn.BackgroundTransparency = 1
-hideBtn.Text = "X"
-hideBtn.TextColor3 = Color3.new(1, 1, 1)
-
--- الإطار الرئيسي
 local mainFrame = Instance.new("Frame", screenGui)
-mainFrame.Size = UDim2.new(0, 500, 0, 300)
-mainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
-mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
-mainFrame.BorderSizePixel = 2
+mainFrame.Size = UDim2.new(0, 500, 0, 350)
+mainFrame.Position = UDim2.new(0.5, -250, 0.5, -175)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- لون خلفية داكن
+mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0) -- إطار ذهبي
+mainFrame.BorderSizePixel = 3
 Instance.new("UICorner", mainFrame)
 
-hideBtn.MouseButton1Click:Connect(function()
-	mainFrame.Visible = not mainFrame.Visible
-end)
+-- 2. العنوان الرئيسي
+local title = Instance.new("TextLabel", mainFrame)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Text = "VR7 TEAM: The Mercy Script"
+title.TextColor3 = Color3.fromRGB(255, 215, 0)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 22
+title.BackgroundTransparency = 1
 
--- القائمة الجانبية
-local btnNames = {"قائمة ألعاب", "القفز", "التحية", "الأسلحة", "الجلوس"}
-local sideMenu = Instance.new("Frame", mainFrame)
-sideMenu.Size = UDim2.new(0.35, 0, 0.85, 0)
-sideMenu.Position = UDim2.new(0.02, 0, 0.12, 0)
-sideMenu.BackgroundTransparency = 1
-
-local infoFrame = Instance.new("Frame", mainFrame)
-infoFrame.Size = UDim2.new(0.6, 0, 0.85, 0)
-infoFrame.Position = UDim2.new(0.38, 0, 0.12, 0)
-infoFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Instance.new("UICorner", infoFrame)
-
--- الوظائف البرمجية (داخل منطقة المعلومات)
-local function createGameButtons()
-	infoFrame:ClearAllChildren()
-	
-	-- زر السرعة
-	local speedBtn = Instance.new("TextButton", infoFrame)
-	speedBtn.Size = UDim2.new(0.8, 0, 0.2, 0)
-	speedBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
-	speedBtn.Text = "زيادة السرعة"
-	speedBtn.MouseButton1Click:Connect(function()
-		humanoid.WalkSpeed = 50
-	end)
-	
-	-- زر القفز
-	local jumpBtn = Instance.new("TextButton", infoFrame)
-	jumpBtn.Size = UDim2.new(0.8, 0, 0.2, 0)
-	jumpBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
-	jumpBtn.Text = "زيادة القفز"
-	jumpBtn.MouseButton1Click:Connect(function()
-		humanoid.JumpPower = 100
-	end)
-	
-	-- زر الاختفاء
-	local invisibleBtn = Instance.new("TextButton", infoFrame)
-	invisibleBtn.Size = UDim2.new(0.8, 0, 0.2, 0)
-	invisibleBtn.Position = UDim2.new(0.1, 0, 0.7, 0)
-	invisibleBtn.Text = "اختفاء اللاعب"
-	invisibleBtn.MouseButton1Click:Connect(function()
-		for _, part in pairs(character:GetDescendants()) do
-			if part:IsA("BasePart") or part:IsA("Decal") then
-				part.Transparency = 1
-			end
-		end
-	end)
-end
-
--- إنشاء الأزرار الجانبية
-for i = 1, 5 do
-	local btn = Instance.new("TextButton", sideMenu)
-	btn.Size = UDim2.new(1, 0, 0.16, 0)
-	btn.Position = UDim2.new(0, 0, (i-1) * 0.2, 0)
-	btn.BackgroundColor3 = Color3.fromRGB(200, 160, 0)
-	btn.Text = btnNames[i]
+-- 3. دالة إنشاء الأزرار بالتصميم المطلوب (نظام التفعيل)
+local function createButton(name, position, actionFunc)
+	local btn = Instance.new("TextButton", mainFrame)
+	btn.Size = UDim2.new(0.4, 0, 0.12, 0)
+	btn.Position = position
+	btn.BackgroundColor3 = Color3.fromRGB(200, 160, 0) -- ذهبي
+	btn.Text = name
 	btn.Font = Enum.Font.SourceSansBold
+	btn.TextColor3 = Color3.new(0, 0, 0)
 	Instance.new("UICorner", btn)
 	
-	-- عند الضغط على "قائمة ألعاب" يفتح الأزرار الثلاثة
-	if i == 1 then
-		btn.MouseButton1Click:Connect(createGameButtons)
-	end
+	local enabled = false
+	btn.MouseButton1Click:Connect(function()
+		enabled = not enabled
+		-- تغيير اللون بناءً على الحالة
+		btn.BackgroundColor3 = enabled and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 160, 0)
+		-- تنفيذ الوظيفة
+		actionFunc(enabled)
+	end)
 end
+
+-- 4. الأزرار المطلوبة
+-- زر السرعة
+createButton("سرعة اللاعب", UDim2.new(0.05, 0, 0.2, 0), function(on)
+	humanoid.WalkSpeed = on and 50 or 16
+end)
+
+-- زر القفز
+createButton("قوة القفز", UDim2.new(0.05, 0, 0.4, 0), function(on)
+	humanoid.JumpPower = on and 100 or 50
+end)
+
+-- زر الاختفاء
+createButton("اختفاء اللاعب", UDim2.new(0.05, 0, 0.6, 0), function(on)
+	for _, part in pairs(character:GetDescendants()) do
+		if part:IsA("BasePart") or part:IsA("Decal") then
+			part.Transparency = on and 1 or 0
+		end
+	end
+end)
+
+-- زر الإخفاء العام للواجهة (للخروج)
+local closeBtn = Instance.new("TextButton", mainFrame)
+closeBtn.Size = UDim2.new(0.1, 0, 0.1, 0)
+closeBtn.Position = UDim2.new(0.85, 0, 0.02, 0)
+closeBtn.Text = "X"
+closeBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeBtn.MouseButton1Click:Connect(function()
+	mainFrame.Visible = false
+end)
