@@ -1,124 +1,159 @@
 -- ==========================================
 -- صنع من قبل: أيهم (Made by Ayham)
--- سكربت مخصص لماب ريفن العسكرية
 -- ==========================================
 
 local Players = game:GetService("Players")
 local localPlayer = Players.LocalPlayer
-local TweenService = game:GetService("TweenService")
+local workspace = game:GetService("Workspace")
 
--- 1. إنشاء القائمة الرئيسية (UI) باللون الأصفر والأسود
+-- 1. إنشاء القائمة الرئيسية (UI)
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "AyhamSuperMenu"
+screenGui.Name = "AyhamSuperMenuV2"
 screenGui.Parent = game:GetService("CoreGui")
 
 -- اللوحة الخلفية للقائمة
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 250, 0, 320)
-mainFrame.Position = UDim2.new(0.1, 0, 0.3, 0) -- تظهر على يسار الشاشة لتجنب أزرار اللعبة
-mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25) -- خلفية سوداء داكنة للوضوح
+mainFrame.Size = UDim2.new(0, 240, 0, 310)
+mainFrame.Position = UDim2.new(0.1, 0, 0.25, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 mainFrame.BorderSizePixel = 2
-mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0) -- إطار أصفر ذهبي
+mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0) -- إطار أصفر
 mainFrame.Active = true
-mainFrame.Draggable = true -- يمكنك سحب القائمة وتحريكها في الشاشة بجوالك
+mainFrame.Draggable = true
 mainFrame.Parent = screenGui
 
 -- عنوان القائمة (صنع من ايهم)
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(1, 0, 0, 40)
-titleLabel.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- خلفية صفراء للعنوان
-titleLabel.TextColor3 = Color3.fromRGB(0, 0, 0) -- نص أسود
-titleLabel.TextSize = 20
+titleLabel.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- خلفية صفراء
+titleLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+titleLabel.TextSize = 18
 titleLabel.Font = Enum.Font.SourceSansBold
 titleLabel.Text = "صنع من ايهم"
 titleLabel.Parent = mainFrame
 
--- دالة مساعدة لإنشاء الأزرار بشكل متناسق تحت بعضها
+-- [تعديل جديد]: زر لتصغير وتكبير القائمة
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 35, 0, 30)
+minimizeBtn.Position = UDim2.new(1, -40, 0, 5)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
+minimizeBtn.TextSize = 18
+minimizeBtn.Font = Enum.Font.SourceSansBold
+minimizeBtn.Text = "-"
+minimizeBtn.Parent = mainFrame
+
+-- حاوية الأزرار (عشان تختفي لما نصغر القائمة)
+local buttonContainer = Instance.new("Frame")
+buttonContainer.Size = UDim2.new(1, 0, 1, -40)
+buttonContainer.Position = UDim2.new(0, 0, 0, 40)
+buttonContainer.BackgroundTransparency = 1
+buttonContainer.Parent = mainFrame
+
+local isMinimized = false
+minimizeBtn.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    if isMinimized then
+        mainFrame.Size = UDim2.new(0, 240, 0, 40)
+        buttonContainer.Visible = false
+        minimizeBtn.Text = "+"
+    else
+        mainFrame.Size = UDim2.new(0, 240, 0, 310)
+        buttonContainer.Visible = true
+        minimizeBtn.Text = "-"
+    end
+end)
+
+-- دالة إنشاء الأزرار بشكل متناسق
 local buttonCount = 0
 local function createMenuButton(text, callback)
     buttonCount = buttonCount + 1
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0.9, 0, 0, 45)
-    btn.Position = UDim2.new(0.05, 0, 0, 40 + (buttonCount - 1) * 55)
-    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    btn.TextColor3 = Color3.fromRGB(255, 215, 0) -- نص أصفر
+    btn.Position = UDim2.new(0.05, 0, 0, 10 + (buttonCount - 1) * 60)
+    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.BorderColor3 = Color3.fromRGB(255, 215, 0)
-    btn.TextSize = 16
+    btn.TextSize = 15
     btn.Font = Enum.Font.SourceSansBold
     btn.Text = text
-    btn.Parent = mainFrame
+    btn.Parent = buttonContainer
     
     btn.MouseButton1Click:Connect(callback)
     return btn
 end
 
 -- ==========================================
--- وبرمجة وظائف الأزرار الأربعة
+-- برمجة الأزرار الأربعة لتعمل بذكاء وبحث أعمق
 -- ==========================================
 
--- [الزر الأول: الانتقال الى الدروب]
+-- [الزر الأول: الانتقال الى الدروب] (بحث شامل في كل الماب)
 createMenuButton("الانتقال الى الدروب", function()
-    local dropsFolder = workspace:FindFirstChild("Drops") or workspace
-    local targetDrop = dropsFolder:FindFirstChild("SupplyDrop") or dropsFolder:FindFirstChild("Drop") or dropsFolder:FindFirstChild("Drops")
-    
-    -- إذا لم يجد الاسم المباشر، يبحث عن أول شيء يحتوي اسمه على كلمة Drop
-    if not targetDrop then
-        for _, child in pairs(dropsFolder:GetChildren()) do
-            if string.find(child.Name:lower(), "drop") then
-                targetDrop = child
-                break
-            end
+    local targetDrop = nil
+    -- البحث في كل مكان بالماب عن أي مجسم يحتوي اسمه على "Drop" أو "Supply"
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and (string.find(obj.Name:lower(), "drop") or string.find(obj.Name:lower(), "supply")) then
+            targetDrop = obj
+            break
         end
     end
 
     if targetDrop and localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        localPlayer.Character.HumanoidRootPart.CFrame = targetDrop.CFrame + Vector3.new(0, 5, 0)
-        print("تم الانتقال للدروب!")
+        localPlayer.Character.HumanoidRootPart.CFrame = targetDrop.CFrame + Vector3.new(0, 4, 0)
     else
-        print("لم يتم العثور على دروب في الماب حالياً.")
+        print("لم يتم العثور على أي دروب نشط حالياً.")
     end
 end)
 
--- [الزر الثاني: تجميع صناديق تلقائي]
+-- [الزر الثاني: تجميع صناديق تلقائي] (البحث عن مجسمات الصناديق والمهمة)
 local autoBoxes = false
 createMenuButton("تجميع صناديق تلقائي", function()
     autoBoxes = not autoBoxes
-    print("تجميع الصناديق التلقائي: " .. tostring(autoBoxes))
-    -- هنا يتم وضع دالة التجميع التلقائي بناءً على كود الماب وحمل الصناديق للمنطقة
-    -- السكربت جاهز لاستقبال المسارات البرمجية الخاصة بالصناديق وموقع التسليم
-end)
-
--- [الزر الثالث: مضاد اي اف كي]
-local antiAfkEnabled = false
-createMenuButton("مضاد اي اف كي", function()
-    antiAfkEnabled = not antiAfkEnabled
-    print("مضاد الـ AFK: " .. tostring(antiAfkEnabled))
-    
-    if antiAfkEnabled then
+    if autoBoxes then
         task.spawn(function()
-            while antiAfkEnabled do
-                task.wait(900) -- قفز كل 15 دقيقة
-                if localPlayer.Character and localPlayer.Character:FindFirstChild("Humanoid") then
-                    localPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            while autoBoxes do
+                task.wait(0.5)
+                if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    -- البحث عن أي صندوق قابل للحمل أو مجسم اسمه Box أو Package
+                    for _, obj in pairs(workspace:GetDescendants()) do
+                        if obj:IsA("BasePart") and (string.find(obj.Name:lower(), "box") or string.find(obj.Name:lower(), "crate") or string.find(obj.Name:lower(), "cargo")) then
+                            -- الانتقال للصندوق لتجميعه تلقائياً
+                            localPlayer.Character.HumanoidRootPart.CFrame = obj.CFrame
+                            break
+                        end
+                    end
                 end
             end
         end)
     end
 end)
 
--- [الزر الرابع: فلاي v2]
+-- [الزر الثالث: مضاد اي اف كي] (معدل ليعمل فورياً وبدون انتظار طويل)
+local antiAfkEnabled = false
+createMenuButton("مضاد اي اف كي", function()
+    antiAfkEnabled = not antiAfkEnabled
+    if antiAfkEnabled then
+        task.spawn(function()
+            while antiAfkEnabled do
+                if localPlayer.Character and localPlayer.Character:FindFirstChild("Humanoid") then
+                    localPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+                task.wait(300) -- يقفز كل 5 دقائق لضمان الحماية
+            end
+        end)
+    end
+end)
+
+-- [الزر الرابع: فلاي v2] (شغال تمام وتم الحفاظ عليه)
 local flying = false
-local speed = 50
+local speed = 45
 createMenuButton("فلاي v2", function()
     flying = not flying
-    print("الطيران: " .. tostring(flying))
-    
     local character = localPlayer.Character
     if not character or not character:FindFirstChild("HumanoidRootPart") then return end
     local hrp = character.HumanoidRootPart
     
     if flying then
-        -- كود طيران بسيط ومناسب للجوال عن طريق التحكم بالـ Velocity
         local bodyVelocity = Instance.new("BodyVelocity")
         bodyVelocity.Name = "AyhamFly"
         bodyVelocity.Velocity = Vector3.new(0, 0, 0)
@@ -129,7 +164,6 @@ createMenuButton("فلاي v2", function()
             while flying do
                 task.wait()
                 if character:FindFirstChild("Humanoid") then
-                    -- الطيران باتجاه الكاميرا التي ينظر إليها اللاعب
                     bodyVelocity.Velocity = workspace.CurrentCamera.CFrame.LookVector * speed
                 end
             end
