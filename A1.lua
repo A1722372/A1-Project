@@ -1,40 +1,56 @@
--- تعريف الخدمات الأساسية
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-local Camera = workspace.CurrentCamera
+-- إنشاء واجهة المستخدم
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MyCustomGui"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- إنشاء الواجهة (ScreenGui)
-local screenGui = Instance.new("ScreenGui", game.CoreGui)
-local mainFrame = Instance.new("Frame", screenGui)
-mainFrame.Size = UDim2.new(0, 400, 0, 300)
-mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-mainFrame.Active = true
-mainFrame.Draggable = true -- سحب الواجهة
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 200, 0, 150)
+frame.Position = UDim2.new(0.5, -100, 0.5, -75)
 
--- القوائم الخمس (مصفوفة لتسهيل التبديل)
-local Tabs = {"الترحيب", "الاستهداف", "اللاعب", "الأنيميشن", "إضافات"}
-
--- [هنا تضع وظائف الأزرار التي كتبناها سابقاً]
--- مثال: وظيفة الإخفاء
-local hidden = false
-local function toggleHidden()
-    hidden = not hidden
-    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if root then
-        root.CFrame = hidden and root.CFrame + Vector3.new(0, -500, 0) or root.CFrame + Vector3.new(0, 500, 0)
-    end
-end
-
--- زر التفعيل الصغير (الذي طلبت أن يكون في الزاوية)
-local toggleBtn = Instance.new("TextButton", screenGui)
-toggleBtn.Size = UDim2.new(0, 50, 0, 50)
-toggleBtn.Position = UDim2.new(0, 10, 0, 10)
-toggleBtn.Text = "Menu"
-toggleBtn.MouseButton1Click:Connect(function()
-    mainFrame.Visible = not mainFrame.Visible
+-- 1. زر الاختفاء
+local btnHide = Instance.new("TextButton", frame)
+btnHide.Text = "اختفاء"
+btnHide.Size = UDim2.new(1, 0, 0, 30)
+btnHide.Position = UDim2.new(0, 0, 0, 0)
+btnHide.MouseButton1Click:Connect(function()
+    frame.Visible = false
 end)
 
--- ملاحظة للتنظيم: 
--- قم بإنشاء Frame لكل قائمة من القوائم الخمس وقم بتبديل خاصية Visible لها
+-- 2. حقل النص
+local textBox = Instance.new("TextBox", frame)
+textBox.PlaceholderText = "أدخل 3 أحرف"
+textBox.Size = UDim2.new(1, 0, 0, 30)
+textBox.Position = UDim2.new(0, 0, 0, 35)
+
+-- 3. زر انتقال و 4. زر مشاهدة (مخفيان في البداية)
+local btnTeleport = Instance.new("TextButton", frame)
+btnTeleport.Text = "انتقال"
+btnTeleport.Size = UDim2.new(0.5, 0, 0, 30)
+btnTeleport.Position = UDim2.new(0, 0, 0, 70)
+btnTeleport.Visible = false
+
+local btnView = Instance.new("TextButton", frame)
+btnView.Text = "مشاهدات"
+btnView.Size = UDim2.new(0.5, 0, 0, 30)
+btnView.Position = UDim2.new(0.5, 0, 0, 70)
+btnView.Visible = false
+
+-- منطق إظهار الأزرار عند كتابة 3 أحرف
+textBox:GetPropertyChangedSignal("Text"):Connect(function()
+    if #textBox.Text >= 3 then
+        btnTeleport.Visible = true
+        btnView.Visible = true
+    else
+        btnTeleport.Visible = false
+        btnView.Visible = false
+    end
+end)
+
+-- الدوال (يمكنك تعديل محتواها لاحقاً حسب حاجتك)
+btnTeleport.MouseButton1Click:Connect(function()
+    print("تم الضغط على انتقال للاعب: " .. textBox.Text)
+end)
+
+btnView.MouseButton1Click:Connect(function()
+    print("تم الضغط على مشاهدة للاعب: " .. textBox.Text)
+end)
