@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V12 المصلح والمضمون 100% ]]
+-- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V11 الأصلي والمثالي ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -7,10 +7,8 @@ local PlayersService = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 
--- تنظيف أي نسخة قديمة لتجنب المشاكل
-if PlayerGui:FindFirstChild("AihamSuperMenu") then 
-    PlayerGui.AihamSuperMenu:Destroy() 
-end
+-- تنظيف أي نسخ قديمة لضمان عمل السكريبت بنجاح
+if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamSuperMenu"
@@ -73,7 +71,7 @@ ContentArea.BackgroundTransparency = 1
 local Pages = {}
 local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات"}
 
--- بناء وتفعيل الصفحات والشرائح بالكامل لتشتغل جميعها بشكل صحيح
+-- بناء وتفعيل الصفحات والشرائح بالكامل
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
     btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
@@ -83,8 +81,7 @@ for i, name in ipairs(tabs) do
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
     page.CanvasSize = UDim2.new(0, 0, 0, 450) page.ScrollBarThickness = 5
-    page.Visible = (i == 1) 
-    Pages[i] = page
+    page.Visible = (i == 1) Pages[i] = page
     
     btn.MouseButton1Click:Connect(function()
         for _, p in ipairs(Pages) do p.Visible = false end
@@ -95,52 +92,9 @@ end
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
 
--- الزر المضاف: توصيل الصناديق السريع والأوتوماتيكي السري
-local SingleDeliveryBtn = Instance.new("TextButton", MapPage)
-SingleDeliveryBtn.Size = UDim2.new(0.9, 0, 0, 40) 
-SingleDeliveryBtn.Position = UDim2.new(0.05, 0, 0, 10)
-SingleDeliveryBtn.Text = "توصيل الصناديق السريع [أوتوماتيك]"
-SingleDeliveryBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120)
-SingleDeliveryBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-SingleDeliveryBtn.Font = Enum.Font.SourceSansBold
-SingleDeliveryBtn.TextSize = 13
-
--- الإحداثيات السرية المستخرجة من الصورة 1000000886.jpg
-local BoxLocations = {
-    CFrame.new(-213.542047, 73.2739944, -2543.59131, 0.999607503, 0, 0.0280152336, 0, 1, 0, -0.0280152336, 0, 0.999607503),
-    CFrame.new(-263.750427, 73.2739944, -2542.646, 0.998816729, 0, -0.0486327633, 0, 1, 0, 0.0486327633, 0, 0.998816729)
-}
-
-local DeliveryPoints = {
-    CFrame.new(364.754425, 73.2696381, -2792.82397, -0.898638666, 5.53675381e-08, 1, -5.01138651e-08, -1, -5.43868953, -2.89107476e-08, -0.898638666),
-    CFrame.new(-87.3092346, 72.9999924, -2713.91992, -0.960549295, 0, -0.278109878, 0, 1, 0, -0.278109878, 0, -0.960549295),
-    CFrame.new(-391.991913, 72.9999924, -2659.02031, -0.882352471, -4.57078541e-08, 1, -1.55811204e-08, -0.470589161, -4.06085832e-08, -0.882352471)
-}
-
-local deliveryActive = false
-SingleDeliveryBtn.MouseButton1Click:Connect(function()
-    deliveryActive = not deliveryActive
-    SingleDeliveryBtn.BackgroundColor3 = deliveryActive and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(120, 0, 120)
-    SingleDeliveryBtn.Text = deliveryActive and "تعطيل التوصيل السريع [شغال]" or "توصيل الصناديق السريع [أوتوماتيك]"
-    
-    if deliveryActive then
-        task.spawn(function()
-            while deliveryActive do
-                if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-                    Player.Character.HumanoidRootPart.CFrame = BoxLocations[math.random(1, #BoxLocations)]
-                    task.wait(0.3)
-                    Player.Character.HumanoidRootPart.CFrame = DeliveryPoints[math.random(1, #DeliveryPoints)]
-                    task.wait(1.5)
-                end
-                task.wait(0.1)
-            end
-        end)
-    end
-end)
-
 -- زر الفول برايت الأصلي
 local BrightBtn = Instance.new("TextButton", MapPage)
-BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 55)
+BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 10)
 BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 BrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255) BrightBtn.Font = Enum.Font.SourceSansBold BrightBtn.TextSize = 13
 local brightActive = false
@@ -157,13 +111,13 @@ BrightBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- أزرار الألوان وتغيير الحواف
+-- أزرار الألوان الأصلية وتغيير الحواف (تمت إعادتها لأماكنها الأصلية الصحيحة)
 local colors = {"Rainbow", "Red", "Yellow", "Blue"}
 local colorNames = {Rainbow = "حواف قوس قزح", Red = "حواف حمراء", Yellow = "حواف صفراء", Blue = "حواف زرقاء"}
 for idx, mode in ipairs(colors) do
     local cBtn = Instance.new("TextButton", MapPage)
     cBtn.Size = UDim2.new(0.42, 0, 0, 32)
-    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 100 or 140)
+    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 60 or 100)
     cBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) cBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
@@ -268,7 +222,7 @@ TeleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 4: نقاط الحفظ ] ===
+-- === [ شريحة 4: نقاط الحفظ اليدوية ] ===
 local CheckpointPage = Pages[4]
 
 local CPInput = Instance.new("TextBox", CheckpointPage)
