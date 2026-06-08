@@ -13,7 +13,25 @@ mainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
 mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 mainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
 mainFrame.BorderSizePixel = 2
-local frameCorner = Instance.new("UICorner", mainFrame) -- زوايا دائرية للإطار
+local frameCorner = Instance.new("UICorner", mainFrame)
+
+-- الزر الجديد للإخفاء والإظهار (في الزاوية العليا)
+local toggleBtn = Instance.new("TextButton", mainFrame)
+toggleBtn.Size = UDim2.new(0, 80, 0, 30)
+toggleBtn.Position = UDim2.new(1, -85, 0, 0) -- يوضع في الزاوية اليمنى العليا
+toggleBtn.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+toggleBtn.Text = "إخفاء"
+toggleBtn.Font = Enum.Font.SourceSansBold
+toggleBtn.TextColor3 = Color3.new(0,0,0)
+Instance.new("UICorner", toggleBtn)
+
+-- وظيفة الإخفاء/الإظهار
+toggleBtn.MouseButton1Click:Connect(function()
+    if mainFrame.Visible then
+        mainFrame.Visible = false
+        -- إنشاء زر صغير للعودة (اختياري) أو يمكنك استخدام زر خارج الواجهة
+    end
+end)
 
 -- العنوان العلوي
 local title = Instance.new("TextLabel", mainFrame)
@@ -37,22 +55,22 @@ for i = 1, 5 do
     btn.BackgroundColor3 = Color3.fromRGB(200, 160, 0)
     btn.Text = "الأمر " .. (i == 1 and "الأول" or i == 2 and "الثاني" or i == 3 and "الثالث" or i == 4 and "الرابع" or "الخامس")
     btn.Font = Enum.Font.SourceSansBold
-    local btnCorner = Instance.new("UICorner", btn) -- زوايا دائرية للأزرار
+    local btnCorner = Instance.new("UICorner", btn)
 end
 
--- منطقة معلومات اللاعب (يمين)
+-- منطقة معلومات اللاعب
 local infoFrame = Instance.new("Frame", mainFrame)
 infoFrame.Size = UDim2.new(0.6, 0, 0.85, 0)
 infoFrame.Position = UDim2.new(0.38, 0, 0.12, 0)
 infoFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-local infoCorner = Instance.new("UICorner", infoFrame) -- زوايا دائرية لمنطقة المعلومات
+local infoCorner = Instance.new("UICorner", infoFrame)
 
 -- صورة اللاعب
 local userImage = Instance.new("ImageLabel", infoFrame)
 userImage.Size = UDim2.new(0.3, 0, 0.4, 0)
 userImage.Position = UDim2.new(0.05, 0, 0.05, 0)
 userImage.Image = game.Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
-local imgCorner = Instance.new("UICorner", userImage) -- زوايا دائرية للصورة
+local imgCorner = Instance.new("UICorner", userImage)
 
 -- نص الترحيب
 local welcomeText = Instance.new("TextLabel", infoFrame)
@@ -62,3 +80,5 @@ welcomeText.Text = "مرحباً بك في واجهة أوامر ماب ريفن
 welcomeText.TextColor3 = Color3.fromRGB(255, 215, 0)
 welcomeText.BackgroundTransparency = 1
 welcomeText.TextWrapped = true
+
+-- نصيحة: لجعل الواجهة تظهر مرة أخرى بعد الإخفاء، يفضل إضافة زر "فتح" في الـ ScreenGui نفسه خارج الإطار الرئيسي.
