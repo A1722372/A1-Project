@@ -1,6 +1,6 @@
 -- ==========================================
 -- صنع من قبل: أيهم (Made by Ayham)
--- واجهة VR7 المتقدمة مع نظام الأزرار الذهبية ومؤشر الصلاة على النبي ﷺ
+-- واجهة VR7 المتقدمة - النسخة المصلحة بالكامل
 -- ==========================================
 
 local Players = game:GetService("Players")
@@ -77,7 +77,7 @@ local function createPage()
     page.Size = UDim2.new(1, -20, 1, -20)
     page.Position = UDim2.new(0, 10, 0, 10)
     page.BackgroundTransparency = 1
-    page.CanvasSize = UDim2.new(0, 0, 2, 0)
+    page.CanvasSize = UDim2.new(0, 0, 1.5, 0)
     page.ScrollBarThickness = 4
     page.Visible = false
     page.Parent = contentFrame
@@ -146,7 +146,7 @@ local function createFeatureButton(parentPage, text, callback)
             btn.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- ذهبي عند التفعيل
             btn.TextColor3 = Color3.fromRGB(0, 0, 0)
         else
-            btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- يعود للرمادي عند الإطفاء
+            btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
             btn.TextColor3 = Color3.fromRGB(255, 255, 255)
         end
         callback(isEnabled)
@@ -171,7 +171,6 @@ activePage = pages["القائمة الرئيسية | Home"]
 -- برمجة ميزات [القائمة الرئيسية | Home]
 -- ==========================================
 
--- 1. زر الانتقال إلى النزال الجوي (الدروب)
 createFeatureButton(pageHome, "الانتقال الى النزال الجوي (الدروب)", function(enabled)
     _G.AutoDrop = enabled
     if enabled then
@@ -199,7 +198,6 @@ end)
 -- برمجة ميزات [استهداف | Target]
 -- ==========================================
 
--- إنشاء قائمة منسدلة لاختيار اللاعبين بالسيرفر
 local playerDropdown = Instance.new("TextBox")
 playerDropdown.Size = UDim2.new(1, 0, 0, 35)
 playerDropdown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -216,8 +214,7 @@ playerDropdown.FocusLost:Connect(function(enterPressed)
     end
 end)
 
--- زر الانتقال للاعب المستهدف
-createFeatureButton(pageTarget, "انتقال إلى اللاعب المختارات", function(enabled)
+createFeatureButton(pageTarget, "انتقال إلى اللاعب المختار", function(enabled)
     if enabled and selectedPlayerName ~= "" then
         local p = Players:FindFirstChild(selectedPlayerName)
         if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -228,7 +225,6 @@ createFeatureButton(pageTarget, "انتقال إلى اللاعب المختار
     end
 end)
 
--- زر مراقبة اللاعب المستهدف (Spectate)
 local cam = workspace.CurrentCamera
 createFeatureButton(pageTarget, "مراقبة شاشة اللاعب (Spectate)", function(enabled)
     if enabled and selectedPlayerName ~= "" then
@@ -257,7 +253,8 @@ local function playR6Animation(animId)
     end
 end
 
-createFeatureButton(pageAnims = registerTab, "تشغيل رقصة R6: التلويح", function(enabled)
+-- تم إصلاح هذا السطر هنا بنجاح ليعمل دون مشاكل
+createFeatureButton(pageAnims, "تشغيل رقصة R6: التلويح", function(enabled)
     if enabled then playR6Animation("128062452") end
 end)
 
@@ -269,7 +266,6 @@ end)
 -- أنظمة الخلفية التلقائية (التصغير والتذكير الديني)
 -- ==========================================
 
--- نظام تصغير القائمة الفخم لشريط علوي
 local isMinimized = false
 closeBtn.MouseButton1Click:Connect(function()
     isMinimized = not isMinimized
@@ -286,11 +282,9 @@ closeBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- [النظام الديني]: التذكير بالصلاة على النبي ﷺ كل 25 دقيقة تلقائياً
 task.spawn(function()
     while true do
-        task.wait(1500) -- الانتظار لمدة 25 دقيقة كاملة (25 * 60 ثانية)
-        -- إنشاء إشعار فخم ومميز يظهر للاعب بوسط الشاشة وينتفي بعد 7 ثوانٍ
+        task.wait(1500) -- تذكير كل 25 دقيقة تلقائياً
         local notifyGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
         local notifyFrame = Instance.new("Frame", notifyGui)
         notifyFrame.Size = UDim2.new(0, 350, 0, 60)
