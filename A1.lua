@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - نسخة V5.1 المطورة مع قائمة أنيميشن موحدة ]]
+-- [[ سكريبت أيهم الأسطوري - نسخة V5 المطورة مع خانة الأنيميشن R15 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
@@ -104,7 +104,7 @@ local function updateMenuTheme(themeName)
 end
 
 -----------------------------------------
--- 4. إنشاء التبويبات القوائم
+-- 4. إنشاء التبويبات القوائم (تم إضافة انميشن كخانة خامسة)
 -----------------------------------------
 local Pages = {}
 local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "انميشن"}
@@ -411,11 +411,12 @@ loadPoints()
 refreshList()
 
 -----------------------------------------
--- [[ التعديل الجديد للخانة 5: زر واحد يفتح قائمة أنيميشن متكاملة ]]
+-- [[ الخانة 5 الجديدة: انميشن (R15) ]]
 -----------------------------------------
 local AnimationPage = Pages[5]
 local currentTrack = nil
 
+-- دالة لتشغيل أي أنيميشن بشكل آمن وإيقاف القديم
 local function playCustomAnimation(animationId)
     local char = Player.Character
     local humanoid = char and char:FindFirstChildOfClass("Humanoid")
@@ -428,30 +429,25 @@ local function playCustomAnimation(animationId)
     end
 end
 
+-- دالة لإيقاف الأنميشن الحالي
 local function stopAnimation()
     if currentTrack then currentTrack:Stop(); currentTrack = nil end
 end
 
--- بناء الواجهة المستقلة الشفافة للأنيميشن محاكاة للصورة 1000000872.jpg
-local AnimWindow = Instance.new("Frame")
-AnimWindow.Name = "AnimWindow"
-AnimWindow.Size = UDim2.new(0, 240, 0, 260)
-AnimWindow.Position = UDim2.new(0.5, -120, 0.5, -130)
-AnimWindow.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-AnimWindow.BackgroundTransparency = 0.15 -- تصميم داكن شفاف ومميز
-AnimWindow.BorderSizePixel = 0
-AnimWindow.Visible = false
-AnimWindow.Parent = ScreenGui
+-- الإعداد لـ واجهة الرقصات المجانية الشفافة (Sub-Window)
+local EmotesWindow = Instance.new("Frame")
+EmotesWindow.Name = "EmotesWindow"
+EmotesWindow.Size = UDim2.new(0, 200, 0, 200)
+EmotesWindow.Position = UDim2.new(0.5, -100, 0.5, -100)
+EmotesWindow.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+EmotesWindow.BackgroundTransparency = 0.4 -- صفحة شفافة كما طلبت!
+EmotesWindow.BorderSizePixel = 2
+EmotesWindow.BorderColor3 = Color3.fromRGB(255, 215, 0)
+EmotesWindow.Visible = false
+EmotesWindow.Parent = ScreenGui
 
--- إضافة زوايا دائرية ناعمة للواجهة
-local Corner = Instance.new("UICorner")
-Corner.CornerRadius = UDim.new(0, 12)
-Corner.Parent = AnimWindow
-
--- عنوان الواجهة
-local AnimTitle = Instance.new("TextLabel")
-AnimTitle.Size = UDim2.new(1, -40, 0, 35)
-AnimTitle.Position = UDim2.new(0, 10, 0, 5)
-AnimTitle.BackgroundTransparency = 1
-AnimTitle.Text = "R15 Animation"
-An
+local EmoteTitle = Instance.new("TextLabel")
+EmoteTitle.Size = UDim2.new(1, 0, 0, 25)
+EmoteTitle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+EmoteTitle.BackgroundTransparency = 0.5
+EmoteTitle.Text = "قائمة الرقصات المجانية"
