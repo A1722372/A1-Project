@@ -1,19 +1,20 @@
--- [[ سكريبت أيهم الأسطوري V14 - نظام الألوان الموحد والطيران الحر ]]
+-- [[ سكريبت أيهم الأسطوري V12 - تعديل نظام الطيران المستقيم والسهل ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+local Backpack = Player:WaitForChild("Backpack")
 local RunService = game:GetService("RunService")
 local PlayersService = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 
--- تنظيف النسخ القديمة
+-- تنظيف أي نسخ قديمة لضمان عمل السكريبت بنجاح
 if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamSuperMenu"
 ScreenGui.ResetOnSpawn = false
 
--- الإطار الرئيسي
+-- الإطار الرئيسي للشاشة
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 480, 0, 320)
 MainFrame.Position = UDim2.new(0.5, -240, 0.5, -160)
@@ -22,21 +23,41 @@ MainFrame.BorderSizePixel = 3
 MainFrame.Active = true
 MainFrame.Draggable = true
 
--- زر الفتح والإغلاق الجانبي (●)
+-- جدول نقاط الحفظ الخاص بشريحة الحفظ
+local savedLocations = {}
+
+-- نظام ألوان الحواف الكامل لجميع الشرائح
+local rainbowConnection
+local function setBorderColor(mode)
+    if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
+    if mode == "Red" then MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    elseif mode == "Yellow" then MainFrame.BorderColor3 = Color3.fromRGB(255, 200, 0)
+    elseif mode == "Blue" then MainFrame.BorderColor3 = Color3.fromRGB(0, 100, 255)
+    elseif mode == "Rainbow" then
+        rainbowConnection = RunService.RenderStepped:Connect(function()
+            local hue = (tick() % 4) / 4
+            MainFrame.BorderColor3 = Color3.fromHSV(hue, 1, 1)
+        end)
+    end
+end
+setBorderColor("Yellow")
+
+-- زر الفتح والإغلاق الجانبي الصغير (●)
 local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 40, 0, 40)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -20)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
 ToggleButton.Text = "●"
 ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 ToggleButton.TextSize = 22 ToggleButton.Font = Enum.Font.SourceSansBold
 ToggleButton.Active = true ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
--- العنوان العلوي
+-- العنوان العلوي الثابت
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 35) Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Title.Text = "صنع من قبل المطور الأسطوري أيهم"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
+Title.TextColor3 = Color3.fromRGB(255, 200, 0) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
 
 -- القائمة الجانبية للتنقل
 local SideMenu = Instance.new("Frame", MainFrame)
@@ -48,16 +69,14 @@ ContentArea.Size = UDim2.new(1, -130, 1, -35) ContentArea.Position = UDim2.new(0
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
-local MenuButtons = {} -- جدول لحفظ أزرار القائمة لتغيير ألوانها
 local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات"}
 
--- بناء وتفعيل الصفحات والشرائح
+-- بناء وتفعيل الصفحات والشرائح بالكامل
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
     btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
-    btn.Text = name btn.TextColor3 = Color3.fromRGB(0, 0, 0)
+    btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
-    table.insert(MenuButtons, btn) -- إضافة الزر للجدول ليتحكم به نظام الألوان
     
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
@@ -69,36 +88,6 @@ for i, name in ipairs(tabs) do
         page.Visible = true
     end)
 end
-
--- [[ نظام الألوان الموحد الجديد (الحواف + القوائم + زر الفتح) ]]
-local rainbowConnection
-local function setGlobalColor(mode)
-    if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
-    
-    local function applyColor(color)
-        MainFrame.BorderColor3 = color
-        ToggleButton.BackgroundColor3 = color
-        Title.TextColor3 = color
-        for _, btn in ipairs(MenuButtons) do
-            btn.BackgroundColor3 = color
-        end
-    end
-
-    if mode == "Red" then 
-        applyColor(Color3.fromRGB(255, 0, 0))
-    elseif mode == "Yellow" then 
-        applyColor(Color3.fromRGB(255, 200, 0))
-    elseif mode == "Blue" then 
-        applyColor(Color3.fromRGB(0, 100, 255))
-    elseif mode == "Rainbow" then
-        rainbowConnection = RunService.RenderStepped:Connect(function()
-            local hue = (tick() % 4) / 4
-            local rainbowColor = Color3.fromHSV(hue, 1, 1)
-            applyColor(rainbowColor)
-        end)
-    end
-end
-setGlobalColor("Yellow") -- اللون الافتراضي عند التشغيل
 
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
@@ -122,17 +111,17 @@ BrightBtn.MouseButton1Click:Connect(function()
 end)
 
 local colors = {"Rainbow", "Red", "Yellow", "Blue"}
-local colorNames = {Rainbow = "قوس قزح شامل 🌈", Red = "ثيم أحمر ممتد 🔴", Yellow = "ثيم أصفر كلاسيك 🟡", Blue = "ثيم أزرق ملكي 🔵"}
+local colorNames = {Rainbow = "حواف قوس قزح", Red = "حواف حمراء", Yellow = "حواف صفراء", Blue = "حواف زرقاء"}
 for idx, mode in ipairs(colors) do
     local cBtn = Instance.new("TextButton", MapPage)
     cBtn.Size = UDim2.new(0.42, 0, 0, 32)
     cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 60 or 100)
     cBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) cBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 11
-    cBtn.MouseButton1Click:Connect(function() setGlobalColor(mode) end)
+    cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
+    cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
 end
 
--- === [ شريحة 2: اللاعب (الطيران الحر يتبع الكاميرا بالكامل) ] ===
+-- === [ شريحة 2: اللاعب (تم إصلاح نظام الطيران المستقيم هنا) ] ===
 local PlayerPage = Pages[2]
 
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
@@ -141,7 +130,7 @@ SpeedLabel.Text = "السرعة:" SpeedLabel.TextColor3 = Color3.fromRGB(255, 25
 
 local SpeedInput = Instance.new("TextBox", PlayerPage)
 SpeedInput.Size = UDim2.new(0.2, 0, 0, 30) SpeedInput.Position = UDim2.new(0.35, 0, 0, 15)
-SpeedInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) SpeedInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) SpeedInput.TextColor3 = Color3.fromRGB(255, 200, 0)
 SpeedInput.Text = "65" SpeedInput.Font = Enum.Font.SourceSansBold SpeedInput.TextSize = 14
 
 local SpeedBtn = Instance.new("TextButton", PlayerPage)
@@ -167,7 +156,7 @@ JumpLabel.Text = "القفز:" JumpLabel.TextColor3 = Color3.fromRGB(255, 255, 2
 
 local JumpInput = Instance.new("TextBox", PlayerPage)
 JumpInput.Size = UDim2.new(0.2, 0, 0, 30) JumpInput.Position = UDim2.new(0.35, 0, 0, 60)
-JumpInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) JumpInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+JumpInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) JumpInput.TextColor3 = Color3.fromRGB(255, 200, 0)
 JumpInput.Text = "120" JumpInput.Font = Enum.Font.SourceSansBold JumpInput.TextSize = 14
 
 local JumpBtn = Instance.new("TextButton", PlayerPage)
@@ -191,10 +180,10 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- [[ تعديل الطيران المطور ليتبع حركة ونظر الكاميرا بالكامل بناءً على طلبك ]]
+-- تم تعديل وإصلاح كود الطيران ليكون مستقيماً تماماً ومفصولاً عن حركة الكاميرا
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
-FlyBtn.Text = "تفعيل طيران الكاميرا الحر (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyBtn.Text = "تفعيل الطيران السهل (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 FlyBtn.Font = Enum.Font.SourceSansBold FlyBtn.TextSize = 13
 
 local flying = false
@@ -204,36 +193,40 @@ local bodyVelocity, bodyGyro
 FlyBtn.MouseButton1Click:Connect(function()
     flying = not flying
     FlyBtn.BackgroundColor3 = flying and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(120, 0, 120)
-    FlyBtn.Text = flying and "تعطيل الطيران" or "تفعيل طيران الكاميرا الحر (Fly)"
+    FlyBtn.Text = flying and "تعطيل الطيران" or "تفعيل الطيران السهل (Fly)"
     
-    local root = Player.Character and (Player.Character:FindFirstChild("HumanoidRootPart") or Player.Character:FindFirstChild("Torso"))
-    if not root then return end
+    local torso = Player.Character and (Player.Character:FindFirstChild("UpperTorso") or Player.Character:FindFirstChild("HumanoidRootPart"))
+    if not torso then return end
     
     if flying then
-        bodyVelocity = Instance.new("BodyVelocity", root)
+        bodyVelocity = Instance.new("BodyVelocity", torso)
         bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
         bodyVelocity.Velocity = Vector3.new(0, 0, 0)
         
-        bodyGyro = Instance.new("BodyGyro", root)
+        bodyGyro = Instance.new("BodyGyro", torso)
         bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-        bodyGyro.CFrame = root.CFrame
+        -- تثبيت زاوية الجسم ليبقى مستقيماً دائماً ولا ينحني مع الكاميرا
+        bodyGyro.CFrame = CFrame.new(torso.Position)
         
         flyConnection = RunService.RenderStepped:Connect(function()
-            if flying and root and bodyVelocity and bodyGyro then
-                local cam = workspace.CurrentCamera
-                -- جعل اللاعب يلتف بالكامل مع اتجاه الكاميرا (فوق، تحت، يمين، يسار)
-                bodyGyro.CFrame = cam.CFrame
+            if Player.Character and torso and bodyVelocity and bodyGyro then
+                -- توجيه الحواف أفقياً فقط بناءً على اتجاه النظر بدون الارتفاع والانخفاض
+                local camCFrame = workspace.CurrentCamera.CFrame
+                bodyGyro.CFrame = CFrame.lookAt(torso.Position, torso.Position + Vector3.new(camCFrame.LookVector.X, 0, camCFrame.LookVector.Z))
                 
-                local speed = 75
-                local moveDir = Vector3.new(0, 0, 0)
+                -- حساب اتجاه المشي العادي (W, A, S, D)
+                local moveDirection = Player.Character.Humanoid.MoveDirection
+                local horizontalVelocity = moveDirection * 70 -- سرعة المشي الطائر أفقياً
                 
-                -- حساب الحركة بناءً على أزرار الاتجاه ونظر الكاميرا
-                if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.CFrame.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.CFrame.RightVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.CFrame.RightVector end
+                local verticalSpeed = 0
+                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                    verticalSpeed = 50 -- يطير للأعلى فقط عند الضغط على سبيس
+                elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+                    verticalSpeed = -50 -- ينزل للأسفل فقط عند الضغط على شيفت
+                end
                 
-                bodyVelocity.Velocity = moveDir * speed
+                -- دمج السرعة الأفقية مع الارتفاع الرأسي النظيف
+                bodyVelocity.Velocity = Vector3.new(horizontalVelocity.X, verticalSpeed, horizontalVelocity.Z)
             end
         end)
     else
@@ -287,8 +280,7 @@ TeleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 4: نقاط الحفظ ] ===
-local savedLocations = {}
+-- === [ شريحة 4: نقاط الحفظ اليدوية ] ===
 local CheckpointPage = Pages[4]
 
 local CPInput = Instance.new("TextBox", CheckpointPage)
@@ -336,9 +328,15 @@ local EffectsPage = Pages[5]
 
 local function clearAllEffects()
     if Player.Character then
-        for _, item in ipairs(Player.Character:GetChildren()) do if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end end
+        for _, item in ipairs(Player.Character:GetChildren()) do
+            if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end
+        end
         local root = Player.Character:FindFirstChild("HumanoidRootPart")
-        if root then for _, item in ipairs(root:GetChildren()) do if item.Name == "PlayerParticles" or item:IsA("ParticleEmitter") then item:Destroy() end end end
+        if root then
+            for _, item in ipairs(root:GetChildren()) do
+                if item.Name == "PlayerParticles" or item:IsA("ParticleEmitter") then item:Destroy() end
+            end
+        end
     end
 end
 
@@ -346,12 +344,19 @@ local function giveDirectEffect(effectType, customColor)
     clearAllEffects()
     local root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
     if not root then return end
+    
     if effectType == "Highlight" then
-        local hl = Instance.new("Highlight") hl.Name = "PlayerHighlight" hl.FillColor = customColor hl.Parent = Player.Character
+        local hl = Instance.new("Highlight")
+        hl.Name = "PlayerHighlight" hl.FillColor = customColor hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+        hl.Parent = Player.Character
     elseif effectType == "Particles" then
-        local pe = Instance.new("ParticleEmitter") pe.Name = "PlayerParticles" pe.Color = ColorSequence.new(customColor) pe.Speed = NumberRange.new(8, 12) pe.Rate = 80 pe.Parent = root
+        local pe = Instance.new("ParticleEmitter")
+        pe.Name = "PlayerParticles" pe.Color = ColorSequence.new(customColor)
+        pe.Speed = NumberRange.new(8, 12) pe.Rate = 80 pe.Lifetime = NumberRange.new(1, 1.5)
+        pe.Size = NumberSequence.new(0.5, 0) pe.Parent = root
     elseif effectType == "Fire" then
-        local f = Instance.new("Fire") f.Name = "PlayerParticles" f.Size = 10 f.Parent = root
+        local f = Instance.new("Fire")
+        f.Name = "PlayerParticles" f.Size = 10 f.Heat = 15 f.Parent = root
     end
 end
 
@@ -361,7 +366,9 @@ end
 
 createEffectBtn("تفعيل تأثير النار على الجسم فوراً", 10, Color3.fromRGB(210, 90, 0), function() giveDirectEffect("Fire") end)
 createEffectBtn("تفعيل تأثير الإضاءة المشعة الشاملة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
-createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 90, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
+createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
+createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
+createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
 -- زر إغلاق القائمة الرئيسي (X)
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
