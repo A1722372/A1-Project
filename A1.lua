@@ -1,6 +1,7 @@
--- [[ سكريبت أيهم الأسطوري المعدل بالكامل V8.0 ]]
+-- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V10.0 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+local Backpack = Player:WaitForChild("Backpack")
 local RunService = game:GetService("RunService")
 local PlayersService = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -21,7 +22,7 @@ MainFrame.BorderSizePixel = 3
 MainFrame.Active = true
 MainFrame.Draggable = true
 
--- نظام ألوان الحواف
+-- نظام ألوان الحواف لشريحة الإعدادات
 local rainbowConnection
 local function setBorderColor(mode)
     if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
@@ -35,9 +36,9 @@ local function setBorderColor(mode)
         end)
     end
 end
-setBorderColor("Rainbow")
+setBorderColor("Yellow")
 
--- زر الفتح والإغلاق الجانبي (●)
+-- زر الففتح والإغلاق الجانبي (●)
 local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 40, 0, 40)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -20)
@@ -54,7 +55,7 @@ Title.Size = UDim2.new(1, 0, 0, 35) Title.BackgroundColor3 = Color3.fromRGB(10, 
 Title.Text = "صنع من قبل المطور الأسطوري أيهم"
 Title.TextColor3 = Color3.fromRGB(255, 200, 0) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
 
--- القائمة الجانبية الصفراء
+-- القائمة الجانبية
 local SideMenu = Instance.new("Frame", MainFrame)
 SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -86,7 +87,6 @@ end
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
 
--- زر جعل الماب مضوي بالكامل (Full Bright) بدون شفافية
 local BrightBtn = Instance.new("TextButton", MapPage)
 BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 10)
 BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -108,13 +108,12 @@ BrightBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- أزرار ألوان الحواف
 local colors = {"Rainbow", "Red", "Yellow", "Blue"}
 local colorNames = {Rainbow = "حواف قوس قزح", Red = "حواف حمراء", Yellow = "حواف صفراء", Blue = "حواف زرقاء"}
 for idx, mode in ipairs(colors) do
     local cBtn = Instance.new("TextButton", MapPage)
     cBtn.Size = UDim2.new(0.42, 0, 0, 32)
-    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 65 or 105)
+    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 60 or 105)
     cBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) cBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
@@ -123,7 +122,6 @@ end
 -- === [ شريحة 2: اللاعب ] ===
 local PlayerPage = Pages[2]
 
--- السرعة المخصصة (تم إصلاح قراءة العداد بالكامل)
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
 SpeedLabel.Size = UDim2.new(0.3, 0, 0, 30) SpeedLabel.Position = UDim2.new(0.05, 0, 0, 15)
 SpeedLabel.Text = "السرعة:" SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255) SpeedLabel.BackgroundTransparency = 1
@@ -138,6 +136,12 @@ SpeedBtn.Size = UDim2.new(0.35, 0, 0, 30) SpeedBtn.Position = UDim2.new(0.6, 0, 
 SpeedBtn.Text = "تفعيل السرعة" SpeedBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpeedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local speedActive = false
 
+SpeedInput:GetPropertyChangedSignal("Text"):Connect(function()
+    if speedActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then
+        Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65
+    end
+end)
+
 SpeedBtn.MouseButton1Click:Connect(function()
     speedActive = not speedActive
     SpeedBtn.BackgroundColor3 = speedActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
@@ -148,7 +152,6 @@ SpeedBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- القفز المخصص
 local JumpLabel = Instance.new("TextLabel", PlayerPage)
 JumpLabel.Size = UDim2.new(0.3, 0, 0, 30) JumpLabel.Position = UDim2.new(0.05, 0, 0, 60)
 JumpLabel.Text = "القفز:" JumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255) JumpLabel.BackgroundTransparency = 1
@@ -163,6 +166,12 @@ JumpBtn.Size = UDim2.new(0.35, 0, 0, 30) JumpBtn.Position = UDim2.new(0.6, 0, 0,
 JumpBtn.Text = "تفعيل القفز" JumpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) JumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local jumpActive = false
 
+JumpInput:GetPropertyChangedSignal("Text"):Connect(function()
+    if jumpActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then
+        Player.Character.Humanoid.JumpPower = tonumber(JumpInput.Text) or 120
+    end
+end)
+
 JumpBtn.MouseButton1Click:Connect(function()
     jumpActive = not jumpActive
     JumpBtn.BackgroundColor3 = jumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
@@ -173,7 +182,6 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- ميزة اختراق الجدران (Noclip)
 local NoclipBtn = Instance.new("TextButton", PlayerPage)
 NoclipBtn.Size = UDim2.new(0.9, 0, 0, 32) NoclipBtn.Position = UDim2.new(0.05, 0, 0, 105)
 NoclipBtn.Text = "تفعيل اختراق الجدران (Noclip)" NoclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) NoclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -196,7 +204,6 @@ NoclipBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- ميزة القفز اللانهائي (Infinite Jump)
 local InfJumpBtn = Instance.new("TextButton", PlayerPage)
 InfJumpBtn.Size = UDim2.new(0.9, 0, 0, 32) InfJumpBtn.Position = UDim2.new(0.05, 0, 0, 145)
 InfJumpBtn.Text = "تفعيل القفز اللانهائي (Inf Jump)" InfJumpBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InfJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -277,44 +284,74 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 5: التأثيرات والبارتكلز (تمت إعادة برمجتها بالكامل لتشتغل للكل وتثبت) ] ===
+-- === [ شريحة 5: شريحة البارتكلز والتأثيرات بنظام الأدوات (Tools) لتظهر للكل ] ===
 local EffectsPage = Pages[5]
 
 local function clearAllEffects()
-    local char = Player.Character
-    if char then
-        for _, obj in ipairs(char:GetDescendants()) do
-            if obj:IsA("ParticleEmitter") or obj:IsA("Fire") or obj:IsA("Highlight") then obj:Destroy() end
+    -- مسح الأدوات القديمة من حقيبة اللاعب واليد
+    for _, item in ipairs(Backpack:GetChildren()) do
+        if item.Name == "Fire" or item.Name == "Highlight" or item.Name == "Yellow Particles" or item.Name == "Red Particles" then
+            item:Destroy()
+        end
+    end
+    if Player.Character then
+        for _, item in ipairs(Player.Character:GetChildren()) do
+            if item.Name == "Fire" or item.Name == "Highlight" or item.Name == "Yellow Particles" or item.Name == "Red Particles" or item:IsA("Highlight") then
+                item:Destroy()
+            end
         end
     end
 end
 
-local function applyServerVisibleEffect(effectType, customColor)
+local function giveServerToolEffect(effectName, effectType, customColor)
     clearAllEffects()
-    local char = Player.Character if not char then return end
     
-    -- نقوم بحقن التأثير مباشرة داخل الـ UpperTorso أو Torso لضمان ثباتها ورؤية الجميع لها
-    local targetPart = char:FindFirstChild("UpperTorso") or char:FindFirstChild("Torso") or char:FindFirstChild("HumanoidRootPart")
-    if not targetPart then return end
+    -- إنشاء أداة (Tool) يراها السيرفر بالكامل في حقيبتك
+    local Tool = Instance.new("Tool")
+    Tool.Name = effectName
+    Tool.RequiresHandle = true
     
+    -- إنشاء المقبض الأساسي للأداة ليحمله اللاعب بيده
+    local Handle = Instance.new("Part")
+    Handle.Name = "Handle"
+    Handle.Size = Vector3.new(1, 1, 1)
+    Handle.Transparency = 1 -- المقبض مخفي تماماً عشان ما يخرب الشكل
+    Handle.CanCollide = false
+    Handle.Parent = Tool
+    
+    -- إضافة التأثير المطلوب داخل المقبض لكي يراه الجميع فوراً عند تفعيل الأداة
     if effectType == "Fire" then
         local f = Instance.new("Fire")
-        f.Size = 9
-        f.Heat = 15
-        f.Parent = targetPart
+        f.Size = 12
+        f.Heat = 18
+        f.Parent = Handle
     elseif effectType == "Highlight" then
-        local hl = Instance.new("Highlight")
-        hl.FillColor = customColor
-        hl.OutlineColor = Color3.new(1,1,1)
-        hl.Parent = char
+        -- لتأثير الإضاءة المشعة يتم حاقنها لتغطي جسم الشخصية
+        Tool.Equipped:Connect(function()
+            if Player.Character and not Player.Character:FindFirstChild("BackpackHighlight") then
+                local hl = Instance.new("Highlight")
+                hl.Name = "BackpackHighlight"
+                hl.FillColor = customColor
+                hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                hl.Parent = Player.Character
+            end
+        end)
+        Tool.Unequipped:Connect(function()
+            if Player.Character and Player.Character:FindFirstChild("BackpackHighlight") then
+                Player.Character.BackpackHighlight:Destroy()
+            end
+        end)
     elseif effectType == "Particles" then
         local pe = Instance.new("ParticleEmitter")
         pe.Color = ColorSequence.new(customColor)
-        pe.Speed = NumberRange.new(8, 14)
-        pe.Rate = 75
+        pe.Speed = NumberRange.new(10, 15)
+        pe.Rate = 95
         pe.Lifetime = NumberRange.new(1, 2)
-        pe.Parent = targetPart
+        pe.Size = NumberSequence.new(0.6, 0)
+        pe.Parent = Handle
     end
+    
+    Tool.Parent = Backpack
 end
 
 local function createEffectBtn(text, yPos, color, callback)
@@ -325,11 +362,11 @@ local function createEffectBtn(text, yPos, color, callback)
     btn.MouseButton1Click:Connect(callback)
 end
 
-createEffectBtn("تأثير الاشتعال بالنار (ثابت ويراه الجميع)", 10, Color3.fromRGB(200, 80, 0), function() applyServerVisibleEffect("Fire") end)
-createEffectBtn("تأثير الإضاءة المشعة المشتركة (Highlight)", 48, Color3.fromRGB(0, 150, 150), function() applyServerVisibleEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
-createEffectBtn("شظايا جزيئات باللون الأصفر (ثابت)", 86, Color3.fromRGB(180, 180, 0), function() applyServerVisibleEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
-createEffectBtn("شظايا جزيئات باللون الأحمر (ثابت)", 124, Color3.fromRGB(180, 0, 0), function() applyServerVisibleEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
-createEffectBtn("إزالة كافة التأثيرات عن الشخصية", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
+createEffectBtn("إعطائي أداة النار (تظهر في حقيبتك للجميع)", 10, Color3.fromRGB(210, 90, 0), function() giveServerToolEffect("Fire", "Fire") end)
+createEffectBtn("إعطائي أداة الإضاءة المشعة (Highlight Tool)", 48, Color3.fromRGB(0, 160, 160), function() giveServerToolEffect("Highlight", "Highlight", Color3.fromRGB(0, 255, 255)) end)
+createEffectBtn("إعطائي أداة الشظايا الصفراء (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveServerToolEffect("Yellow Particles", "Particles", Color3.fromRGB(255, 215, 0)) end)
+createEffectBtn("إعطائي أداة الشظايا الحمراء (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveServerToolEffect("Red Particles", "Particles", Color3.fromRGB(255, 0, 0)) end)
+createEffectBtn("إزالة كافة الأدوات والتأثيرات من الحقيبة", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
 -- زر إغلاق القائمة (X)
 local CloseBtn = Instance.new("TextButton", MainFrame)
