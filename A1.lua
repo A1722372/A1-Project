@@ -1,55 +1,81 @@
--- [[ سكريبت أيهم الأسطوري - النسخة المستقرة V4.4 ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة المستقرة V4.3 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+local RunService = game:GetService("RunService")
 local PlayersService = game:GetService("Players")
 
-if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
+if PlayerGui:FindFirstChild("AihamSuperMenu") then 
+    PlayerGui.AihamSuperMenu:Destroy() 
+end
 
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamSuperMenu"
 
+-- واجهة مستطيلة بسيطة بدون تبويبات معقدة
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 350, 0, 250); MainFrame.Position = UDim2.new(0.5, -175, 0.5, -125)
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20); MainFrame.Active = true; MainFrame.Draggable = true
+MainFrame.Size = UDim2.new(0, 340, 0, 220)
+MainFrame.Position = UDim2.new(0.5, -170, 0.5, -110)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
+MainFrame.Active = true
+MainFrame.Draggable = true
 
 local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "Aiham Project V4.4"; Title.TextColor3 = Color3.fromRGB(255, 215, 0)
-Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "صنع من قبل المطور الأسطوري أيهم V4.3"
+Title.TextColor3 = Color3.fromRGB(255, 215, 0)
+Title.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 14
 
--- دالة الأزرار
-local function createBtn(text, pos, callback)
+-- دالة مبسطة لإنشاء الأزرار المباشرة للنسخة 4.3
+local function createDirectBtn(text, posy, callback)
     local btn = Instance.new("TextButton", MainFrame)
-    btn.Size = UDim2.new(0.9, 0, 0, 35); btn.Position = pos; btn.Text = text
-    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50); btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Size = UDim2.new(0.9, 0, 0, 35)
+    btn.Position = UDim2.new(0.05, 0, 0, posy)
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.SourceSansBold
+    btn.TextSize = 14
+    
     local active = false
     btn.MouseButton1Click:Connect(function()
         active = not active
-        btn.BackgroundColor3 = active and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(50, 50, 50)
+        btn.BackgroundColor3 = active and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(45, 45, 45)
+        btn.TextColor3 = active and Color3.fromRGB(0, 0, 0) or Color3.fromRGB(255, 255, 255)
         callback(active)
     end)
+    return btn
 end
 
--- ميزات النسخة 4.4
-createBtn("تجميع الصناديق تلقائي (Auto Farm)", UDim2.new(0.05, 0, 0, 50), function(active)
-    _G.AutoFarm = active
-    spawn(function()
-        while _G.AutoFarm do
-            for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("TouchTransmitter") and obj.Parent.Name:lower():find("box") then
-                    firetouchinterest(Player.Character.HumanoidRootPart, obj.Parent, 0)
-                end
-            end
-            task.wait(1)
-        end
-    end)
+-- ميزات النسخة 4.3 الأساسية
+createDirectBtn("تفعيل السرعة العالية (WalkSpeed)", 50, function(active)
+    local char = Player.Character
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.WalkSpeed = active and 60 or 16
+    end
 end)
 
-createBtn("تفعيل سرعة خيالية", UDim2.new(0.05, 0, 0, 95), function(active)
-    Player.Character.Humanoid.WalkSpeed = active and 80 or 16
+createDirectBtn("تفعيل القفز العالي (JumpPower)", 95, function(active)
+    local char = Player.Character
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.JumpPower = active and 120 or 50
+    end
 end)
 
-createBtn("تفعيل قفز عالي", UDim2.new(0.05, 0, 0, 140), function(active)
-    Player.Character.Humanoid.JumpPower = active and 150 or 50
+createDirectBtn("إضاءة ساطعة للماب (FullBright)", 140, function(active)
+    game.Lighting.Ambient = active and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(128, 128, 128)
 end)
 
-createBtn("إغلاق القائمة", UDim2.new(0.05, 0, 0, 195), function() MainFrame.Visible = false end)
+-- زر صغير لإخفاء القائمة في الزاوية
+local CloseBtn = Instance.new("TextButton", MainFrame)
+CloseBtn.Size = UDim2.new(0, 25, 0, 25)
+CloseBtn.Position = UDim2.new(1, -28, 0, 5)
+CloseBtn.Text = "X"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.MouseButton1Click:Connect(function() 
+    MainFrame.Visible = false 
+end)
