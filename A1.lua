@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة المطورة للهواتف (إضافة قائمة الاستهداف) ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة المطورة للهواتف (إضافة ميزة تغيير ألوان الإطار) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
@@ -22,7 +22,7 @@ local ToggleButton = Instance.new("TextButton")
 ToggleButton.Name = "ToggleButton"
 ToggleButton.Size = UDim2.new(0, 40, 0, 40)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -20)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- البداية أصفر
 ToggleButton.Text = "●"
 ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 ToggleButton.TextSize = 20
@@ -41,7 +41,7 @@ MainFrame.Size = UDim2.new(0, 450, 0, 280)
 MainFrame.Position = UDim2.new(0.5, -225, 0.5, -140)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 2
-MainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
+MainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0) -- البداية أصفر
 MainFrame.Visible = false
 MainFrame.Parent = ScreenGui
 
@@ -53,7 +53,7 @@ local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 35)
 Title.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 Title.Text = "صنع من قبل المطور الأسطوري أيهم"
-Title.TextColor3 = Color3.fromRGB(255, 215, 0)
+Title.TextColor3 = Color3.fromRGB(255, 215, 0) -- البداية أصفر
 Title.TextSize = 16
 Title.Font = Enum.Font.SourceSansBold
 Title.Parent = MainFrame
@@ -71,7 +71,49 @@ ContentArea.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 ContentArea.Parent = MainFrame
 
 -----------------------------------------
--- 3. إنشاء التبويبات (الإعدادات، اللاعب، الاستهداف)
+-- 3. نظام وإدارة تغيير الألوان (Theme System)
+-----------------------------------------
+local currentTheme = "أصفر"
+local rainbowConnection = nil
+
+local function updateMenuTheme(themeName)
+    currentTheme = themeName
+    
+    -- إيقاف تشغيل قوس قزح القديم إذا كان يعمل لتجنب التداخل
+    if rainbowConnection then
+        rainbowConnection:Disconnect()
+        rainbowConnection = nil
+    end
+
+    if themeName == "أصفر" then
+        local color = Color3.fromRGB(255, 215, 0)
+        MainFrame.BorderColor3 = color
+        ToggleButton.BackgroundColor3 = color
+        Title.TextColor3 = color
+    elseif themeName == "أحمر" then
+        local color = Color3.fromRGB(255, 0, 0)
+        MainFrame.BorderColor3 = color
+        ToggleButton.BackgroundColor3 = color
+        Title.TextColor3 = color
+    elseif themeName == "أزرق" then
+        local color = Color3.fromRGB(0, 150, 255)
+        MainFrame.BorderColor3 = color
+        ToggleButton.BackgroundColor3 = color
+        Title.TextColor3 = color
+    elseif themeName == "قوس قزح" then
+        -- تشغيل تأثير قوس قزح المتغير والمتحرك تلقائياً
+        rainbowConnection = RunService.RenderStepped:Connect(function()
+            local hue = (tick() % 5) / 5 -- سرعة تغير الألوان
+            local color = Color3.fromHSV(hue, 1, 1)
+            MainFrame.BorderColor3 = color
+            ToggleButton.BackgroundColor3 = color
+            Title.TextColor3 = color
+        end)
+    end
+end
+
+-----------------------------------------
+-- 4. إنشاء التبويبات (الإعدادات، اللاعب، الاستهداف)
 -----------------------------------------
 local Pages = {}
 local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف"}
@@ -125,11 +167,37 @@ local function createAbilityButton(parent, text, position, onClick)
 end
 
 -----------------------------------------
--- القائمة 1: الإعدادات
+-- القائمة 1: الإعدادات (تحديث الزر الجديد)
 -----------------------------------------
 local SettingsPage = Pages[1]
+
 createAbilityButton(SettingsPage, "إضاءة ساطعة (FullBright)", UDim2.new(0.05, 0, 0, 10), function(isActive)
     game.Lighting.Ambient = isActive and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(128, 128, 128)
+end)
+
+-- إنشاء زر تبديل الألوان داخل قائمة الإعدادات
+local ChangeColorBtn = Instance.new("TextButton")
+ChangeColorBtn.Size = UDim2.new(0.9, 0, 0, 35)
+ChangeColorBtn.Position = UDim2.new(0.05, 0, 0, 50)
+ChangeColorBtn.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+ChangeColorBtn.Text = "تغيير لون الإطار (الحالي: أصفر)"
+ChangeColorBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+ChangeColorBtn.Font = Enum.Font.SourceSansBold
+ChangeColorBtn.TextSize = 14
+ChangeColorBtn.Parent = SettingsPage
+
+local themesList = {"أصفر", "أحمر", "أزرق", "قوس قزح"}
+local currentThemeIndex = 1
+
+ChangeColorBtn.MouseButton1Click:Connect(function()
+    currentThemeIndex = currentThemeIndex + 1
+    if currentThemeIndex > #themesList then
+        currentThemeIndex = 1
+    end
+    
+    local nextTheme = themesList[currentThemeIndex]
+    ChangeColorBtn.Text = "تغيير لون الإطار (الحالي: " .. nextTheme .. ")"
+    updateMenuTheme(nextTheme)
 end)
 
 -----------------------------------------
@@ -185,11 +253,10 @@ createAbilityButton(PlayerPage, "تفعيل الاختفاء", UDim2.new(0.05, 0
 end)
 
 -----------------------------------------
--- 4. برمجة "قائمة الاستهداف" (الشريحة الثالثة)
+-- القائمة 3: الاستهداف
 -----------------------------------------
 local TargetPage = Pages[3]
 
--- إنشاء مكان كتابة أحرف اسم اللاعب (TextBox)
 local NameInput = Instance.new("TextBox")
 NameInput.Size = UDim2.new(0.9, 0, 0, 40)
 NameInput.Position = UDim2.new(0.05, 0, 0, 15)
@@ -201,7 +268,6 @@ NameInput.Font = Enum.Font.SourceSans
 NameInput.TextSize = 14
 NameInput.Parent = TargetPage
 
--- دالة للبحث عن اللاعب من خلال أول أحرف من اسمه
 local function getTargetPlayer()
     local text = NameInput.Text:lower()
     if text == "" then return nil end
@@ -213,11 +279,10 @@ local function getTargetPlayer()
     return nil
 end
 
--- [ 1. زر الانتقال (Teleport) ]
 local TeleportBtn = Instance.new("TextButton")
 TeleportBtn.Size = UDim2.new(0.4, 0, 0, 45)
 TeleportBtn.Position = UDim2.new(0.05, 0, 0, 75)
-TeleportBtn.BackgroundColor3 = Color3.fromRGB(220, 180, 0) -- أصفر
+TeleportBtn.BackgroundColor3 = Color3.fromRGB(220, 180, 0)
 TeleportBtn.Text = "انتقال"
 TeleportBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
 TeleportBtn.Font = Enum.Font.SourceSansBold
@@ -229,7 +294,6 @@ TeleportBtn.MouseButton1Click:Connect(function()
     if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
         local myChar = Player.Character
         if myChar and myChar:FindFirstChild("HumanoidRootPart") then
-            -- نقلك مباشرة خلف اللاعب المستهدف قليلاً لكي لا تندمجوا معاً
             myChar.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
             print("تم الانتقال إلى: " .. target.Name)
         end
@@ -238,11 +302,10 @@ TeleportBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- [ 2. زر المشاهدة (Spectate) ]
 local SpectateBtn = Instance.new("TextButton")
 SpectateBtn.Size = UDim2.new(0.4, 0, 0, 45)
 SpectateBtn.Position = UDim2.new(0.55, 0, 0, 75)
-SpectateBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 200) -- رمادي افتراضي
+SpectateBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
 SpectateBtn.Text = "مشاهدة"
 SpectateBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
 SpectateBtn.Font = Enum.Font.SourceSansBold
@@ -257,18 +320,18 @@ SpectateBtn.MouseButton1Click:Connect(function()
     if isSpectating then
         local target = getTargetPlayer()
         if target and target.Character and target.Character:FindFirstChild("Humanoid") then
-            SpectateBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- يضوي أخضر
-            cam.CameraSubject = target.Character.Humanoid -- تحويل الكاميرا للاعب المستهدف
+            SpectateBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+            cam.CameraSubject = target.Character.Humanoid
             print("أنت تشاهد الآن: " .. target.Name)
         else
             isSpectating = false
             print("تعذر المشاهدة، تأكد من الاسم!")
         end
     else
-        SpectateBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 200) -- يعود رمادي
+        SpectateBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
         local myChar = Player.Character
         if myChar and myChar:FindFirstChild("Humanoid") then
-            cam.CameraSubject = myChar.Humanoid -- إعادة الكاميرا لشخصيتك
+            cam.CameraSubject = myChar.Humanoid
             print("تم إيقاف المشاهدة العودة للشخصية.")
         end
     end
