@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - نسخة الهواتف المطورة مع نظام نقاط الحفظ الدائم ]]
+-- [[ سكريبت أيهم الأسطوري - نسخة الهواتف المطورة مع ميزة اختراق الجدران ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
@@ -104,7 +104,7 @@ local function updateMenuTheme(themeName)
 end
 
 -----------------------------------------
--- 4. إنشاء التبويبات (تحديث لأربع قوائم)
+-- 4. إنشاء التبويبات القوائم الأربعة
 -----------------------------------------
 local Pages = {}
 local menuNames = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ"}
@@ -135,13 +135,13 @@ end
 
 local function createAbilityButton(parent, text, position, onClick)
     local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(0.9, 0, 0, 35)
+    Btn.Size = UDim2.new(0.9, 0, 0, 32) -- تقليل الحجم قليلاً لتناسب الشاشة المحمولة
     Btn.Position = position
     Btn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
     Btn.Text = text
     Btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     Btn.Font = Enum.Font.SourceSansBold
-    Btn.TextSize = 14
+    Btn.TextSize = 13
     Btn.Parent = parent
 
     local active = false
@@ -182,17 +182,25 @@ ChangeColorBtn.MouseButton1Click:Connect(function()
 end)
 
 -----------------------------------------
--- القائمة 2: اللاعب
+-- القائمة 2: اللاعب (تمت إضافة ميزة اختراق الجدران والتحويل لقائمة قابلة للتمرير)
 -----------------------------------------
 local PlayerPage = Pages[2]
+
+-- جعل صفحة اللاعب قابلة للتمرير لأن الأزرار أصبحت كثيرة وممتازة!
+local PlayerScroll = Instance.new("ScrollingFrame")
+PlayerScroll.Size = UDim2.new(1, 0, 1, 0)
+PlayerScroll.BackgroundTransparency = 1
+PlayerScroll.CanvasSize = UDim2.new(0, 0, 0, 250)
+PlayerScroll.ScrollBarThickness = 5
+PlayerScroll.Parent = PlayerPage
 
 local function createCustomValueButton(parent, buttonText, defaultNumber, positionY, onToggle)
     local isBtnActive = false
     local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(0.65, 0, 0, 35); Btn.Position = UDim2.new(0.05, 0, 0, positionY); Btn.BackgroundColor3 = Color3.fromRGB(200, 200, 200); Btn.Text = buttonText; Btn.TextColor3 = Color3.fromRGB(0, 0, 0); Btn.Font = Enum.Font.SourceSansBold; Btn.TextSize = 14; Btn.Parent = parent
+    Btn.Size = UDim2.new(0.65, 0, 0, 32); Btn.Position = UDim2.new(0.05, 0, 0, positionY); Btn.BackgroundColor3 = Color3.fromRGB(200, 200, 200); Btn.Text = buttonText; Btn.TextColor3 = Color3.fromRGB(0, 0, 0); Btn.Font = Enum.Font.SourceSansBold; Btn.TextSize = 13; Btn.Parent = parent
 
     local NumInput = Instance.new("TextBox")
-    NumInput.Size = UDim2.new(0.2, 0, 0, 35); NumInput.Position = UDim2.new(0.75, 0, 0, positionY); NumInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45); NumInput.TextColor3 = Color3.fromRGB(255, 255, 0); NumInput.Text = tostring(defaultNumber); NumInput.Font = Enum.Font.SourceSansBold; NumInput.TextSize = 16; NumInput.ClearTextOnFocus = false; NumInput.Parent = parent
+    NumInput.Size = UDim2.new(0.2, 0, 0, 32); NumInput.Position = UDim2.new(0.75, 0, 0, positionY); NumInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45); NumInput.TextColor3 = Color3.fromRGB(255, 255, 0); NumInput.Text = tostring(defaultNumber); NumInput.Font = Enum.Font.SourceSansBold; NumInput.TextSize = 15; NumInput.ClearTextOnFocus = false; NumInput.Parent = parent
 
     Btn.MouseButton1Click:Connect(function()
         isBtnActive = not isBtnActive
@@ -207,19 +215,19 @@ local function createCustomValueButton(parent, buttonText, defaultNumber, positi
     end)
 end
 
-createCustomValueButton(PlayerPage, "تفعيل السرعة الفائقة", 60, 10, function(isActive, speedValue)
+createCustomValueButton(PlayerScroll, "تفعيل السرعة الفائقة", 60, 10, function(isActive, speedValue)
     local char = Player.Character
     if char and char:FindFirstChild("Humanoid") then char.Humanoid.WalkSpeed = isActive and speedValue or 16 end
 end)
 
-createCustomValueButton(PlayerPage, "تفعيل القفز العالي", 120, 50, function(isActive, jumpValue)
+createCustomValueButton(PlayerScroll, "تفعيل القفز العالي", 120, 45, function(isActive, jumpValue)
     local char = Player.Character
     if char and char:FindFirstChild("Humanoid") then char.Humanoid.JumpPower = isActive and jumpValue or 50 end
 end)
 
 local flying = false
 local flyConnection = nil
-createAbilityButton(PlayerPage, "تفعيل الطيران", UDim2.new(0.05, 0, 0, 90), function(isActive)
+createAbilityButton(PlayerScroll, "تفعيل الطيران", UDim2.new(0.05, 0, 0, 80), function(isActive)
     local char = Player.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
     local humanoid = char and char:FindFirstChild("Humanoid")
@@ -241,7 +249,7 @@ createAbilityButton(PlayerPage, "تفعيل الطيران", UDim2.new(0.05, 0, 
     end
 end)
 
-createAbilityButton(PlayerPage, "تفعيل الاختفاء", UDim2.new(0.05, 0, 0, 130), function(isActive)
+createAbilityButton(PlayerScroll, "تفعيل الاختفاء", UDim2.new(0.05, 0, 0, 115), function(isActive)
     local char = Player.Character
     if char then
         for _, part in ipairs(char:GetDescendants()) do
@@ -254,7 +262,7 @@ end)
 
 local infiniteJumpEnabled = false
 local jumpConnection = nil
-createAbilityButton(PlayerPage, "تفعيل القفز اللانهائي", UDim2.new(0.05, 0, 0, 170), function(isActive)
+createAbilityButton(PlayerScroll, "تفعيل القفز اللانهائي", UDim2.new(0.05, 0, 0, 150), function(isActive)
     infiniteJumpEnabled = isActive
     if infiniteJumpEnabled then
         jumpConnection = UserInputService.JumpRequest:Connect(function()
@@ -264,6 +272,36 @@ createAbilityButton(PlayerPage, "تفعيل القفز اللانهائي", UDim
         end)
     else
         if jumpConnection then jumpConnection:Disconnect(); jumpConnection = nil end
+    end
+end)
+
+-- [ 6. ميزة اختراق الجدران (Noclip) الجديدة ]
+local noclipEnabled = false
+local noclipConnection = nil
+
+createAbilityButton(PlayerScroll, "تفعيل اختراق الجدران", UDim2.new(0.05, 0, 0, 185), function(isActive)
+    noclipEnabled = isActive
+    
+    if noclipEnabled then
+        -- تشغيل حلقة برمجية تلغي تصادم الشخصية مع الجدران بشكل مستمر
+        noclipConnection = RunService.Stepped:Connect(function()
+            local char = Player.Character
+            if char and noclipEnabled then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+        print("تم تفعيل اختراق الجدران!")
+    else
+        -- إيقاف الميزة وإعادة التصادم الطبيعي
+        if noclipConnection then
+            noclipConnection:Disconnect()
+            noclipConnection = nil
+        end
+        print("تم تعطيل اختراق الجدران.")
     end
 end)
 
@@ -317,47 +355,21 @@ SpectateBtn.MouseButton1Click:Connect(function()
 end)
 
 -----------------------------------------
--- القائمة 4: نقاط الحفظ والتشيك بوينت الدائمة
+-- القائمة 4: نقاط الحفظ
 -----------------------------------------
 local CheckpointPage = Pages[4]
-
--- صندوق كتابة اسم النقطة
 local CPNameInput = Instance.new("TextBox")
-CPNameInput.Size = UDim2.new(0.9, 0, 0, 35)
-CPNameInput.Position = UDim2.new(0.05, 0, 0, 10)
-CPNameInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-CPNameInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-CPNameInput.Text = ""
-CPNameInput.PlaceholderText = "اكتب اسم النقطة (مثل: الملك)..."
-CPNameInput.Font = Enum.Font.SourceSans
-CPNameInput.TextSize = 14
-CPNameInput.Parent = CheckpointPage
+CPNameInput.Size = UDim2.new(0.9, 0, 0, 35); CPNameInput.Position = UDim2.new(0.05, 0, 0, 10); CPNameInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45); CPNameInput.TextColor3 = Color3.fromRGB(255, 255, 255); CPNameInput.Text = ""; CPNameInput.PlaceholderText = "اكتب اسم النقطة (مثل: الملك)..."; CPNameInput.Font = Enum.Font.SourceSans; CPNameInput.TextSize = 14; CPNameInput.Parent = CheckpointPage
 
--- زر الحفظ
 local SaveCPBtn = Instance.new("TextButton")
-SaveCPBtn.Size = UDim2.new(0.9, 0, 0, 35)
-SaveCPBtn.Position = UDim2.new(0.05, 0, 0, 50)
-SaveCPBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-SaveCPBtn.Text = "حفظ النقطة الحالية"
-SaveCPBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-SaveCPBtn.Font = Enum.Font.SourceSansBold
-SaveCPBtn.TextSize = 14
-SaveCPBtn.Parent = CheckpointPage
+SaveCPBtn.Size = UDim2.new(0.9, 0, 0, 35); SaveCPBtn.Position = UDim2.new(0.05, 0, 0, 50); SaveCPBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0); SaveCPBtn.Text = "حفظ النقطة الحالية"; SaveCPBtn.TextColor3 = Color3.fromRGB(255, 255, 255); SaveCPBtn.Font = Enum.Font.SourceSansBold; SaveCPBtn.TextSize = 14; SaveCPBtn.Parent = CheckpointPage
 
--- قائمة النقاط المحفوظة القابلة للتمرير
 local CPListFrame = Instance.new("ScrollingFrame")
-CPListFrame.Size = UDim2.new(0.9, 0, 0, 135)
-CPListFrame.Position = UDim2.new(0.05, 0, 0, 95)
-CPListFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-CPListFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-CPListFrame.ScrollBarThickness = 6
-CPListFrame.Parent = CheckpointPage
+CPListFrame.Size = UDim2.new(0.9, 0, 0, 135); CPListFrame.Position = UDim2.new(0.05, 0, 0, 95); CPListFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25); CPListFrame.CanvasSize = UDim2.new(0, 0, 0, 0); CPListFrame.ScrollBarThickness = 6; CPListFrame.Parent = CheckpointPage
 
 local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Padding = UDim.new(0, 5)
-UIListLayout.Parent = CPListFrame
+UIListLayout.Padding = UDim.new(0, 5); UIListLayout.Parent = CPListFrame
 
--- نظام تحميل وحفظ البيانات برمجياً (الملفات الافتراضية للسكريبتات)
 local savedPoints = {}
 local filename = "AihamCheckpoints_Raven.json"
 
@@ -372,83 +384,42 @@ local function savePointsToFile()
     if writefile then pcall(function() writefile(filename, HttpService:JSONEncode(savedPoints)) end) end
 end
 
-local refreshList -- تعريف دالة التحديث لاحقاً
-
+local refreshList
 refreshList = function()
-    -- مسح العناصر القديمة من القائمة لإعادة بنائها
-    for _, child in ipairs(CPListFrame:GetChildren()) do
-        if child:IsA("Frame") then child:Destroy() end
-    end
-    
+    for _, child in ipairs(CPListFrame:GetChildren()) do if child:IsA("Frame") then child:Destroy() end end
     local count = 0
     for name, posData in pairs(savedPoints) do
         count = count + 1
-        
         local ItemFrame = Instance.new("Frame")
-        ItemFrame.Size = UDim2.new(0.98, 0, 0, 30)
-        ItemFrame.BackgroundTransparency = 1
-        ItemFrame.Parent = CPListFrame
+        ItemFrame.Size = UDim2.new(0.98, 0, 0, 30); ItemFrame.BackgroundTransparency = 1; ItemFrame.Parent = CPListFrame
         
-        -- زر الانتقال للنقطة
         local GoBtn = Instance.new("TextButton")
-        GoBtn.Size = UDim2.new(0.8, 0, 1, 0)
-        GoBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        GoBtn.Text = name
-        GoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        GoBtn.Font = Enum.Font.SourceSansBold
-        GoBtn.TextSize = 14
-        GoBtn.Parent = ItemFrame
-        
+        GoBtn.Size = UDim2.new(0.8, 0, 1, 0); GoBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50); GoBtn.Text = name; GoBtn.TextColor3 = Color3.fromRGB(255, 255, 255); GoBtn.Font = Enum.Font.SourceSansBold; GoBtn.TextSize = 14; GoBtn.Parent = ItemFrame
         GoBtn.MouseButton1Click:Connect(function()
             local char = Player.Character
             local root = char and char:FindFirstChild("HumanoidRootPart")
-            if root then
-                root.CFrame = CFrame.new(posData.X, posData.Y, posData.Z)
-                print("تم الانتقال إلى النقطة: " .. name)
-            end
+            if root then root.CFrame = CFrame.new(posData.X, posData.Y, posData.Z) end
         end)
         
-        -- زر الحذف (X)
         local DelBtn = Instance.new("TextButton")
-        DelBtn.Size = UDim2.new(0.15, 0, 1, 0)
-        DelBtn.Position = UDim2.new(0.85, 0, 0, 0)
-        DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-        DelBtn.Text = "X"
-        DelBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        DelBtn.Font = Enum.Font.SourceSansBold
-        DelBtn.TextSize = 14
-        DelBtn.Parent = ItemFrame
-        
+        DelBtn.Size = UDim2.new(0.15, 0, 1, 0); DelBtn.Position = UDim2.new(0.85, 0, 0, 0); DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); DelBtn.Text = "X"; DelBtn.TextColor3 = Color3.fromRGB(255, 255, 255); DelBtn.Font = Enum.Font.SourceSansBold; DelBtn.TextSize = 14; DelBtn.Parent = ItemFrame
         DelBtn.MouseButton1Click:Connect(function()
-            savedPoints[name] = nil
-            savePointsToFile()
-            refreshList()
-            print("تم حذف النقطة: " .. name)
+            savedPoints[name] = nil; savePointsToFile(); refreshList()
         end)
     end
     CPListFrame.CanvasSize = UDim2.new(0, 0, 0, count * 35)
 end
 
--- كود عمل زر الحفظ
 SaveCPBtn.MouseButton1Click:Connect(function()
     local name = CPNameInput.Text
-    if name == "" then print("الرجاء كتابة اسم أولاً!") return end
-    
+    if name == "" then return end
     local char = Player.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
     if root then
-        savedPoints[name] = {
-            X = root.Position.X,
-            Y = root.Position.Y,
-            Z = root.Position.Z
-        }
-        savePointsToFile()
-        refreshList()
-        CPNameInput.Text = "" -- تفريغ المربع بعد الحفظ
-        print("تم حفظ النقطة بنجاح باسم: " .. name)
+        savedPoints[name] = {X = root.Position.X, Y = root.Position.Y, Z = root.Position.Z}
+        savePointsToFile(); refreshList(); CPNameInput.Text = ""
     end
 end)
 
--- تحميل النقاط المحفوظة تلقائياً عند بدء تشغيل السكريبت
 loadPoints()
 refreshList()
