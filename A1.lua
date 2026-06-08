@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V12 الأوتوماتيكي ]]
+-- [[ سكريبت أيهم الأسطوري الشامل والنهائي والكامل V12 المصلح والمضمون 100% ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -7,13 +7,16 @@ local PlayersService = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 
-if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
+-- تنظيف أي نسخة قديمة لتجنب المشاكل
+if PlayerGui:FindFirstChild("AihamSuperMenu") then 
+    PlayerGui.AihamSuperMenu:Destroy() 
+end
 
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamSuperMenu"
 ScreenGui.ResetOnSpawn = false
 
--- الإطار الرئيسي
+-- الإطار الرئيسي للشاشة
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 480, 0, 320)
 MainFrame.Position = UDim2.new(0.5, -240, 0.5, -160)
@@ -22,10 +25,10 @@ MainFrame.BorderSizePixel = 3
 MainFrame.Active = true
 MainFrame.Draggable = true
 
--- جدول نقاط الحفظ المشترك بين الشرائح
+-- جدول نقاط الحفظ الخاص بشريحة الحفظ
 local savedLocations = {}
 
--- نظام ألوان الحواف لشريحة الإعدادات
+-- نظام ألوان الحواف الكامل لجميع الشرائح
 local rainbowConnection
 local function setBorderColor(mode)
     if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
@@ -41,7 +44,7 @@ local function setBorderColor(mode)
 end
 setBorderColor("Yellow")
 
--- زر الفتح والإغلاق الجانبي (●)
+-- زر الفتح والإغلاق الجانبي الصغير (●)
 local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 40, 0, 40)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -20)
@@ -52,13 +55,13 @@ ToggleButton.TextSize = 22 ToggleButton.Font = Enum.Font.SourceSansBold
 ToggleButton.Active = true ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
--- العنوان العلوي
+-- العنوان العلوي الثابت
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 35) Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Title.Text = "صنع من قبل المطور الأسطوري أيهم"
 Title.TextColor3 = Color3.fromRGB(255, 200, 0) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
 
--- القائمة الجانبية
+-- القائمة الجانبية للتنقل
 local SideMenu = Instance.new("Frame", MainFrame)
 SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -70,6 +73,7 @@ ContentArea.BackgroundTransparency = 1
 local Pages = {}
 local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات"}
 
+-- بناء وتفعيل الصفحات والشرائح بالكامل لتشتغل جميعها بشكل صحيح
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
     btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
@@ -79,7 +83,8 @@ for i, name in ipairs(tabs) do
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
     page.CanvasSize = UDim2.new(0, 0, 0, 450) page.ScrollBarThickness = 5
-    page.Visible = (i == 1) Pages[i] = page
+    page.Visible = (i == 1) 
+    Pages[i] = page
     
     btn.MouseButton1Click:Connect(function()
         for _, p in ipairs(Pages) do p.Visible = false end
@@ -90,31 +95,12 @@ end
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
 
--- زر الفول برايت
-local BrightBtn = Instance.new("TextButton", MapPage)
-BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 10)
-BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-BrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255) BrightBtn.Font = Enum.Font.SourceSansBold BrightBtn.TextSize = 13
-local brightActive = false
-local originalBrightness = Lighting.Brightness
-local originalAmbient = Lighting.Ambient
-
-BrightBtn.MouseButton1Click:Connect(function()
-    brightActive = not brightActive
-    BrightBtn.BackgroundColor3 = brightActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
-    if brightActive then
-        Lighting.Brightness = 4 Lighting.Ambient = Color3.fromRGB(255, 255, 255) Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
-    else
-        Lighting.Brightness = originalBrightness Lighting.Ambient = originalAmbient
-    end
-end)
-
--- الزر الجديد الزائد: توصيل الصناديق السريع والأوتوماتيكي (من أسرارك)
+-- الزر المضاف: توصيل الصناديق السريع والأوتوماتيكي السري
 local SingleDeliveryBtn = Instance.new("TextButton", MapPage)
 SingleDeliveryBtn.Size = UDim2.new(0.9, 0, 0, 40) 
-SingleDeliveryBtn.Position = UDim2.new(0.05, 0, 0, 52)
+SingleDeliveryBtn.Position = UDim2.new(0.05, 0, 0, 10)
 SingleDeliveryBtn.Text = "توصيل الصناديق السريع [أوتوماتيك]"
-SingleDeliveryBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) -- لون مميز للزر الجديد
+SingleDeliveryBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120)
 SingleDeliveryBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 SingleDeliveryBtn.Font = Enum.Font.SourceSansBold
 SingleDeliveryBtn.TextSize = 13
@@ -141,11 +127,8 @@ SingleDeliveryBtn.MouseButton1Click:Connect(function()
         task.spawn(function()
             while deliveryActive do
                 if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-                    -- 1. انتقال فوري لمكان الصناديق
                     Player.Character.HumanoidRootPart.CFrame = BoxLocations[math.random(1, #BoxLocations)]
                     task.wait(0.3)
-                    
-                    -- 2. انتقال فوري للتسليم (محكمة، إدارة، نافورة) عشوائياً للتمويه والتأمين
                     Player.Character.HumanoidRootPart.CFrame = DeliveryPoints[math.random(1, #DeliveryPoints)]
                     task.wait(1.5)
                 end
@@ -155,13 +138,32 @@ SingleDeliveryBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- أزرار الألوان داخل شريحة الإعدادات (تم تعديل مكانها لتنزل لأسفل الزر الجديد)
+-- زر الفول برايت الأصلي
+local BrightBtn = Instance.new("TextButton", MapPage)
+BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 55)
+BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+BrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255) BrightBtn.Font = Enum.Font.SourceSansBold BrightBtn.TextSize = 13
+local brightActive = false
+local originalBrightness = Lighting.Brightness
+local originalAmbient = Lighting.Ambient
+
+BrightBtn.MouseButton1Click:Connect(function()
+    brightActive = not brightActive
+    BrightBtn.BackgroundColor3 = brightActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
+    if brightActive then
+        Lighting.Brightness = 4 Lighting.Ambient = Color3.fromRGB(255, 255, 255) Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+    else
+        Lighting.Brightness = originalBrightness Lighting.Ambient = originalAmbient
+    end
+end)
+
+-- أزرار الألوان وتغيير الحواف
 local colors = {"Rainbow", "Red", "Yellow", "Blue"}
 local colorNames = {Rainbow = "حواف قوس قزح", Red = "حواف حمراء", Yellow = "حواف صفراء", Blue = "حواف زرقاء"}
 for idx, mode in ipairs(colors) do
     local cBtn = Instance.new("TextButton", MapPage)
     cBtn.Size = UDim2.new(0.42, 0, 0, 32)
-    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 105 or 145)
+    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 100 or 140)
     cBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) cBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
@@ -258,7 +260,7 @@ NameBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30) NameBox.TextColor3 = Color
 
 local TeleBtn = Instance.new("TextButton", TargetPage)
 TeleBtn.Size = UDim2.new(0.9, 0, 0, 32) TeleBtn.Position = UDim2.new(0.05, 0, 0, 55)
-TeleBtn.Text = "انتقال فوري" TeleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) TeleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TeleBtn.Text = "انتقال فوري للاعب" TeleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) TeleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 TeleBtn.MouseButton1Click:Connect(function()
     local tName = NameBox.Text:lower()
     for _, p in ipairs(PlayersService:GetPlayers()) do
@@ -309,7 +311,7 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 5: شريحة البارتكلز والتأثيرات بنظام الأدوات (Tools) ] ===
+-- === [ شريحة 5: التأثيرات والأدوات ] ===
 local EffectsPage = Pages[5]
 
 local function clearAllEffects()
@@ -343,5 +345,5 @@ createEffectBtn("إعطائي أداة الشظايا الصفراء (Yellow Par
 createEffectBtn("إعطائي أداة الشظايا الحمراء (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveServerToolEffect("Red Particles", "Particles", Color3.fromRGB(255, 0, 0)) end)
 createEffectBtn("إزالة كافة الأدوات والتأثيرات من الحقيبة", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
--- زر إغلاق القائمة (X)
+-- زر إغلاق القائمة الرئيسي (X)
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
