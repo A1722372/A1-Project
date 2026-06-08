@@ -1,1 +1,13 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/A1722372/A1-Project/main/A1.lua"))()
+-- صنع من قبل أيهم
+loadstring(game:HttpGet("https://rawscripts.net/raw/ryfn-alaskryh-or-jwaez-ywmyh-RAVEN-ACADEMY-230857"))()
+
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+task.spawn(function()
+    while true do
+        task.wait(900)
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("Humanoid") then
+            localPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
+    end
+end)
