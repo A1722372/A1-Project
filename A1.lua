@@ -201,7 +201,7 @@ GhostBtn.Text = "الجوست مود المطور (تعديل المنظور)" G
 
 local ghostActive = false
 local ghostBody = nil
-local moveConnection = nil
+local hideConnection = nil
 
 GhostBtn.MouseButton1Click:Connect(function()
     ghostActive = not ghostActive
@@ -217,37 +217,43 @@ GhostBtn.MouseButton1Click:Connect(function()
             ghostBody.Parent = workspace
             originalChar.Archivable = false
             
-            -- 2. إخفاء الجسد الحقيقي الأساسي وجعله شفافاً بالكامل من غير اصطدام
-            for _, part in ipairs(originalChar:GetChildren()) do
-                if part:IsA("BasePart") then
-                    part.Transparency = 1
-                    part.CanCollide = false
-                elseif part:IsA("Accessory") and part:FindFirstChild("Handle") then
-                    part.Handle.Transparency = 1
+            -- 2. إصلاح الاختفاء: استخدام RenderStepped لضمان بقاء الجسد الحقيقي مخفي بالكامل وبدون اصطدام
+            hideConnection = RunService.RenderStepped:Connect(function()
+                if originalChar then
+                    for _, part in ipairs(originalChar:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.Transparency = 1
+                            part.LocalTransparencyModifier = 1
+                            part.CanCollide = false
+                        elseif part:IsA("Decal") or part:IsA("Texture") then
+                            part.Transparency = 1
+                        end
+                    end
                 end
-            end
+            end)
             
             -- 3. جعل الجسد المستنسخ (الجوست) شبه شفاف لتعرف أنه الوضع الشبح
-            for _, part in ipairs(ghostBody:GetChildren()) do
+            for _, part in ipairs(ghostBody:GetDescendants()) do
                 if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
                     part.Transparency = 0.4
-                elseif part:IsA("Accessory") and part:FindFirstChild("Handle") then
-                    part.Handle.Transparency = 0.4
+                elseif part:IsA("Decal") then
+                    part.Transparency = 0.4
                 end
             end
             
-            -- 4. تعديل الكاميرا لتتبع الـ Humanoid الخاص بجسد الجوست فوراً!
+            -- 4. العبقرية هنا: تحويل منظور الكاميرا فوراً ليلحق الجسد الجوست!
             if ghostBody:FindFirstChild("Humanoid") then
                 Camera.CameraSubject = ghostBody.Humanoid
             end
             
-            -- ربط التحكم بالجسد المستنسخ ليتحرك معك بسلاسة
+            -- ربط التحكم بالجسد المستنسخ ليتحرك معك
+            local moveConnection
             moveConnection = RunService.RenderStepped:Connect(function()
                 if not ghostActive or not ghostBody or not ghostBody:FindFirstChild("HumanoidRootPart") or not originalChar:FindFirstChild("HumanoidRootPart") then
-                    if moveConnection then moveConnection:Disconnect() moveConnection = nil end
+                    if moveConnection then moveConnection:Disconnect() end
                     return
                 end
-                -- نقل إحداثيات الحركة والقفز من تحكمك الأساسي إلى الجوست
+                -- نقل إحداثيات الحركة من تحكمك الأساسي إلى الجوست
                 ghostBody.Humanoid:Move(originalChar.Humanoid.MoveDirection, true)
                 if originalChar.Humanoid.Jump then
                     ghostBody.Humanoid.Jump = true
@@ -255,24 +261,25 @@ GhostBtn.MouseButton1Click:Connect(function()
             end)
             
         else
-            -- عند إلغاء التفعيل: إرجاع منظور الكاميرا للجسد الأصلي وحذف الجوست
-            if moveConnection then moveConnection:Disconnect() moveConnection = nil end
+            -- عند إلغاء التفعيل: إيقاف حلقة إخفاء الجسد الأصلي وحذف الجوست
+            if hideConnection then hideConnection:Disconnect() hideConnection = nil end
             
             if originalChar and originalChar:FindFirstChild("Humanoid") then
                 Camera.CameraSubject = originalChar.Humanoid
                 
-                -- إعادة إظهار الجسد الأساسي الحقيقي وإعادة الاصطدام
-                for _, part in ipairs(originalChar:GetChildren()) do
+                -- إعادة إظهار الجسد الأساسي الحقيقي وجعله مرئياً
+                for _, part in ipairs(originalChar:GetDescendants()) do
                     if part:IsA("BasePart") then
                         part.Transparency = 0
+                        part.LocalTransparencyModifier = 0
                         part.CanCollide = true
-                    elseif part:IsA("Accessory") and part:FindFirstChild("Handle") then
-                        part.Handle.Transparency = 0
+                    elseif part:IsA("Decal") or part:IsA("Texture") then
+                        part.Transparency = 0
                     end
                 end
             end
             
-            -- حذف الجسد الشبح من الماب
+            -- حذف الجسد الشبح
             if ghostBody then
                 ghostBody:Destroy()
                 ghostBody = nil
@@ -363,13 +370,4 @@ SaveBtn.Text = "حفظ" SaveBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0) Sav
 SaveBtn.MouseButton1Click:Connect(function()
     local locName = CPInput.Text
     if locName ~= "" and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        savedLocations[locName] = Player.Character.HumanoidRootPart.CFrame
-        CPInput.Text = "" updateCPList()
-    end
-end)
-
--- === [ شريحة 5: التأثيرات - مكملة بالكامل ] ===
-local EffectsPage = Pages[5]
-local function clearAllEffects()
-    if Player.Character then
-        for _, item in 
+        savedLocations[locName]
