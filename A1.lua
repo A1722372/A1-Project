@@ -1,13 +1,26 @@
--- [[ سكريبت أيهم الأسطوري - النسخة المفتوحة الشاملة V20 ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V22 - مع زر تحكم ثابت ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
--- [1] إنشاء الحاوية الأساسية
+-- [1] إنشاء الحاوية الأساسية مع ZIndex عالي لضمان الظهور
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamScript_Main"
 ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 999 
 
--- [2] إنشاء الإطار الرئيسي (الواجهة)
+-- [2] زر العين (ToggleBtn) - تم وضعه في الأعلى يميناً لعدم التداخل
+local ToggleBtn = Instance.new("TextButton", ScreenGui)
+ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
+ToggleBtn.Position = UDim2.new(0.9, -60, 0.1, 0) -- يمين الشاشة
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ToggleBtn.Text = "👁️"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 200, 0)
+ToggleBtn.TextSize = 25
+ToggleBtn.Draggable = true
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+Instance.new("UIStroke", ToggleBtn).Color = Color3.fromRGB(255, 200, 0)
+
+-- [3] الإطار الرئيسي (MainFrame)
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 500, 0, 350)
 MainFrame.Position = UDim2.new(0.5, -250, 0.5, -175)
@@ -15,29 +28,20 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true 
 MainFrame.Draggable = true
+MainFrame.Visible = true 
 
-local UICorner = Instance.new("UICorner", MainFrame)
-UICorner.CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
 
--- [3] إعدادات التبويبات (أضف أي اسم هنا في أي وقت!)
-local MenuConfig = {
-    "اعدادات الماب",
-    "اللاعب",
-    "الاستهداف",
-    "التأثيرات",
-    "المحفوظات",
-    "العسكرية 🎖️"
-}
-
--- [4] قائمة الأزرار الجانبية
+-- [4] التبويبات (MenuConfig)
+local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 150, 1, 0)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 SideMenu.BorderSizePixel = 0
 SideMenu.CanvasSize = UDim2.new(0, 0, 0, #MenuConfig * 50)
 SideMenu.ScrollBarThickness = 2
+Instance.new("UICorner", SideMenu).CornerRadius = UDim.new(0, 10)
 
--- [5] منطقة عرض المحتوى
 local ContentArea = Instance.new("Frame", MainFrame)
 ContentArea.Size = UDim2.new(1, -150, 1, 0)
 ContentArea.Position = UDim2.new(0, 150, 0, 0)
@@ -45,7 +49,6 @@ ContentArea.BackgroundTransparency = 1
 
 local AllPages = {}
 
--- [6] بناء الأزرار والصفحات ديناميكياً
 for i, name in ipairs(MenuConfig) do
     local btn = Instance.new("TextButton", SideMenu)
     btn.Size = UDim2.new(0.9, 0, 0, 40)
@@ -59,7 +62,6 @@ for i, name in ipairs(MenuConfig) do
     page.Size = UDim2.new(1, 0, 1, 0)
     page.BackgroundTransparency = 1
     page.Visible = (i == 1)
-    page.Name = name
     AllPages[name] = page
     
     btn.MouseButton1Click:Connect(function()
@@ -68,16 +70,7 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- [7] زر التصغير والتكبير
-local ToggleBtn = Instance.new("TextButton", ScreenGui)
-ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
-ToggleBtn.Position = UDim2.new(0, 20, 0.5, -25)
-ToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-ToggleBtn.Text = "👁️"
-ToggleBtn.TextColor3 = Color3.new(1, 1, 1)
-ToggleBtn.Draggable = true
-Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
-
+-- [5] منطق التصغير (يعمل الآن على إخفاء الإطار فقط)
 ToggleBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
