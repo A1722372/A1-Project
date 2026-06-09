@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V16 (الكامل مع تاب IY الجديد) ]]
+-- [[ سكريبت أيهم الأسطوري V16 (الكامل والمصلح 100%) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -342,11 +342,11 @@ createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particl
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
--- === [ شريحة 6: تاب IY الجديد بطلب من أيهم الأسطوري ] ===
+-- === [ شريحة 6: تاب IY الجديد والمصلح بالكامل ] ===
 local IYPage = Pages[6]
 
 local function makeIYButton(text, yPos, onClick)
     local btn = Instance.new("TextButton", IYPage)
     btn.Size = UDim2.new(0.9, 0, 0, 35)
     btn.Position = UDim2.new(0.05, 0, 0, yPos)
-    btn.BackgroundColo
+    btn.BackgroundColor3 = Color
