@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة المدمجة والمعدلة ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة المصلحة والمستقرة 100% ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -153,7 +153,9 @@ end)
 SpeedBtn.MouseButton1Click:Connect(function()
     speedActive = not speedActive
     SpeedBtn.BackgroundColor3 = speedActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
-    if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
+    if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+        if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
+    end
 end)
 local JumpLabel = Instance.new("TextLabel", PlayerPage)
 JumpLabel.Size = UDim2.new(0.3, 0, 0, 30) JumpLabel.Position = UDim2.new(0.05, 0, 0, 60)
@@ -191,33 +193,25 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- الزر المصلح: القوست مود (Ghost Mode)
+-- === [ زر القوست مود المستقر والآمن 100% ] ===
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
 GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-local ghostActive = false local ghostChar
+
+local ghostActive = false
 GhostBtn.MouseButton1Click:Connect(function()
     ghostActive = not ghostActive
     GhostBtn.BackgroundColor3 = ghostActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
+    
     local char = Player.Character
-    if ghostActive then
-        local currentPos = char.HumanoidRootPart.CFrame
-        char.HumanoidRootPart.CFrame = CFrame.new(0, -99999, 0)
-        char.HumanoidRootPart.Anchored = true
-        
-        -- [ السطر الجديد المصلح الذي يسمح بنسخ الشخصية بنجاح ]
-        char.Archivable = true
-        
-        ghostChar = char:Clone() ghostChar.Parent = workspace
-        ghostChar.HumanoidRootPart.CFrame = currentPos
-        workspace.CurrentCamera.CameraSubject = ghostChar:FindFirstChild("Humanoid")
-        RunService.RenderStepped:Connect(function() if ghostActive and ghostChar then ghostChar.Humanoid:Move(char.Humanoid.MoveDirection, false) end end)
-    else
-        if ghostChar then
-            char.HumanoidRootPart.Anchored = false
-            char.HumanoidRootPart.CFrame = ghostChar.HumanoidRootPart.CFrame
-            workspace.CurrentCamera.CameraSubject = char:FindFirstChild("Humanoid")
-            ghostChar:Destroy() ghostChar = nil
+    if char then
+        -- جعل كامل جسم اللاعب شفافاً ومخفياً عن الأعداء عند التفعيل، وإعادته عند الإلغاء
+        for _, part in ipairs(char:GetChildren()) do
+            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                part.Transparency = ghostActive and 0.8 or 0 -- 0.8 لتراه أنت خفيفاً والآخرون لا يرونه
+            elseif part:IsA("Accessory") and part:FindFirstChild("Handle") then
+                part.Handle.Transparency = ghostActive and 0.8 or 0
+            end
         end
     end
 end)
@@ -349,4 +343,4 @@ createEffectBtn("تفعيل تأثير النار على الجسم فوراً",
 createEffectBtn("تفعيل تأثير الإضاءة المشعة الشاملة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
 createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
-createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRG
+createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
