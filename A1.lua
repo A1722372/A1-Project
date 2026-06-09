@@ -96,8 +96,6 @@ end
 
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
-
--- زر الشادر (مشغل)
 local ShaderBtn = Instance.new("TextButton", MapPage)
 ShaderBtn.Size = UDim2.new(0.9, 0, 0, 35) ShaderBtn.Position = UDim2.new(0.05, 0, 0, 10)
 ShaderBtn.Text = "تفعيل الشادر (Shader)" ShaderBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -135,7 +133,7 @@ for idx, mode in ipairs(colors) do
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
 end
 
--- === [ باقي السكربت كما هو ] ===
+-- === [ شريحة 2: اللاعب ] ===
 local PlayerPage = Pages[2]
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
 SpeedLabel.Size = UDim2.new(0.3, 0, 0, 30) SpeedLabel.Position = UDim2.new(0.05, 0, 0, 15)
@@ -186,42 +184,16 @@ JumpBtn.MouseButton1Click:Connect(function()
         end
     end
 end)
+
+-- زر الطيران المعدل لتشغيل سكربت FlyGuiV3
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
-FlyBtn.Text = "تفعيل الطيران السهل (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyBtn.Text = "تفعيل الطيران (FlyGuiV3)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 FlyBtn.Font = Enum.Font.SourceSansBold FlyBtn.TextSize = 13
-local flying = false
-local flyConnection
-local bodyVelocity, bodyGyro
 FlyBtn.MouseButton1Click:Connect(function()
-    flying = not flying
-    FlyBtn.BackgroundColor3 = flying and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(120, 0, 120)
-    FlyBtn.Text = flying and "تعطيل الطيران" or "تفعيل الطيران السهل (Fly)"
-    local torso = Player.Character and (Player.Character:FindFirstChild("UpperTorso") or Player.Character:FindFirstChild("HumanoidRootPart"))
-    if not torso then return end
-    if flying then
-        bodyVelocity = Instance.new("BodyVelocity", torso)
-        bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-        bodyGyro = Instance.new("BodyGyro", torso)
-        bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-        bodyGyro.CFrame = torso.CFrame
-        flyConnection = RunService.RenderStepped:Connect(function()
-            if Player.Character and torso and bodyVelocity and bodyGyro then
-                bodyGyro.CFrame = workspace.CurrentCamera.CFrame
-                local moveDirection = Player.Character.Humanoid.MoveDirection
-                local velocity = moveDirection * 70
-                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then velocity = velocity + Vector3.new(0, 50, 0)
-                elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then velocity = velocity + Vector3.new(0, -50, 0) end
-                bodyVelocity.Velocity = velocity
-            end
-        end)
-    else
-        if flyConnection then flyConnection:Disconnect() flyConnection = nil end
-        if bodyVelocity then bodyVelocity:Destroy() end
-        if bodyGyro then bodyGyro:Destroy() end
-    end
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
+
 local NoclipBtn = Instance.new("TextButton", PlayerPage)
 NoclipBtn.Size = UDim2.new(0.9, 0, 0, 32) NoclipBtn.Position = UDim2.new(0.05, 0, 0, 145)
 NoclipBtn.Text = "تفعيل اختراق الجدران (Noclip)" NoclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) NoclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
