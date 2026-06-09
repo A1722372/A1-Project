@@ -312,6 +312,13 @@ end
 
 -- === [ شريحة 7: الرقصات ] ===
 local EmotePage = Pages[7]
+local emoteList = {
+    {name = "رقصة 1", id = "0000000000"}, -- عدل الـ ID
+    {name = "رقصة 2", id = "0000000000"}
+}
+-- تحديث حجم التمرير تلقائياً بناءً على عدد الرقصات
+EmotePage.CanvasSize = UDim2.new(0, 0, 0, (#emoteList * 55) + 20)
+
 local function playEmote(id)
     local char = Player.Character
     if char and char:FindFirstChild("Humanoid") then
@@ -321,11 +328,6 @@ local function playEmote(id)
         track:Play()
     end
 end
-
-local emoteList = {
-    {name = "الرقصة 1", id = "0000000000"}, -- استبدل الأصفار بالـ ID
-    {name = "الرقصة 2", id = "0000000000"}
-}
 
 for i, data in ipairs(emoteList) do
     local eBtn = Instance.new("TextButton", EmotePage)
