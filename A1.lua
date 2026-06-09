@@ -112,7 +112,14 @@ for i, name in ipairs(tabs) do
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) 
     page.BackgroundTransparency = 1
-    page.CanvasSize = UDim2.new(0, 0, 0, 450) 
+    
+    -- زيادة مساحة التمرير لصفحة اللاعب لتستوعب الأزرار الثلاثة الجديدة دون كراش
+    if name == "اللاعب" then
+        page.CanvasSize = UDim2.new(0, 0, 0, 550)
+    else
+        page.CanvasSize = UDim2.new(0, 0, 0, 450)
+    end
+    
     page.ScrollBarThickness = 5
     page.Visible = (i == 1) 
     Pages[i] = page
@@ -282,7 +289,7 @@ end)
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) 
 GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
-GhostBtn.Text = "القفست مود (Ghost Mode)" 
+GhostBtn.Text = "القوست مود (Ghost Mode)" 
 GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) 
 GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local ghostActive = false 
@@ -505,9 +512,4 @@ local function updateCPList()
         local ItemFrame = Instance.new("Frame", ListContainer)
         ItemFrame.Size = UDim2.new(0.95, 0, 0, 30) 
         ItemFrame.Position = UDim2.new(0, 0, 0, count * 34)
-        ItemFrame.BackgroundTransparency = 1
-        
-        local GoBtn = Instance.new("TextButton", ItemFrame)
-        GoBtn.Size = UDim2.new(0.8, 0, 1, 0) 
-        GoBtn.Text = name
-        GoBtn.BackgroundCol
+        ItemFrame.Backg
