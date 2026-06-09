@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - مع ميزة الطيران المحدثة ]]
+-- [[ سكريبت أيهم الأسطوري V12 - مع ميزة الطيران السهل والمصلح بالكامل ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -77,7 +77,7 @@ Title.Text = "صنع من قبل المطور الأسطوري أيهم"
 Title.TextColor3 = Color3.fromRGB(255, 200, 0) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
 table.insert(yellowElements, Title)
 
--- القائمة الجانبية للتنقل
+-- القائمة الجانبية للتنقل (تعديل: تم تحويلها إلى ScrollingFrame)
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -203,14 +203,52 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر الطيران
+-- زر الطيران السهل
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
-FlyBtn.Text = "تشغيل سكربت الطيران" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyBtn.Text = "تفعيل الطيران السهل (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 FlyBtn.Font = Enum.Font.SourceSansBold FlyBtn.TextSize = 13
 
+local flying = false
+local flyConnection
+local bodyVelocity, bodyGyro
+
 FlyBtn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+    flying = not flying
+    FlyBtn.BackgroundColor3 = flying and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(120, 0, 120)
+    FlyBtn.Text = flying and "تعطيل الطيران" or "تفعيل الطيران السهل (Fly)"
+    
+    local torso = Player.Character and (Player.Character:FindFirstChild("UpperTorso") or Player.Character:FindFirstChild("HumanoidRootPart"))
+    if not torso then return end
+    
+    if flying then
+        bodyVelocity = Instance.new("BodyVelocity", torso)
+        bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        
+        bodyGyro = Instance.new("BodyGyro", torso)
+        bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+        bodyGyro.CFrame = torso.CFrame
+        
+        flyConnection = RunService.RenderStepped:Connect(function()
+            if Player.Character and torso and bodyVelocity and bodyGyro then
+                bodyGyro.CFrame = workspace.CurrentCamera.CFrame
+                local moveDirection = Player.Character.Humanoid.MoveDirection
+                local velocity = moveDirection * 70
+                
+                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                    velocity = velocity + Vector3.new(0, 50, 0)
+                elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+                    velocity = velocity + Vector3.new(0, -50, 0)
+                end
+                bodyVelocity.Velocity = velocity
+            end
+        end)
+    else
+        if flyConnection then flyConnection:Disconnect() flyConnection = nil end
+        if bodyVelocity then bodyVelocity:Destroy() end
+        if bodyGyro then bodyGyro:Destroy() end
+    end
 end)
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage)
@@ -254,27 +292,6 @@ TeleBtn.MouseButton1Click:Connect(function()
     local tName = NameBox.Text:lower()
     for _, p in ipairs(PlayersService:GetPlayers()) do
         if p.Name:lower():sub(1, #tName) == tName and p.Character then Player.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3) end
-    end
-end)
-
--- الزر الجديد: مشاهدة الهدف (Toggle)
-local SpecBtn = Instance.new("TextButton", TargetPage)
-SpecBtn.Size = UDim2.new(0.9, 0, 0, 32) SpecBtn.Position = UDim2.new(0.05, 0, 0, 95)
-SpecBtn.Text = "مشاهدة الهدف" SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-local specActive = false
-
-SpecBtn.MouseButton1Click:Connect(function()
-    specActive = not specActive
-    SpecBtn.BackgroundColor3 = specActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
-    if specActive then
-        local tName = NameBox.Text:lower()
-        for _, p in ipairs(PlayersService:GetPlayers()) do
-            if p.Name:lower():sub(1, #tName) == tName and p.Character and p.Character:FindFirstChild("Humanoid") then
-                workspace.CurrentCamera.CameraSubject = p.Character.Humanoid
-            end
-        end
-    else
-        workspace.CurrentCamera.CameraSubject = Player.Character and Player.Character:FindFirstChild("Humanoid") or Player.Character
     end
 end)
 
@@ -322,41 +339,22 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 5: التأثيرات والأدوات ] ===
+-- === [ شريحة 5: التأثيرات والأدوات - مُعدل لإرسال إشارة للسيرفر ] ===
 local EffectsPage = Pages[5]
+local EffectEvent = game:GetService("ReplicatedStorage"):FindFirstChild("EffectEvent") or Instance.new("RemoteEvent", game:GetService("ReplicatedStorage"))
+EffectEvent.Name = "EffectEvent"
 
 local function clearAllEffects()
+    EffectEvent:FireServer("Clear") -- طلب من السيرفر إزالة التأثيرات للجميع
     if Player.Character then
-        for _, item in ipairs(Player.Character:GetChildren()) do
-            if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end
-        end
+        for _, item in ipairs(Player.Character:GetChildren()) do if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end end
         local root = Player.Character:FindFirstChild("HumanoidRootPart")
-        if root then
-            for _, item in ipairs(root:GetChildren()) do
-                if item.Name == "PlayerParticles" or item:IsA("ParticleEmitter") then item:Destroy() end
-            end
-        end
+        if root then for _, item in ipairs(root:GetChildren()) do if item.Name == "PlayerParticles" or item:IsA("ParticleEmitter") then item:Destroy() end end end
     end
 end
 
 local function giveDirectEffect(effectType, customColor)
-    clearAllEffects()
-    local root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-    if not root then return end
-    
-    if effectType == "Highlight" then
-        local hl = Instance.new("Highlight")
-        hl.Name = "PlayerHighlight" hl.FillColor = customColor hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-        hl.Parent = Player.Character
-    elseif effectType == "Particles" then
-        local pe = Instance.new("ParticleEmitter")
-        pe.Name = "PlayerParticles" pe.Color = ColorSequence.new(customColor)
-        pe.Speed = NumberRange.new(8, 12) pe.Rate = 80 pe.Lifetime = NumberRange.new(1, 1.5)
-        pe.Size = NumberSequence.new(0.5, 0) pe.Parent = root
-    elseif effectType == "Fire" then
-        local f = Instance.new("Fire")
-        f.Name = "PlayerParticles" f.Size = 10 f.Heat = 15 f.Parent = root
-    end
+    EffectEvent:FireServer("Create", effectType, customColor) -- طلب من السيرفر تشغيل التأثير للجميع
 end
 
 local function createEffectBtn(text, yPos, color, callback)
@@ -372,5 +370,5 @@ createEffectBtn("إزالة كافة التأثيرات والبارتكلز ف�
 -- زر إغلاق القائمة الرئيسي (X)
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
 
--- [ التثبيت النهائي ]
+-- [ التثبيت النهائي ] - يتم الاستدعاء هنا بعد امتلاء الجدول تماماً بالأزرار لتغيير الألوان فوراً وبنجاح
 setBorderColor("Yellow")
