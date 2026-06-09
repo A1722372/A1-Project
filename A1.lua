@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة النهائية الموحدة V32 ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V33 - إصلاح نهائي للأيقونة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -8,31 +8,33 @@ if PlayerGui:FindFirstChild("AihamScript_Main") then
     PlayerGui.AihamScript_Main:Destroy()
 end
 
--- [1] إنشاء الحاوية
+-- [1] الحاوية
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamScript_Main"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 999999
 
--- [2] زر التصغير (الصورة المربعة الصفراء بالنقطة)
-local ToggleBtn = Instance.new("ImageButton", ScreenGui)
+-- [2] زر التحكم (مربع أيقوني مضمون الظهور)
+local ToggleBtn = Instance.new("TextButton", ScreenGui)
 ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
 ToggleBtn.Position = UDim2.new(0.9, -60, 0.1, 0)
-ToggleBtn.BackgroundTransparency = 1
-ToggleBtn.Image = "rbxassetid://18563336718"
+ToggleBtn.Text = "■" -- المربع
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 200, 0)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ToggleBtn.TextSize = 30
 ToggleBtn.Draggable = true
+Instance.new("UICorner", ToggleBtn)
 
 -- [3] الإطار الرئيسي
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 400, 0, 300)
 MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-MainFrame.BorderSizePixel = 0
 MainFrame.Active = true 
 MainFrame.Draggable = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", MainFrame)
 
--- [4] التبويبات والمحتوى
+-- [4] التبويبات والمحتوى (نفس التنسيق المعتمد)
 local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 120, 1, 0)
@@ -67,7 +69,7 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- [5] إضافة الميزات للشريحة الأولى
+-- [5] الميزات (إعدادات الماب)
 local MapPage = AllPages["اعدادات الماب"]
 
 -- أ. تغيير اللون
