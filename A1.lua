@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - مع زر الاختفاء الجديد ]]
+-- [[ سكريبت أيهم الأسطوري V12 - مع زر الاختفاء بالسماء ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -7,14 +7,12 @@ local PlayersService = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 
--- تنظيف أي نسخ قديمة لضمان عمل السكريبت بنجاح
 if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamSuperMenu"
 ScreenGui.ResetOnSpawn = false
 
--- الإطار الرئيسي للشاشة
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 480, 0, 320)
 MainFrame.Position = UDim2.new(0.5, -240, 0.5, -160)
@@ -25,8 +23,8 @@ MainFrame.Active = true
 MainFrame.Draggable = true
 
 local yellowElements = {}
-
 local rainbowConnection
+
 local function setBorderColor(mode)
     if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
     local function applyColor(color)
@@ -111,7 +109,7 @@ end)
 local BrightBtn = Instance.new("TextButton", MapPage)
 BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 50)
 BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-BrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255) BrightBtn.Font = Enum.Font.SourceSansBold BrightBtn.TextSize = 13
+BrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255) ShaderBtn.Font = Enum.Font.SourceSansBold BrightBtn.TextSize = 13
 local brightActive = false
 local originalBrightness = Lighting.Brightness
 local originalAmbient = Lighting.Ambient
@@ -185,7 +183,6 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر الطيران
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تفعيل الطيران (FlyGuiV3)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -194,20 +191,22 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- زر الاختفاء الجديد (إخفاء الجسد فقط)
+-- هذا هو زر الاختفاء الذي طلبته (مثل الفيديو)
 local InviBtn = Instance.new("TextButton", PlayerPage)
 InviBtn.Size = UDim2.new(0.9, 0, 0, 32) InviBtn.Position = UDim2.new(0.05, 0, 0, 145)
-InviBtn.Text = "تفعيل الاختفاء" InviBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InviBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+InviBtn.Text = "تفعيل الاختفاء (Sky)" InviBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InviBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local inviActive = false
+local lastPosition = nil
 InviBtn.MouseButton1Click:Connect(function()
     inviActive = not inviActive
     InviBtn.BackgroundColor3 = inviActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
-    local character = Player.Character
-    if character then
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") or part:IsA("Decal") then
-                part.Transparency = inviActive and 1 or 0
-            end
+    local char = Player.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        if inviActive then
+            lastPosition = char.HumanoidRootPart.CFrame
+            char.HumanoidRootPart.CFrame = CFrame.new(0, 5000, 0)
+        else
+            if lastPosition then char.HumanoidRootPart.CFrame = lastPosition end
         end
     end
 end)
@@ -236,7 +235,6 @@ UserInputService.JumpRequest:Connect(function()
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
--- باقي القائمة (الاستهداف، نقاط الحفظ، التأثيرات)
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
@@ -250,6 +248,7 @@ TeleBtn.MouseButton1Click:Connect(function()
         if p.Name:lower():sub(1, #tName) == tName and p.Character then Player.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3) end
     end
 end)
+
 local CheckpointPage = Pages[4]
 local CPInput = Instance.new("TextBox", CheckpointPage)
 CPInput.Size = UDim2.new(0.55, 0, 0, 32) CPInput.Position = UDim2.new(0.05, 0, 0, 10)
@@ -286,6 +285,7 @@ SaveBtn.MouseButton1Click:Connect(function()
         CPInput.Text = "" updateCPList()
     end
 end)
+
 local EffectsPage = Pages[5]
 local function clearAllEffects()
     if Player.Character then
