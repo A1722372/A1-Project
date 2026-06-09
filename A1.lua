@@ -20,7 +20,6 @@ MainFrame.Size = UDim2.new(0, 480, 0, 320)
 MainFrame.Position = UDim2.new(0.5, -240, 0.5, -160)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 3
-MainFrame.BorderColor3 = Color3.fromRGB(255, 200, 0) -- الحواف ثابتة لا تتأثر
 MainFrame.Active = true
 MainFrame.Draggable = true
 
@@ -50,37 +49,21 @@ startFlying()
 -- جدول نقاط الحفظ الخاص بشريحة الحفظ
 local savedLocations = {}
 
--- جدول ذكي لتخزين العناصر التي ستتغير ألوانها بالكامل (الشرائح والنصوص الصفراء)
-local yellowElements = {}
-
--- نظام ألوان الشرائح والقوائم الكامل بدلاً من الحواف
+-- نظام ألوان الحواف الكامل لجميع الشرائح
 local rainbowConnection
 local function setBorderColor(mode)
     if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
-    
-    local function applyColor(color)
-        for _, obj in ipairs(yellowElements) do
-            if obj:IsA("TextButton") or obj:IsA("Frame") then
-                obj.BackgroundColor3 = color
-            elseif obj:IsA("TextLabel") or obj:IsA("TextBox") then
-                obj.TextColor3 = color
-            end
-        end
-    end
-
-    if mode == "Red" then 
-        applyColor(Color3.fromRGB(255, 0, 0))
-    elseif mode == "Yellow" then 
-        applyColor(Color3.fromRGB(255, 200, 0))
-    elseif mode == "Blue" then 
-        applyColor(Color3.fromRGB(0, 100, 255))
+    if mode == "Red" then MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+    elseif mode == "Yellow" then MainFrame.BorderColor3 = Color3.fromRGB(255, 200, 0)
+    elseif mode == "Blue" then MainFrame.BorderColor3 = Color3.fromRGB(0, 100, 255)
     elseif mode == "Rainbow" then
         rainbowConnection = RunService.RenderStepped:Connect(function()
             local hue = (tick() % 4) / 4
-            applyColor(Color3.fromHSV(hue, 1, 1))
+            MainFrame.BorderColor3 = Color3.fromHSV(hue, 1, 1)
         end)
     end
 end
+setBorderColor("Yellow")
 
 -- زر الفتح والإغلاق الجانبي الصغير (●)
 local ToggleButton = Instance.new("TextButton", ScreenGui)
@@ -92,14 +75,12 @@ ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 ToggleButton.TextSize = 22 ToggleButton.Font = Enum.Font.SourceSansBold
 ToggleButton.Active = true ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
-table.insert(yellowElements, ToggleButton)
 
 -- العنوان العلوي الثابت
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 35) Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Title.Text = "صنع من قبل المطور الأسطوري أيهم"
 Title.TextColor3 = Color3.fromRGB(255, 200, 0) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
-table.insert(yellowElements, Title)
 
 -- القائمة الجانبية للتنقل
 local SideMenu = Instance.new("Frame", MainFrame)
@@ -119,7 +100,6 @@ for i, name in ipairs(tabs) do
     btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
     btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
-    table.insert(yellowElements, btn)
     
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
@@ -152,7 +132,7 @@ BrightBtn.MouseButton1Click:Connect(function()
 end)
 
 local colors = {"Rainbow", "Red", "Yellow", "Blue"}
-local colorNames = {Rainbow = "شرائح قوس قزح", Red = "شرائح حمراء", Yellow = "شرائح صفراء", Blue = "شرائح زرقاء"}
+local colorNames = {Rainbow = "حواف قوس قزح", Red = "حواف حمراء", Yellow = "حواف صفراء", Blue = "حواف زرقاء"}
 for idx, mode in ipairs(colors) do
     local cBtn = Instance.new("TextButton", MapPage)
     cBtn.Size = UDim2.new(0.42, 0, 0, 32)
@@ -171,8 +151,6 @@ local SpeedInput = Instance.new("TextBox", PlayerPage)
 SpeedInput.Size = UDim2.new(0.2, 0, 0, 30) SpeedInput.Position = UDim2.new(0.35, 0, 0, 15)
 SpeedInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) SpeedInput.TextColor3 = Color3.fromRGB(255, 200, 0)
 SpeedInput.Text = "65" SpeedInput.Font = Enum.Font.SourceSansBold SpeedInput.TextSize = 14
-table.insert(yellowElements, SpeedInput)
-
 local SpeedBtn = Instance.new("TextButton", PlayerPage)
 SpeedBtn.Size = UDim2.new(0.35, 0, 0, 30) SpeedBtn.Position = UDim2.new(0.6, 0, 0, 15)
 SpeedBtn.Text = "تفعيل السرعة" SpeedBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpeedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -194,8 +172,6 @@ local JumpInput = Instance.new("TextBox", PlayerPage)
 JumpInput.Size = UDim2.new(0.2, 0, 0, 30) JumpInput.Position = UDim2.new(0.35, 0, 0, 60)
 JumpInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) JumpInput.TextColor3 = Color3.fromRGB(255, 200, 0)
 JumpInput.Text = "120" JumpInput.Font = Enum.Font.SourceSansBold JumpInput.TextSize = 14
-table.insert(yellowElements, JumpInput)
-
 local JumpBtn = Instance.new("TextButton", PlayerPage)
 JumpBtn.Size = UDim2.new(0.35, 0, 0, 30) JumpBtn.Position = UDim2.new(0.6, 0, 0, 60)
 JumpBtn.Text = "تفعيل القفز" JumpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) JumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -224,7 +200,7 @@ NoclipBtn.MouseButton1Click:Connect(function()
     NoclipBtn.BackgroundColor3 = noclipActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
     if noclipActive then
         noclipConnection = RunService.Stepped:Connect(function()
-            if Player.Character then for _, part in ipairs(Player.Character:GetChildren()) do if part:IsA("BasePart") then part.CanCollide = false end end end end
+            if Player.Character then for _, part in ipairs(Player.Character:GetChildren()) do if part:IsA("BasePart") then part.CanCollide = false end end end
         end)
     else
         if noclipConnection then noclipConnection:Disconnect() noclipConnection = nil end
@@ -338,8 +314,6 @@ local ChestPage = Pages[6]
 local ChestLabel = Instance.new("TextLabel", ChestPage)
 ChestLabel.Size = UDim2.new(0.9, 0, 0, 40) ChestLabel.Position = UDim2.new(0.05, 0, 0, 10)
 ChestLabel.Text = "نظام الصناديق (يتم تحديثه)" ChestLabel.TextColor3 = Color3.fromRGB(255, 200, 0) ChestLabel.BackgroundTransparency = 1
-table.insert(yellowElements, ChestLabel)
-
 local ChestBtn = Instance.new("TextButton", ChestPage)
 ChestBtn.Size = UDim2.new(0.9, 0, 0, 40) ChestBtn.Position = UDim2.new(0.05, 0, 0, 60)
 ChestBtn.Text = "تجميع الصناديق القريبة" ChestBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0) ChestBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -349,6 +323,3 @@ end)
 
 -- زر إغلاق القائمة
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
-
--- تفعيل اللون الأصفر الافتراضي عند تشغيل المنيو لأول مرة لجميع العناصر المجموعة
-setBorderColor("Yellow")
