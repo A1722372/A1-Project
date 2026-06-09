@@ -203,7 +203,7 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر الطيران الجديد
+-- زر الطيران
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تشغيل سكربت الطيران" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -257,16 +257,24 @@ TeleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- الزر الجديد: مشاهدة الهدف
+-- الزر الجديد: مشاهدة الهدف (Toggle)
 local SpecBtn = Instance.new("TextButton", TargetPage)
 SpecBtn.Size = UDim2.new(0.9, 0, 0, 32) SpecBtn.Position = UDim2.new(0.05, 0, 0, 95)
 SpecBtn.Text = "مشاهدة الهدف" SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+local specActive = false
+
 SpecBtn.MouseButton1Click:Connect(function()
-    local tName = NameBox.Text:lower()
-    for _, p in ipairs(PlayersService:GetPlayers()) do
-        if p.Name:lower():sub(1, #tName) == tName and p.Character and p.Character:FindFirstChild("Humanoid") then
-            workspace.CurrentCamera.CameraSubject = p.Character.Humanoid
+    specActive = not specActive
+    SpecBtn.BackgroundColor3 = specActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
+    if specActive then
+        local tName = NameBox.Text:lower()
+        for _, p in ipairs(PlayersService:GetPlayers()) do
+            if p.Name:lower():sub(1, #tName) == tName and p.Character and p.Character:FindFirstChild("Humanoid") then
+                workspace.CurrentCamera.CameraSubject = p.Character.Humanoid
+            end
         end
+    else
+        workspace.CurrentCamera.CameraSubject = Player.Character and Player.Character:FindFirstChild("Humanoid") or Player.Character
     end
 end)
 
@@ -364,5 +372,5 @@ createEffectBtn("إزالة كافة التأثيرات والبارتكلز ف�
 -- زر إغلاق القائمة الرئيسي (X)
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
 
--- [ التثبيت النهائي ] - يتم الاستدعاء هنا بعد امتلاء الجدول تماماً بالأزرار لتغيير الألوان فوراً وبنجاح
+-- [ التثبيت النهائي ]
 setBorderColor("Yellow")
