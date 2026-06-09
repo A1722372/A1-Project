@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة المدمجة والمعدلة ]]
+-- [[ سكريبت أيهم الأسطوري V15 (الكامل) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -201,27 +201,22 @@ GhostBtn.MouseButton1Click:Connect(function()
     GhostBtn.BackgroundColor3 = ghostActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
     local char = Player.Character
     if ghostActive then
-        local currentPos = char.HumanoidRootPart.CFrame
-        char.HumanoidRootPart.CFrame = CFrame.new(0, -99999, 0)
-        char.HumanoidRootPart.Anchored = true
         ghostChar = char:Clone() ghostChar.Parent = workspace
-        ghostChar.HumanoidRootPart.CFrame = currentPos
-        workspace.CurrentCamera.CameraSubject = ghostChar:FindFirstChild("Humanoid")
-        RunService.RenderStepped:Connect(function() if ghostActive and ghostChar then ghostChar.Humanoid:Move(char.Humanoid.MoveDirection, false) end end)
+        ghostChar.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame
+        workspace.CurrentCamera.CameraSubject = ghostChar.Humanoid
+        char.HumanoidRootPart.CFrame = CFrame.new(0, -5000, 0)
+        RunService.RenderStepped:Connect(function() if ghostActive and ghostChar then ghostChar.Humanoid:Move(char.Humanoid.MoveDirection, true) end end)
     else
-        if ghostChar then
-            char.HumanoidRootPart.Anchored = false
-            char.HumanoidRootPart.CFrame = ghostChar.HumanoidRootPart.CFrame
-            workspace.CurrentCamera.CameraSubject = char:FindFirstChild("Humanoid")
-            ghostChar:Destroy() ghostChar = nil
-        end
+        workspace.CurrentCamera.CameraSubject = char.Humanoid
+        char.HumanoidRootPart.CFrame = ghostChar.HumanoidRootPart.CFrame
+        ghostChar:Destroy()
     end
 end)
 
--- الزر المعدل: تجميد الكاميرا (Camera Lock)
+-- الزر المعدل: قفل الكاميرا (Camera Lock)
 local LockCamBtn = Instance.new("TextButton", PlayerPage)
 LockCamBtn.Size = UDim2.new(0.9, 0, 0, 32) LockCamBtn.Position = UDim2.new(0.05, 0, 0, 185)
-LockCamBtn.Text = "تجميد الكاميرا" LockCamBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) LockCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+LockCamBtn.Text = "قفل الكاميرا" LockCamBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) LockCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local lockActive = false local cam = workspace.CurrentCamera
 LockCamBtn.MouseButton1Click:Connect(function()
     lockActive = not lockActive
@@ -345,4 +340,4 @@ createEffectBtn("تفعيل تأثير الإضاءة المشعة الشامل�
 createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
-local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25
+local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
