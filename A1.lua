@@ -339,22 +339,41 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 5: التأثيرات والأدوات - مُعدل لإرسال إشارة للسيرفر ] ===
+-- === [ شريحة 5: التأثيرات والأدوات ] ===
 local EffectsPage = Pages[5]
-local EffectEvent = game:GetService("ReplicatedStorage"):FindFirstChild("EffectEvent") or Instance.new("RemoteEvent", game:GetService("ReplicatedStorage"))
-EffectEvent.Name = "EffectEvent"
 
 local function clearAllEffects()
-    EffectEvent:FireServer("Clear") -- طلب من السيرفر إزالة التأثيرات للجميع
     if Player.Character then
-        for _, item in ipairs(Player.Character:GetChildren()) do if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end end
+        for _, item in ipairs(Player.Character:GetChildren()) do
+            if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end
+        end
         local root = Player.Character:FindFirstChild("HumanoidRootPart")
-        if root then for _, item in ipairs(root:GetChildren()) do if item.Name == "PlayerParticles" or item:IsA("ParticleEmitter") then item:Destroy() end end end
+        if root then
+            for _, item in ipairs(root:GetChildren()) do
+                if item.Name == "PlayerParticles" or item:IsA("ParticleEmitter") then item:Destroy() end
+            end
+        end
     end
 end
 
 local function giveDirectEffect(effectType, customColor)
-    EffectEvent:FireServer("Create", effectType, customColor) -- طلب من السيرفر تشغيل التأثير للجميع
+    clearAllEffects()
+    local root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    
+    if effectType == "Highlight" then
+        local hl = Instance.new("Highlight")
+        hl.Name = "PlayerHighlight" hl.FillColor = customColor hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+        hl.Parent = Player.Character
+    elseif effectType == "Particles" then
+        local pe = Instance.new("ParticleEmitter")
+        pe.Name = "PlayerParticles" pe.Color = ColorSequence.new(customColor)
+        pe.Speed = NumberRange.new(8, 12) pe.Rate = 80 pe.Lifetime = NumberRange.new(1, 1.5)
+        pe.Size = NumberSequence.new(0.5, 0) pe.Parent = root
+    elseif effectType == "Fire" then
+        local f = Instance.new("Fire")
+        f.Name = "PlayerParticles" f.Size = 10 f.Heat = 15 f.Parent = root
+    end
 end
 
 local function createEffectBtn(text, yPos, color, callback)
