@@ -55,7 +55,7 @@ local yellowElements = {}
 
 -- نظام ألوان الشرائح والقوائم الكامل بدلاً من الحواف
 local rainbowConnection
-local function setBorderColor(mode) -- حافظنا على اسم الدالة القديم لمنع أي أخطاء في بقية الأزرار
+local function setBorderColor(mode)
     if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
     
     local function applyColor(color)
@@ -119,7 +119,7 @@ for i, name in ipairs(tabs) do
     btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
     btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
-    table.insert(yellowElements, btn) -- إضافة أزرار القوائم للتأثر بتغيير الألوان
+    table.insert(yellowElements, btn)
     
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
@@ -342,7 +342,7 @@ table.insert(yellowElements, ChestLabel)
 
 local ChestBtn = Instance.new("TextButton", ChestPage)
 ChestBtn.Size = UDim2.new(0.9, 0, 0, 40) ChestBtn.Position = UDim2.new(0.05, 0, 0, 60)
-ChestBtn.Text = "تجميع الصناديق القريبة" CheatBtn = ChestBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0) ChestBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ChestBtn.Text = "تجميع الصناديق القريبة" ChestBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0) ChestBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 ChestBtn.MouseButton1Click:Connect(function()
     print("جاري البحث عن الصناديق في الماب...")
 end)
