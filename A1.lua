@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V16 (الكامل والمصلح 100%) ]]
+-- [[ سكريبت أيهم الأسطوري V16 (الكامل مع تاب IY الجديد) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -59,7 +59,7 @@ table.insert(yellowElements, ToggleButton)
 
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 35) Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-Title.Text = "صنع من قبل المطور الأسطوري أيهم V16"
+Title.Text = "صنع من قبل المطور الأسطوري أيهم"
 Title.TextColor3 = Color3.fromRGB(255, 200, 0) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
 table.insert(yellowElements, Title)
 
@@ -78,13 +78,13 @@ local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف",
 
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
-    btn.Size = UDim2.new(0.9, 0, 0, 35) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 40 + 12)
+    btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
     btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
     table.insert(yellowElements, btn)
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
-    page.CanvasSize = UDim2.new(0, 0, 0, 500) page.ScrollBarThickness = 5
+    page.CanvasSize = UDim2.new(0, 0, 0, 450) page.ScrollBarThickness = 5
     page.Visible = (i == 1) Pages[i] = page
     btn.MouseButton1Click:Connect(function()
         for _, p in ipairs(Pages) do p.Visible = false end
@@ -191,6 +191,7 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
+-- الزر الجديد: القوست مود (Ghost Mode)
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
 GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -212,6 +213,7 @@ GhostBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- الزر المعدل: قفل الكاميرا (Camera Lock)
 local LockCamBtn = Instance.new("TextButton", PlayerPage)
 LockCamBtn.Size = UDim2.new(0.9, 0, 0, 32) LockCamBtn.Position = UDim2.new(0.05, 0, 0, 185)
 LockCamBtn.Text = "قفل الكاميرا" LockCamBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) LockCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -342,11 +344,9 @@ createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particl
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
--- === [ شريحة 6: تاب IY الجديد والمصلح بالكامل ] ===
+-- === [ شريحة 6: قائمة IY الجديدة المستوحاة بالكامل ] ===
 local IYPage = Pages[6]
 
-local function makeIYButton(text, yPos, onClick)
+local function createIYButton(text, yPos, callback)
     local btn = Instance.new("TextButton", IYPage)
-    btn.Size = UDim2.new(0.9, 0, 0, 35)
-    btn.Position = UDim2.new(0.05, 0, 0, yPos)
-    btn.BackgroundColor3 = Color
+    btn.Size = UDim2.new(0.9
