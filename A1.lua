@@ -194,13 +194,14 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- === [ زر الجوست مود الذكي والمطور حسب فكرتك الرائعة ] ===
+-- === [ زر الجوست مود الذكي والمطور - نسخة الاختفاء المصلحة ] ===
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
 GhostBtn.Text = "الجوست مود المطور (تعديل المنظور)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 local ghostActive = false
 local ghostBody = nil
+local moveConnection = nil
 local hideConnection = nil
 
 GhostBtn.MouseButton1Click:Connect(function()
@@ -217,7 +218,7 @@ GhostBtn.MouseButton1Click:Connect(function()
             ghostBody.Parent = workspace
             originalChar.Archivable = false
             
-            -- 2. إصلاح الاختفاء: استخدام RenderStepped لضمان بقاء الجسد الحقيقي مخفي بالكامل وبدون اصطدام
+            -- 2. إخفاء الجسد الحقيقي الأساسي باستمرار لمنع اللعبة من إظهاره
             hideConnection = RunService.RenderStepped:Connect(function()
                 if originalChar then
                     for _, part in ipairs(originalChar:GetDescendants()) do
@@ -236,24 +237,23 @@ GhostBtn.MouseButton1Click:Connect(function()
             for _, part in ipairs(ghostBody:GetDescendants()) do
                 if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
                     part.Transparency = 0.4
-                elseif part:IsA("Decal") then
+                elseif part:IsA("Decal") or part:IsA("Texture") then
                     part.Transparency = 0.4
                 end
             end
             
-            -- 4. العبقرية هنا: تحويل منظور الكاميرا فوراً ليلحق الجسد الجوست!
+            -- 4. تعديل الكاميرا لتتبع الـ Humanoid الخاص بجسد الجوست فوراً!
             if ghostBody:FindFirstChild("Humanoid") then
                 Camera.CameraSubject = ghostBody.Humanoid
             end
             
-            -- ربط التحكم بالجسد المستنسخ ليتحرك معك
-            local moveConnection
+            -- ربط التحكم بالجسد المستنسخ ليتحرك معك بسلاسة
             moveConnection = RunService.RenderStepped:Connect(function()
                 if not ghostActive or not ghostBody or not ghostBody:FindFirstChild("HumanoidRootPart") or not originalChar:FindFirstChild("HumanoidRootPart") then
-                    if moveConnection then moveConnection:Disconnect() end
+                    if moveConnection then moveConnection:Disconnect() moveConnection = nil end
                     return
                 end
-                -- نقل إحداثيات الحركة من تحكمك الأساسي إلى الجوست
+                -- نقل إحداثيات الحركة والقفز من تحكمك الأساسي إلى الجوست
                 ghostBody.Humanoid:Move(originalChar.Humanoid.MoveDirection, true)
                 if originalChar.Humanoid.Jump then
                     ghostBody.Humanoid.Jump = true
@@ -261,13 +261,14 @@ GhostBtn.MouseButton1Click:Connect(function()
             end)
             
         else
-            -- عند إلغاء التفعيل: إيقاف حلقة إخفاء الجسد الأصلي وحذف الجوست
+            -- عند إلغاء التفعيل: إيقاف حلقات الإخفاء والحركة وإرجاع الكاميرا للأصل
             if hideConnection then hideConnection:Disconnect() hideConnection = nil end
+            if moveConnection then moveConnection:Disconnect() moveConnection = nil end
             
             if originalChar and originalChar:FindFirstChild("Humanoid") then
                 Camera.CameraSubject = originalChar.Humanoid
                 
-                -- إعادة إظهار الجسد الأساسي الحقيقي وجعله مرئياً
+                -- إعادة إظهار الجسد الأساسي الحقيقي وإعادة الاصطدام
                 for _, part in ipairs(originalChar:GetDescendants()) do
                     if part:IsA("BasePart") then
                         part.Transparency = 0
@@ -279,7 +280,7 @@ GhostBtn.MouseButton1Click:Connect(function()
                 end
             end
             
-            -- حذف الجسد الشبح
+            -- حذف الجسد الشبح من الماب
             if ghostBody then
                 ghostBody:Destroy()
                 ghostBody = nil
@@ -369,5 +370,4 @@ SaveBtn.Size = UDim2.new(0.3, 0, 0, 32) SaveBtn.Position = UDim2.new(0.65, 0, 0,
 SaveBtn.Text = "حفظ" SaveBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0) SaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 SaveBtn.MouseButton1Click:Connect(function()
     local locName = CPInput.Text
-    if locName ~= "" and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        savedLocations[locName]
+        
