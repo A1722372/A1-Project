@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - مع زر الاختفاء المطور ]]
+-- [[ سكريبت أيهم الأسطوري V13 - تحديث الزرين ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -191,33 +191,41 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- كود الاختفاء المطور الجديد
-local InviBtn = Instance.new("TextButton", PlayerPage)
-InviBtn.Size = UDim2.new(0.9, 0, 0, 32) InviBtn.Position = UDim2.new(0.05, 0, 0, 145)
-InviBtn.Text = "تفعيل الاختفاء (المنظور الحر)" InviBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InviBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-local inviActive = false
-local cam = game.Workspace.CurrentCamera
-local originalCFrame = nil
-InviBtn.MouseButton1Click:Connect(function()
-    inviActive = not inviActive
-    InviBtn.BackgroundColor3 = inviActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
+-- الزر الجديد: القوست مود (Ghost Mode)
+local GhostBtn = Instance.new("TextButton", PlayerPage)
+GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
+GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+local ghostActive = false local ghostChar
+GhostBtn.MouseButton1Click:Connect(function()
+    ghostActive = not ghostActive
+    GhostBtn.BackgroundColor3 = ghostActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
     local char = Player.Character
-    if char and char:FindFirstChild("HumanoidRootPart") then
-        if inviActive then
-            originalCFrame = cam.CFrame
-            cam.CameraType = Enum.CameraType.Scriptable
-            cam.CFrame = originalCFrame
-            char.HumanoidRootPart.CFrame = CFrame.new(0, -5000, 0)
-        else
-            cam.CameraType = Enum.CameraType.Custom
-            cam.CameraSubject = char:FindFirstChild("Humanoid")
-            if originalCFrame then char.HumanoidRootPart.CFrame = originalCFrame end
-        end
+    if ghostActive then
+        ghostChar = char:Clone() ghostChar.Parent = workspace
+        ghostChar.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame
+        workspace.CurrentCamera.CameraSubject = ghostChar.Humanoid
+        char.HumanoidRootPart.CFrame = CFrame.new(0, -5000, 0)
+        RunService.RenderStepped:Connect(function() if ghostActive and ghostChar then ghostChar.Humanoid:Move(char.Humanoid.MoveDirection, true) end end)
+    else
+        workspace.CurrentCamera.CameraSubject = char.Humanoid
+        char.HumanoidRootPart.CFrame = ghostChar.HumanoidRootPart.CFrame
+        ghostChar:Destroy()
     end
 end)
 
+-- الزر المعدل: قفل الكاميرا (Camera Lock)
+local LockCamBtn = Instance.new("TextButton", PlayerPage)
+LockCamBtn.Size = UDim2.new(0.9, 0, 0, 32) LockCamBtn.Position = UDim2.new(0.05, 0, 0, 185)
+LockCamBtn.Text = "قفل الكاميرا" LockCamBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) LockCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+local lockActive = false local cam = workspace.CurrentCamera
+LockCamBtn.MouseButton1Click:Connect(function()
+    lockActive = not lockActive
+    LockCamBtn.BackgroundColor3 = lockActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
+    cam.CameraType = lockActive and Enum.CameraType.Scriptable or Enum.CameraType.Custom
+end)
+
 local NoclipBtn = Instance.new("TextButton", PlayerPage)
-NoclipBtn.Size = UDim2.new(0.9, 0, 0, 32) NoclipBtn.Position = UDim2.new(0.05, 0, 0, 185)
+NoclipBtn.Size = UDim2.new(0.9, 0, 0, 32) NoclipBtn.Position = UDim2.new(0.05, 0, 0, 225)
 NoclipBtn.Text = "تفعيل اختراق الجدران (Noclip)" NoclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) NoclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local noclipActive = false local noclipConnection
 NoclipBtn.MouseButton1Click:Connect(function()
@@ -231,14 +239,6 @@ NoclipBtn.MouseButton1Click:Connect(function()
         if noclipConnection then noclipConnection:Disconnect() noclipConnection = nil end
     end
 end)
-local InfJumpBtn = Instance.new("TextButton", PlayerPage)
-InfJumpBtn.Size = UDim2.new(0.9, 0, 0, 32) InfJumpBtn.Position = UDim2.new(0.05, 0, 0, 225)
-InfJumpBtn.Text = "تفعيل القفز اللانهائي (Inf Jump)" InfJumpBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InfJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-local infJumpActive = false
-UserInputService.JumpRequest:Connect(function()
-    if infJumpActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid:ChangeState("Jumping") end
-end)
-InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
