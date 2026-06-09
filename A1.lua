@@ -1,11 +1,11 @@
--- [[ سكريبت أيهم الأسطوري - النسخة المدمجة والمعدلة ]]
+-- [[ سكريبت أيهم الأسطوري - نسخة منظور الجوست مود المصلحة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
-local Backpack = Player:WaitForChild("Backpack")
 local RunService = game:GetService("RunService")
 local PlayersService = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
+local Camera = workspace.CurrentCamera
 
 if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
 
@@ -153,8 +153,11 @@ end)
 SpeedBtn.MouseButton1Click:Connect(function()
     speedActive = not speedActive
     SpeedBtn.BackgroundColor3 = speedActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
-    if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
+    if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+        if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
+    end
 end)
+
 local JumpLabel = Instance.new("TextLabel", PlayerPage)
 JumpLabel.Size = UDim2.new(0.3, 0, 0, 30) JumpLabel.Position = UDim2.new(0.05, 0, 0, 60)
 JumpLabel.Text = "القفز:" JumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255) JumpLabel.BackgroundTransparency = 1
@@ -191,29 +194,87 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- الزر الجديد: القوست مود (Ghost Mode)
+-- === [ زر الجوست مود الذكي والمطور حسب فكرتك الرائعة ] ===
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
-GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-local ghostActive = false local ghostChar
+GhostBtn.Text = "الجوست مود المطور (تعديل المنظور)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local ghostActive = false
+local ghostBody = nil
+
 GhostBtn.MouseButton1Click:Connect(function()
     ghostActive = not ghostActive
     GhostBtn.BackgroundColor3 = ghostActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
-    local char = Player.Character
-    if ghostActive then
-        local currentPos = char.HumanoidRootPart.CFrame
-        char.HumanoidRootPart.CFrame = CFrame.new(0, -99999, 0)
-        char.HumanoidRootPart.Anchored = true
-        ghostChar = char:Clone() ghostChar.Parent = workspace
-        ghostChar.HumanoidRootPart.CFrame = currentPos
-        workspace.CurrentCamera.CameraSubject = ghostChar:FindFirstChild("Humanoid")
-        RunService.RenderStepped:Connect(function() if ghostActive and ghostChar then ghostChar.Humanoid:Move(char.Humanoid.MoveDirection, false) end end)
-    else
-        if ghostChar then
-            char.HumanoidRootPart.Anchored = false
-            char.HumanoidRootPart.CFrame = ghostChar.HumanoidRootPart.CFrame
-            workspace.CurrentCamera.CameraSubject = char:FindFirstChild("Humanoid")
-            ghostChar:Destroy() ghostChar = nil
+    
+    local originalChar = Player.Character
+    if originalChar and originalChar:FindFirstChild("HumanoidRootPart") then
+        if ghostActive then
+            -- 1. إنشاء نسخة كاملة من الجسد (الجوست)
+            originalChar.Archivable = true
+            ghostBody = originalChar:Clone()
+            ghostBody.Name = "GhostBody"
+            ghostBody.Parent = workspace
+            originalChar.Archivable = false
+            
+            -- 2. إخفاء الجسد الحقيقي الأساسي وجعله شفافاً بالكامل من غير اصطدام
+            for _, part in ipairs(originalChar:GetChildren()) do
+                if part:IsA("BasePart") then
+                    part.Transparency = 1
+                    part.CanCollide = false
+                elseif part:IsA("Accessory") and part:FindFirstChild("Handle") then
+                    part.Handle.Transparency = 1
+                end
+            end
+            
+            -- 3. جعل الجسد المستنسخ (الجوست) شبه شفاف لتعرف أنه الوضع الشبح
+            for _, part in ipairs(ghostBody:GetChildren()) do
+                if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                    part.Transparency = 0.4
+                elseif part:IsA("Accessory") and part:FindFirstChild("Handle") then
+                    part.Handle.Transparency = 0.4
+                end
+            end
+            
+            -- 4. العبقرية هنا: تحويل منظور الكاميرا فوراً ليلحق الجسد الجوست!
+            if ghostBody:FindFirstChild("Humanoid") then
+                Camera.CameraSubject = ghostBody.Humanoid
+            end
+            
+            -- ربط التحكم بالجسد المستنسخ ليتحرك معك
+            local moveConnection
+            moveConnection = RunService.RenderStepped:Connect(function()
+                if not ghostActive or not ghostBody or not ghostBody:FindFirstChild("HumanoidRootPart") or not originalChar:FindFirstChild("HumanoidRootPart") then
+                    if moveConnection then moveConnection:Disconnect() end
+                    return
+                end
+                -- نقل إحداثيات الحركة من تحكمك الأساسي إلى الجوست
+                ghostBody.Humanoid:Move(originalChar.Humanoid.MoveDirection, true)
+                if originalChar.Humanoid.Jump then
+                    ghostBody.Humanoid.Jump = true
+                end
+            end)
+            
+        else
+            -- عند إلغاء التفعيل: إرجاع منظور الكاميرا للجسد الأصلي وحذف الجوست
+            if originalChar and originalChar:FindFirstChild("Humanoid") then
+                Camera.CameraSubject = originalChar.Humanoid
+                
+                -- إعادة إظهار الجسد الأساسي الحقيقي
+                for _, part in ipairs(originalChar:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        part.Transparency = 0
+                        part.CanCollide = true
+                    elseif part:IsA("Accessory") and part:FindFirstChild("Handle") then
+                        part.Handle.Transparency = 0
+                    end
+                end
+            end
+            
+            -- حذف الجسد الشبح
+            if ghostBody then
+                ghostBody:Destroy()
+                ghostBody = nil
+            end
         end
     end
 end)
@@ -222,11 +283,11 @@ end)
 local LockCamBtn = Instance.new("TextButton", PlayerPage)
 LockCamBtn.Size = UDim2.new(0.9, 0, 0, 32) LockCamBtn.Position = UDim2.new(0.05, 0, 0, 185)
 LockCamBtn.Text = "تجميد الكاميرا" LockCamBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) LockCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-local lockActive = false local cam = workspace.CurrentCamera
+local lockActive = false
 LockCamBtn.MouseButton1Click:Connect(function()
     lockActive = not lockActive
     LockCamBtn.BackgroundColor3 = lockActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
-    cam.CameraType = lockActive and Enum.CameraType.Scriptable or Enum.CameraType.Custom
+    Camera.CameraType = lockActive and Enum.CameraType.Scriptable or Enum.CameraType.Custom
 end)
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage)
@@ -311,39 +372,4 @@ local function clearAllEffects()
         for _, item in ipairs(Player.Character:GetChildren()) do
             if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end
         end
-        local root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-        if root then
-            for _, item in ipairs(root:GetChildren()) do
-                if item.Name == "PlayerParticles" or item:IsA("ParticleEmitter") then item:Destroy() end
-            end
-        end
-    end
-end
-local function giveDirectEffect(effectType, customColor)
-    clearAllEffects()
-    local root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-    if not root then return end
-    if effectType == "Highlight" then
-        local hl = Instance.new("Highlight")
-        hl.Name = "PlayerHighlight" hl.FillColor = customColor hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-        hl.Parent = Player.Character
-    elseif effectType == "Particles" then
-        local pe = Instance.new("ParticleEmitter")
-        pe.Name = "PlayerParticles" pe.Color = ColorSequence.new(customColor)
-        pe.Speed = NumberRange.new(8, 12) pe.Rate = 80 pe.Lifetime = NumberRange.new(1, 1.5)
-        pe.Size = NumberSequence.new(0.5, 0) pe.Parent = root
-    elseif effectType == "Fire" then
-        local f = Instance.new("Fire")
-        f.Name = "PlayerParticles" f.Size = 10 f.Heat = 15 f.Parent = root
-    end
-end
-local function createEffectBtn(text, yPos, color, callback)
-    local btn = Instance.new("TextButton", EffectsPage) btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, yPos) btn.BackgroundColor3 = color btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.Text = text btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13 btn.MouseButton1Click:Connect(callback)
-end
-
--- تصحيح الأسطر الأخيرة بناءً على الصورة
-createEffectBtn("تفعيل تأثير النار على الجسم فوراً", 10, Color3.fromRGB(210, 90, 0), function() giveDirectEffect("Fire") end)
-createEffectBtn("تفعيل تأثير الإضاءة المشعة الشاملة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
-createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
-createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
-createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
+        local root = Player.Character and Player.Chara
