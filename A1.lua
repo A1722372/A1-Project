@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - مع ميزة الطيران السهل والمصلح بالكامل ]]
+-- [[ سكريبت أيهم الأسطوري V12 - مع إضافة زر الاختفاء ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -96,7 +96,6 @@ end
 
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
--- زر الشادر
 local ShaderBtn = Instance.new("TextButton", MapPage)
 ShaderBtn.Size = UDim2.new(0.9, 0, 0, 35) ShaderBtn.Position = UDim2.new(0.05, 0, 0, 10)
 ShaderBtn.Text = "تفعيل الشادر (Shader)" ShaderBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -186,7 +185,7 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر الطيران (FlyGuiV3) فقط
+-- زر الطيران (FlyGuiV3)
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تفعيل الطيران (FlyGuiV3)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -195,8 +194,25 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
+-- زر الاختفاء (Invisible)
+local InviBtn = Instance.new("TextButton", PlayerPage)
+InviBtn.Size = UDim2.new(0.9, 0, 0, 32) InviBtn.Position = UDim2.new(0.05, 0, 0, 145)
+InviBtn.Text = "تفعيل الاختفاء" InviBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InviBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+local inviActive = false
+InviBtn.MouseButton1Click:Connect(function()
+    inviActive = not inviActive
+    InviBtn.BackgroundColor3 = inviActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
+    if Player.Character then
+        for _, part in ipairs(Player.Character:GetDescendants()) do
+            if part:IsA("BasePart") or part:IsA("Decal") then
+                part.Transparency = inviActive and 1 or 0
+            end
+        end
+    end
+end)
+
 local NoclipBtn = Instance.new("TextButton", PlayerPage)
-NoclipBtn.Size = UDim2.new(0.9, 0, 0, 32) NoclipBtn.Position = UDim2.new(0.05, 0, 0, 145)
+NoclipBtn.Size = UDim2.new(0.9, 0, 0, 32) NoclipBtn.Position = UDim2.new(0.05, 0, 0, 185)
 NoclipBtn.Text = "تفعيل اختراق الجدران (Noclip)" NoclipBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) NoclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local noclipActive = false local noclipConnection
 NoclipBtn.MouseButton1Click:Connect(function()
@@ -211,7 +227,7 @@ NoclipBtn.MouseButton1Click:Connect(function()
     end
 end)
 local InfJumpBtn = Instance.new("TextButton", PlayerPage)
-InfJumpBtn.Size = UDim2.new(0.9, 0, 0, 32) InfJumpBtn.Position = UDim2.new(0.05, 0, 0, 185)
+InfJumpBtn.Size = UDim2.new(0.9, 0, 0, 32) InfJumpBtn.Position = UDim2.new(0.05, 0, 0, 225)
 InfJumpBtn.Text = "تفعيل القفز اللانهائي (Inf Jump)" InfJumpBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InfJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local infJumpActive = false
 UserInputService.JumpRequest:Connect(function()
@@ -219,7 +235,7 @@ UserInputService.JumpRequest:Connect(function()
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
--- باقي القائمة (الاستهداف، نقاط الحفظ، التأثيرات) كما كانت تماماً
+-- باقي القائمة كما هي
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
