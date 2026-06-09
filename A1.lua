@@ -106,13 +106,13 @@ local pages = {}
 local currentThemeColor = Color3.fromRGB(0, 255, 0)
 local rainbowThemeActive = false
 
--- نظام تحديث الألوان الديناميكي للثيم بالكامل
+-- نظام تحديث الألوان للثيم بالكامل (الإطار، النص، والأزرار الجانبية)
 local function UpdateUITheme(newColor)
     currentThemeColor = newColor
     TitleLabel.TextColor3 = newColor
-    for _, btn in pairs(tabs) do
-        if btn.Name == "Selected" then
-            btn.BackgroundColor3 = newColor:Darken(0.3)
+    for tName, btn in pairs(tabs) do
+        if btn:GetAttribute("Selected") == true then
+            btn.BackgroundColor3 = Color3.fromRGB(math.max(newColor.R*255 - 60, 0), math.max(newColor.G*255 - 60, 0), math.max(newColor.B*255 - 60, 0))
         else
             btn.BackgroundColor3 = newColor
         end
@@ -130,6 +130,7 @@ local function CreateTab(tabName, order)
     TabButton.Text = tabName
     TabButton.LayoutOrder = order
     TabButton.Parent = LeftPanel
+    TabButton:SetAttribute("Selected", false)
 
     local Page = Instance.new("ScrollingFrame")
     Page.Size = UDim2.new(1, 0, 1, 0)
@@ -147,13 +148,13 @@ local function CreateTab(tabName, order)
     TabButton.MouseButton1Click:Connect(function()
         for _, p in pairs(pages) do p.Visible = false end
         for tName, tBtn in pairs(tabs) do 
-            tBtn.Name = "Unselected"
+            tBtn:SetAttribute("Selected", false)
             tBtn.BackgroundColor3 = currentThemeColor
             tBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
         end
         Page.Visible = true
-        TabButton.Name = "Selected"
-        TabButton.BackgroundColor3 = currentThemeColor:Darken(0.3)
+        TabButton:SetAttribute("Selected", true)
+        TabButton.BackgroundColor3 = Color3.fromRGB(math.max(currentThemeColor.R*255 - 60, 0), math.max(currentThemeColor.G*255 - 60, 0), math.max(currentThemeColor.B*255 - 60, 0))
         TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     end)
 
@@ -162,12 +163,7 @@ local function CreateTab(tabName, order)
     return Page
 end
 
--- ميزة الألوان الداكنة لمساعدة الأزرار النشطة
-function Color3:Darken(amount)
-    local h, s, v = Color3.toHSV(self)
-    return Color3.fromHSV(h, s, math.clamp(v - amount, 0, 1))
-end
-
+-- دالة إنشاء أزرار الميزات داخل الصفحات
 local function CreateFeatureButton(page, text, callback)
     local Button = Instance.new("TextButton")
     Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
@@ -181,7 +177,7 @@ local function CreateFeatureButton(page, text, callback)
     Button.MouseButton1Click:Connect(function()
         active = not active
         if active then
-            Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            Button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
         else
             Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
         end
@@ -191,10 +187,10 @@ local function CreateFeatureButton(page, text, callback)
 end
 
 -- =========================================================
--- القوائم والتبويبات المعدلة
+-- بناء التبويبات والميزات كاملة وثابتة
 -- =========================================================
 
--- 1. اعدادات الماب (تم إضافة زر الشادر)
+-- 1. اعدادات الماب
 local MapPage = CreateTab("اعدادات الماب", 1)
 
 CreateFeatureButton(MapPage, "🎬 تفعيل الشادر (Shaders RTX)", function(state)
@@ -224,7 +220,7 @@ CreateFeatureButton(MapPage, "جعل الماب مضوي (FullBright)", function
     end
 end)
 
--- 2. ألوان السكريبت (لتغيير الألوان بالكامل كطلبك)
+-- 2. ألوان السكريبت (تحديث الألوان الحقيقي الذي طلبته للأزرار، الإطار، والنصوص)
 local ColorsPage = CreateTab("ألوان السكريبت", 2)
 
 CreateFeatureButton(ColorsPage, "🔴 الثيم الأحمر", function()
@@ -256,11 +252,11 @@ CreateFeatureButton(ColorsPage, "🌈 ثيم قوس قزح المتحرك", func
     task.spawn(function()
         local hue = 0
         while rainbowThemeActive do
-            hue = hue + 0.01
+            hue = hue + 0.005
             local rainbowColor = Color3.fromHSV(hue % 1, 1, 1)
             FrameStroke.Color = rainbowColor
             UpdateUITheme(rainbowColor)
-            task.wait(0.03)
+            task.wait(0.02)
         end
     end)
 end)
@@ -294,8 +290,8 @@ CreateFeatureButton(IYPage, "⏱️ منع الطرد — Anti-AFK", function(st
     end
 end)
 
--- فتح القائمة الأولى تلقائياً
+-- تشغيل القائمة الأولى افتراضياً بشكل صحيح
 pages["اعدادات الماب"].Visible = true
-tabs["اعدادات الماب"].Name = "Selected"
-tabs["اعدادات الماب"].BackgroundColor3 = currentThemeColor:Darken(0.3)
+tabs["اعدادات الماب"]:SetAttribute("Selected", true)
+tabs["اعدادات الماب"].BackgroundColor3 = Color3.fromRGB(0, 195, 0)
 tabs["اعدادات الماب"].TextColor3 = Color3.fromRGB(255, 255, 255)
