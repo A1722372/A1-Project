@@ -1,18 +1,23 @@
--- [[ سكريبت أيهم الأسطوري V18 - نسخة الدمج الذكي والتشغيل المضمون ]]
-task.wait(0.1)
+-- [[ سكريبت أيهم الأسطوري - نسخة إعادة البناء الكاملة والتشغيل الإجباري المضمون ]]
+if not game:IsLoaded() then game.Loaded:Wait() end
+task.wait(0.5)
 
-local Player = game.Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
+local Player = game:GetService("Players").LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui", 10)
 local RunService = game:GetService("RunService")
 local PlayersService = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 
-if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
+if not PlayerGui then return end
 
-local ScreenGui = Instance.new("ScreenGui", PlayerGui)
-ScreenGui.Name = "AihamSuperMenu"
+-- توليد اسم عشوائي تماماً للواجهة لمنع الكراش والتعارض مع النسخ القديمة
+local randomName = "AihamMenu_" .. tostring(math.random(10000, 99999))
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = randomName
 ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
 
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 480, 0, 320)
@@ -29,9 +34,10 @@ local rainbowConnection
 local function setBorderColor(mode)
     if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
     local function applyColor(color)
+        MainFrame.BorderColor3 = color
         for _, obj in ipairs(yellowElements) do
             if obj and obj.Parent then
-                if obj:IsA("TextButton") or obj:IsA("Frame") then obj.BackgroundColor3 = color
+                if obj:IsA("TextButton") then obj.BackgroundColor3 = color
                 elseif obj:IsA("TextLabel") or obj:IsA("TextBox") then obj.TextColor3 = color end
             end
         end
@@ -41,8 +47,7 @@ local function setBorderColor(mode)
     elseif mode == "Blue" then applyColor(Color3.fromRGB(0, 100, 255))
     elseif mode == "Rainbow" then
         rainbowConnection = RunService.RenderStepped:Connect(function()
-            local hue = (tick() % 4) / 4
-            applyColor(Color3.fromHSV(hue, 1, 1))
+            applyColor(Color3.fromHSV((tick() % 4) / 4, 1, 1))
         end)
     end
 end
@@ -67,7 +72,7 @@ table.insert(yellowElements, Title)
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-SideMenu.CanvasSize = UDim2.new(0, 0, 0, 250) -- تم إعادتها للوضع الطبيعي لأن التابات أصبحت 5
+SideMenu.CanvasSize = UDim2.new(0, 0, 0, 250)
 SideMenu.ScrollBarThickness = 5
 
 local ContentArea = Instance.new("Frame", MainFrame)
@@ -75,7 +80,7 @@ ContentArea.Size = UDim2.new(1, -130, 1, -35) ContentArea.Position = UDim2.new(0
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
-local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات"} -- تم حذف القائمة السادسة
+local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات"}
 
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
@@ -83,15 +88,18 @@ for i, name in ipairs(tabs) do
     btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
     table.insert(yellowElements, btn)
+    
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
-    page.CanvasSize = UDim2.new(0, 0, 0, 520) -- تم زيادة مساحة التمرير هنا لتستوعب كل الأزرار الجديدة المدمجة
+    page.CanvasSize = UDim2.new(0, 0, 0, i == 2 and 530 or 400)
     page.ScrollBarThickness = 5
     page.Visible = (i == 1) Pages[i] = page
+    
     btn.MouseButton1Click:Connect(function()
         for _, p in ipairs(Pages) do p.Visible = false end
         page.Visible = true
     end)
+    task.wait(0.02) -- تأخير برميجي طفيف جداً لمنع الـ Timeout أثناء التحميل
 end
 
 -- === [ شريحة 1: اعدادات الماب ] ===
@@ -133,7 +141,7 @@ for idx, mode in ipairs(colors) do
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
 end
 
--- === [ شريحة 2: اللاعب (مدمج معها ميزات IY بالكامل) ] ===
+-- === [ شريحة 2: اللاعب (شامل ومدمج بالكامل ومصلح جذرين) ] ===
 local PlayerPage = Pages[2]
 
 local function createPlayerButton(text, yPos, callback)
@@ -155,7 +163,6 @@ local function createPlayerButton(text, yPos, callback)
     return btn
 end
 
--- الأزرار الأساسية السابقة للاعب
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
 SpeedLabel.Size = UDim2.new(0.3, 0, 0, 30) SpeedLabel.Position = UDim2.new(0.05, 0, 0, 15)
 SpeedLabel.Text = "السرعة:" SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255) SpeedLabel.BackgroundTransparency = 1
@@ -176,7 +183,7 @@ end)
 SpeedBtn.MouseButton1Click:Connect(function()
     speedActive = not speedActive
     SpeedBtn.BackgroundColor3 = speedActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
-    if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
+    if speedActive then if Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 end else if Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid.WalkSpeed = 16 end end
 end)
 
 local JumpLabel = Instance.new("TextLabel", PlayerPage)
@@ -207,7 +214,6 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- 1. زر الطيران المدمج (يبدأ من الارتفاع 95)
 local flying = false local flyBody
 local FlyBtn = createPlayerButton("تفعيل الطيران المدمج والآمن (Fly)", 95, function(state)
     flying = state
@@ -234,32 +240,27 @@ local FlyBtn = createPlayerButton("تفعيل الطيران المدمج وال
 end)
 FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120)
 
--- 2. قوست مود
 local ghostActive = false local ghostChar
 createPlayerButton("القوست مود (Ghost Mode)", 135, function(state)
-    ghostActive = state
-    local char = Player.Character
-    if ghostActive then
+    ghostActive = state local char = Player.Character
+    if ghostActive and char and char:FindFirstChild("HumanoidRootPart") then
         ghostChar = char:Clone() ghostChar.Parent = workspace
         ghostChar.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame
         workspace.CurrentCamera.CameraSubject = ghostChar.Humanoid
         char.HumanoidRootPart.CFrame = CFrame.new(0, -5000, 0)
-        RunService.RenderStepped:Connect(function() if ghostActive and ghostChar then ghostChar.Humanoid:Move(char.Humanoid.MoveDirection, true) end end)
-    else
+    elseif ghostChar and char and char:FindFirstChild("HumanoidRootPart") then
         workspace.CurrentCamera.CameraSubject = char.Humanoid
         char.HumanoidRootPart.CFrame = ghostChar.HumanoidRootPart.CFrame
         ghostChar:Destroy()
     end
 end)
 
--- 3. قفل الكاميرا
 local lockActive = false local cam = workspace.CurrentCamera
 createPlayerButton("قفل الكاميرا", 175, function(state)
     lockActive = state
     cam.CameraType = lockActive and Enum.CameraType.Scriptable or Enum.CameraType.Custom
 end)
 
--- 4. اختراق الجدران Noclip
 local noclipActive = false local noclipConnection
 createPlayerButton("تفعيل اختراق الجدران (Noclip)", 215, function(state)
     noclipActive = state
@@ -272,38 +273,30 @@ createPlayerButton("تفعيل اختراق الجدران (Noclip)", 215, funct
     end
 end)
 
--- 5. قفز لانهائي
 local infJumpActive = false
 UserInputService.JumpRequest:Connect(function()
     if infJumpActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid:ChangeState("Jumping") end
 end)
 createPlayerButton("تفعيل القفز اللانهائي (Inf Jump)", 255, function(state) infJumpActive = state end)
 
--- [ الأزرار المنقولة حديثاً من القائمة السادسة ]
--- 6. حلقة الألوان
-local ringHighlight
-local ringConnection
+local ringHighlight local ringConnection
 createPlayerButton("💫 حلقة الألوان النيون حول الشخصية", 295, function(state)
     if ringConnection then ringConnection:Disconnect() ringConnection = nil end
     if ringHighlight then ringHighlight:Destroy() ringHighlight = nil end
     if state and Player.Character then
         ringHighlight = Instance.new("Highlight")
         ringHighlight.Name = "AihamRainbowRing"
-        ringHighlight.FillTransparency = 0.5
-        ringHighlight.OutlineTransparency = 0
+        ringHighlight.FillTransparency = 0.5 ringHighlight.OutlineTransparency = 0
         ringHighlight.Parent = Player.Character
         ringConnection = RunService.RenderStepped:Connect(function()
             if ringHighlight and ringHighlight.Parent then
-                local hue = (tick() % 4) / 4
-                local color = Color3.fromHSV(hue, 1, 1)
-                ringHighlight.FillColor = color
-                ringHighlight.OutlineColor = color
+                local color = Color3.fromHSV((tick() % 4) / 4, 1, 1)
+                ringHighlight.FillColor = color ringHighlight.OutlineColor = color
             end
         end)
     end
 end)
 
--- 7. رؤية الأعلى
 local topCamConnection
 createPlayerButton("👁️ رؤية الأعلى — كاميرا من فوق (Top View)", 335, function(state)
     if topCamConnection then topCamConnection:Disconnect() topCamConnection = nil end
@@ -318,13 +311,10 @@ createPlayerButton("👁️ رؤية الأعلى — كاميرا من فوق (
         end)
     else
         cam.CameraType = Enum.CameraType.Custom
-        if Player.Character and Player.Character:FindFirstChild("Humanoid") then
-            cam.CameraSubject = Player.Character.Humanoid
-        end
+        if Player.Character and Player.Character:FindFirstChild("Humanoid") then cam.CameraSubject = Player.Character.Humanoid end
     end
 end)
 
--- 8. المشي على الجدران WallWalk
 local wallWalkConnection
 createPlayerButton("🧱 WallWalk — المشي على الجدران بالـ Raycast", 375, function(state)
     if wallWalkConnection then wallWalkConnection:Disconnect() wallWalkConnection = nil end
@@ -336,28 +326,23 @@ createPlayerButton("🧱 WallWalk — المشي على الجدران بالـ 
                 params.FilterDescendantsInstances = {Player.Character}
                 params.FilterType = Enum.RaycastFilterType.Exclude
                 local result = workspace:Raycast(root.Position, root.CFrame.LookVector * 3, params)
-                if result then
-                    root.Velocity = Vector3.new(root.Velocity.X, 20, root.Velocity.Z)
-                end
+                if result then root.Velocity = Vector3.new(root.Velocity.X, 20, root.Velocity.Z) end
             end
         end)
     end
 end)
 
--- 9. منع الطرد تلقائياً Anti-AFK
 local antiAfkConnection
 createPlayerButton("⏱️ Anti-AFK — منع الطرد تلقائياً من الماب", 415, function(state)
     if antiAfkConnection then antiAfkConnection:Disconnect() antiAfkConnection = nil end
     if state then
         antiAfkConnection = Player.Idled:Connect(function()
             local vu = game:GetService("VirtualUser")
-            vu:CaptureController()
-            vu:ClickButton2(Vector2.new())
+            vu:CaptureController() vu:ClickButton2(Vector2.new())
         end)
     end
 end)
 
--- 10. تدوير الشخصية Spin
 local spinLoopConnection
 createPlayerButton("🌀 Spin — تدوير الشخصية باستمرار", 455, function(state)
     if spinLoopConnection then spinLoopConnection:Disconnect() spinLoopConnection = nil end
@@ -370,15 +355,11 @@ createPlayerButton("🌀 Spin — تدوير الشخصية باستمرار", 4
     end
 end)
 
--- 11. إخفاء الشخصية كاملاً
 createPlayerButton("👻 Invisible — إخفاء الشخصية كاملاً", 495, function(state)
     if Player.Character then
         for _, obj in ipairs(Player.Character:GetDescendants()) do
-            if obj:IsA("BasePart") and obj.Name ~= "HumanoidRootPart" then
-                obj.Transparency = state and 1 or 0
-            elseif obj:IsA("Decal") then
-                obj.Transparency = state and 1 or 0
-            end
+            if obj:IsA("BasePart") and obj.Name ~= "HumanoidRootPart" then obj.Transparency = state and 1 or 0
+            elseif obj:IsA("Decal") then obj.Transparency = state and 1 or 0 end
         end
     end
 end)
@@ -394,7 +375,9 @@ TeleBtn.Text = "انتقال فوري للاعب" TeleBtn.BackgroundColor3 = Col
 TeleBtn.MouseButton1Click:Connect(function()
     local tName = NameBox.Text:lower()
     for _, p in ipairs(PlayersService:GetPlayers()) do
-        if p.Name:lower():sub(1, #tName) == tName and p.Character then Player.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3) end
+        if p.Name:lower():sub(1, #tName) == tName and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then 
+            Player.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3) 
+        end
     end
 end)
 
@@ -412,4 +395,7 @@ local function updateCPList()
     local count = 0
     for name, cframe in pairs(savedLocations) do
         local ItemFrame = Instance.new("Frame", ListContainer)
-        ItemFrame.Size = UDim2
+        ItemFrame.Size = UDim2.new(0.95, 0, 0, 30) ItemFrame.Position = UDim2.new(0, 0, 0, count * 34)
+        ItemFrame.BackgroundTransparency = 1
+        local GoBtn = Instance.new("TextButton", ItemFrame)
+        GoBtn.Size = U
