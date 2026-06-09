@@ -96,6 +96,7 @@ end
 
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
+-- زر الشادر
 local ShaderBtn = Instance.new("TextButton", MapPage)
 ShaderBtn.Size = UDim2.new(0.9, 0, 0, 35) ShaderBtn.Position = UDim2.new(0.05, 0, 0, 10)
 ShaderBtn.Text = "تفعيل الشادر (Shader)" ShaderBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -185,7 +186,7 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر الطيران المعدل لتشغيل سكربت FlyGuiV3
+-- زر الطيران (FlyGuiV3) فقط
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تفعيل الطيران (FlyGuiV3)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -217,6 +218,8 @@ UserInputService.JumpRequest:Connect(function()
     if infJumpActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid:ChangeState("Jumping") end
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
+
+-- باقي القائمة (الاستهداف، نقاط الحفظ، التأثيرات) كما كانت تماماً
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
