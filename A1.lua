@@ -257,6 +257,19 @@ TeleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- الزر الجديد: مشاهدة الهدف
+local SpecBtn = Instance.new("TextButton", TargetPage)
+SpecBtn.Size = UDim2.new(0.9, 0, 0, 32) SpecBtn.Position = UDim2.new(0.05, 0, 0, 95)
+SpecBtn.Text = "مشاهدة الهدف" SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpecBtn.MouseButton1Click:Connect(function()
+    local tName = NameBox.Text:lower()
+    for _, p in ipairs(PlayersService:GetPlayers()) do
+        if p.Name:lower():sub(1, #tName) == tName and p.Character and p.Character:FindFirstChild("Humanoid") then
+            workspace.CurrentCamera.CameraSubject = p.Character.Humanoid
+        end
+    end
+end)
+
 -- === [ شريحة 4: نقاط الحفظ اليدوية ] ===
 local CheckpointPage = Pages[4]
 
