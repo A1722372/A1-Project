@@ -249,6 +249,70 @@ UserInputService.JumpRequest:Connect(function()
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
+-- زر الدوران المضاف (Spin Button)
+local SpinBtn = Instance.new("TextButton", PlayerPage)
+SpinBtn.Size = UDim2.new(0.9, 0, 0, 32) SpinBtn.Position = UDim2.new(0.05, 0, 0, 305)
+SpinBtn.Text = "تفعيل الدوران (Spin)" SpinBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) SpinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+local spinActive = false local spinConnection
+SpinBtn.MouseButton1Click:Connect(function()
+    spinActive = not spinActive
+    SpinBtn.BackgroundColor3 = spinActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
+    if spinActive then
+        spinConnection = RunService.RenderStepped:Connect(function()
+            if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                Player.Character.HumanoidRootPart.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(20), 0)
+            end
+        end)
+    else
+        if spinConnection then spinConnection:Disconnect() spinConnection = nil end
+    end
+end)
+
+-- زر المشي على الجدران المضاف (Wallwalk Button)
+local WallwalkBtn = Instance.new("TextButton", PlayerPage)
+WallwalkBtn.Size = UDim2.new(0.9, 0, 0, 32) WallwalkBtn.Position = UDim2.new(0.05, 0, 0, 345)
+WallwalkBtn.Text = "تفعيل مشي الجدران (Wallwalk)" WallwalkBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) WallwalkBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+local wallwalkActive = false local wallwalkConnection
+WallwalkBtn.MouseButton1Click:Connect(function()
+    wallwalkActive = not wallwalkActive
+    WallwalkBtn.BackgroundColor3 = wallwalkActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
+    if wallwalkActive then
+        wallwalkConnection = RunService.Stepped:Connect(function()
+            if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                local ray = Ray.new(Player.Character.HumanoidRootPart.Position, Player.Character.HumanoidRootPart.CFrame.LookVector * 3)
+                local part = workspace:FindPartOnRay(ray, Player.Character)
+                if part then
+                    Player.Character.HumanoidRootPart.Velocity = Vector3.new(Player.Character.HumanoidRootPart.Velocity.X, 25, Player.Character.HumanoidRootPart.Velocity.Z)
+                end
+            end
+        end)
+    else
+        if wallwalkConnection then wallwalkConnection:Disconnect() wallwalkConnection = nil end
+    end
+end)
+
+-- زر الانتقال بالماوس المضاف (Click TP Button)
+local ClickTpBtn = Instance.new("TextButton", PlayerPage)
+ClickTpBtn.Size = UDim2.new(0.9, 0, 0, 32) ClickTpBtn.Position = UDim2.new(0.05, 0, 0, 385)
+ClickTpBtn.Text = "تفعيل الانتقال بالضغط (Click TP)" ClickTpBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) ClickTpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+local clickTpActive = false local clickTpConnection
+ClickTpBtn.MouseButton1Click:Connect(function()
+    clickTpActive = not clickTpActive
+    ClickTpBtn.BackgroundColor3 = clickTpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
+    if clickTpActive then
+        clickTpConnection = UserInputService.InputBegan:Connect(function(input, processed)
+            if not processed and input.UserInputType == Enum.UserInputType.MouseButton1 and clickTpActive then
+                local mouse = Player:GetMouse()
+                if mouse and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                    Player.Character.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.Position + Vector3.new(0, 3, 0))
+                end
+            end
+        end)
+    else
+        if clickTpConnection then clickTpConnection:Disconnect() clickTpConnection = nil end
+    end
+end)
+
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
@@ -285,59 +349,4 @@ local function updateCPList()
         local DelBtn = Instance.new("TextButton", ItemFrame)
         DelBtn.Size = UDim2.new(0.18, 0, 1, 0) DelBtn.Position = UDim2.new(0.82, 0, 0, 0)
         DelBtn.Text = "X" DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0) DelBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        DelBtn.MouseButton1Click:Connect(function() savedLocations[name] = nil updateCPList() end)
-        count = count + 1
-    end
-end
-local SaveBtn = Instance.new("TextButton", CheckpointPage)
-SaveBtn.Size = UDim2.new(0.3, 0, 0, 32) SaveBtn.Position = UDim2.new(0.65, 0, 0, 10)
-SaveBtn.Text = "حفظ" SaveBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0) SaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-SaveBtn.MouseButton1Click:Connect(function()
-    local locName = CPInput.Text
-    if locName ~= "" and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        savedLocations[locName] = Player.Character.HumanoidRootPart.CFrame
-        CPInput.Text = "" updateCPList()
-    end
-end)
-
-local EffectsPage = Pages[5]
-local function clearAllEffects()
-    if Player.Character then
-        for _, item in ipairs(Player.Character:GetChildren()) do
-            if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end
-        end
-        local root = Player.Character:FindFirstChild("HumanoidRootPart")
-        if root then
-            for _, item in ipairs(root:GetChildren()) do
-                if item.Name == "PlayerParticles" or item:IsA("ParticleEmitter") then item:Destroy() end
-            end
-        end
-    end
-end
-local function giveDirectEffect(effectType, customColor)
-    clearAllEffects()
-    local root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-    if not root then return end
-    if effectType == "Highlight" then
-        local hl = Instance.new("Highlight")
-        hl.Name = "PlayerHighlight" hl.FillColor = customColor hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-        hl.Parent = Player.Character
-    elseif effectType == "Particles" then
-        local pe = Instance.new("ParticleEmitter")
-        pe.Name = "PlayerParticles" pe.Color = ColorSequence.new(customColor)
-        pe.Speed = NumberRange.new(8, 12) pe.Rate = 80 pe.Lifetime = NumberRange.new(1, 1.5)
-        pe.Size = NumberSequence.new(0.5, 0) pe.Parent = root
-    elseif effectType == "Fire" then
-        local f = Instance.new("Fire")
-        f.Name = "PlayerParticles" f.Size = 10 f.Heat = 15 f.Parent = root
-    end
-end
-local function createEffectBtn(text, yPos, color, callback)
-    local btn = Instance.new("TextButton", EffectsPage) btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, yPos) btn.BackgroundColor3 = color btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.Text = text btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13 btn.MouseButton1Click:Connect(callback)
-end
-createEffectBtn("تفعيل تأثير النار على الجسم فوراً", 10, Color3.fromRGB(210, 90, 0), function() giveDirectEffect("Fire") end)
-createEffectBtn("تفعيل تأثير الإضاءة المشعة الشاملة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
-createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
-createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
-createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
-local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
+        DelBtn.MouseButt
