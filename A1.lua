@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة المعدلة والمطورة V16 ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة الأساسية المستقرة والمطورة V17 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -25,7 +25,7 @@ MainFrame.Draggable = true
 local yellowElements = {}
 local rainbowConnection
 
--- دالة تحديث ألوان الثيم بالكامل (الإطار، العنوان، والأزرار الجانبية)
+-- دالة تحديث الألوان المصلحة بالكامل لتعمل بسلاسة وبدون تعليق على التابلت
 local function setBorderColor(mode)
     if rainbowConnection then rainbowConnection:Disconnect() rainbowConnection = nil end
     
@@ -56,7 +56,7 @@ local function setBorderColor(mode)
     end
 end
 
--- زر التصغير المربع الذهبي الجديد بالنقطة السوداء (مقتبس من تصميم الصورة)
+-- زر التصغير العائم (المربع الذهبي مع النقطة السوداء والإطار الأسود) لسهولة التحكم باللمس
 local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 42, 0, 42)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -21)
@@ -78,14 +78,14 @@ DotCorner.CornerRadius = UDim.new(1, 0)
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 table.insert(yellowElements, ToggleButton)
 
--- عنوان السكريبت باسمك الأسطوري
+-- لوحة العنوان الرئيسية
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 35) Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 Title.Text = "صنع من قبل المطور الأسطوري أيهم"
 Title.TextColor3 = Color3.fromRGB(255, 200, 0) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
 table.insert(yellowElements, Title)
 
--- زر الإغلاق النهائي (X)
+-- زر الإغلاق النهائي (X) لتدمير السكريبت بالكامل عند الحاجة دون تعليق الواجهة
 local CloseBtn = Instance.new("TextButton", MainFrame) 
 CloseBtn.Size = UDim2.new(0, 25, 0, 25) 
 CloseBtn.Position = UDim2.new(1, -28, 0, 5) 
@@ -385,4 +385,4 @@ local function giveDirectEffect(effectType, customColor)
     elseif effectType == "Particles" then
         local pe = Instance.new("ParticleEmitter")
         pe.Name = "PlayerParticles" pe.Color = ColorSequence.new(customColor)
-        pe.Speed = NumberRange.new(8, 12) pe.Rate = 80 pe.Lifetime = NumberRa
+  
