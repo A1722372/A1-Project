@@ -26,7 +26,6 @@ MainFrame.Draggable = true
 
 -- جدول ذكي لتخزين العناصر التي ستتغير ألوانها بالكامل (الشرائح والنصوص الصفراء)
 local yellowElements = {}
-local scrollbars = {} -- جدول إضافي للتحكم في ألوان مؤشرات التمرير بالكامل
 
 -- نظام ألوان الشرائح والقوائم الكامل بدلاً من الحواف
 local rainbowConnection
@@ -41,12 +40,6 @@ local function setBorderColor(mode)
                 elseif obj:IsA("TextLabel") or obj:IsA("TextBox") then
                     obj.TextColor3 = color
                 end
-            end
-        end
-        -- تلوين مؤشرات التمرير تلقائياً مع نظام الألوان
-        for _, scroll in ipairs(scrollbars) do
-            if scroll and scroll.Parent then
-                scroll.ScrollBarImageColor3 = color
             end
         end
     end
@@ -94,22 +87,21 @@ ContentArea.Size = UDim2.new(1, -130, 1, -35) ContentArea.Position = UDim2.new(0
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
-local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات"}
+-- تم إضافة "التحليل" إلى قائمة الشرائح الأساسية لطلبك
+local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "التحليل"}
 
 -- بناء وتفعيل الصفحات والشرائح بالكامل
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
-    btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
+    btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 36 + 8)
     btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
     table.insert(yellowElements, btn)
     
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
-    page.CanvasSize = UDim2.new(0, 0, 0, 450) 
-    page.ScrollBarThickness = 12 -- تم تكبير المؤشر الحركي هنا ليصبح عريضاً وواضحاً وسهل اللمس
+    page.CanvasSize = UDim2.new(0, 0, 0, 450) page.ScrollBarThickness = 5
     page.Visible = (i == 1) Pages[i] = page
-    table.insert(scrollbars, page) -- إضافة المؤشر لنظام الألوان تلقائياً
     
     btn.MouseButton1Click:Connect(function()
         for _, p in ipairs(Pages) do p.Visible = false end
@@ -210,7 +202,7 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر الطيران السهل
+-- زر الطيران السهل الاصلي
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تفعيل الطيران السهل (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -311,9 +303,7 @@ CPInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30) CPInput.TextColor3 = Color
 
 local ListContainer = Instance.new("ScrollingFrame", CheckpointPage)
 ListContainer.Size = UDim2.new(0.9, 0, 0, 160) ListContainer.Position = UDim2.new(0.05, 0, 0, 50)
-ListContainer.BackgroundTransparency = 0.9 ListContainer.CanvasSize = UDim2.new(0, 0, 0, 600) 
-ListContainer.ScrollBarThickness = 12 -- تم تكبير المؤشر الحركي هنا لخانة قائمة نقاط الحفظ
-table.insert(scrollbars, ListContainer)
+ListContainer.BackgroundTransparency = 0.9 ListContainer.CanvasSize = UDim2.new(0, 0, 0, 600) ListContainer.ScrollBarThickness = 4
 
 local savedLocations = {}
 local function updateCPList()
@@ -395,5 +385,13 @@ createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particl
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
--- زر إغلاق القائمة الرئيسي (X)
-local CloseBtn = Instance.new("TextButton", MainFrame) Cl
+
+-- === [ شريحة 6 الجديدة: شريحة التحليل الذكية والشغالة ] ===
+local AnalyticsPage = Pages[6]
+
+local StartAnalysisBtn = Instance.new("TextButton", AnalyticsPage)
+StartAnalysisBtn.Size = UDim2.new(0.9, 0, 0, 35) StartAnalysisBtn.Position = UDim2.new(0.05, 0, 0, 10)
+StartAnalysisBtn.Text = "بدء التحليل الإحصائي الفوري للماب 📊" StartAnalysisBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 200)
+StartAnalysisBtn.TextColor3 = Color3.fromRGB(255, 255, 255) StartAnalysisBtn.Font = Enum.Font.SourceSansBold StartAnalysisBtn.TextSize = 13
+
+-- نصوص عرض البيانات النا
