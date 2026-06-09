@@ -24,9 +24,6 @@ MainFrame.BorderColor3 = Color3.fromRGB(255, 200, 0) -- الحواف ثابتة 
 MainFrame.Active = true
 MainFrame.Draggable = true
 
--- جدول نقاط الحفظ الخاص بشريحة الحفظ
-local savedLocations = {}
-
 -- جدول ذكي لتخزين العناصر التي ستتغير ألوانها بالكامل (الشرائح والنصوص الصفراء)
 local yellowElements = {}
 
@@ -37,10 +34,12 @@ local function setBorderColor(mode)
     
     local function applyColor(color)
         for _, obj in ipairs(yellowElements) do
-            if obj:IsA("TextButton") or obj:IsA("Frame") then
-                obj.BackgroundColor3 = color
-            elseif obj:IsA("TextLabel") or obj:IsA("TextBox") then
-                obj.TextColor3 = color
+            if obj and obj.Parent then
+                if obj:IsA("TextButton") or obj:IsA("Frame") then
+                    obj.BackgroundColor3 = color
+                elseif obj:IsA("TextLabel") or obj:IsA("TextBox") then
+                    obj.TextColor3 = color
+                end
             end
         end
     end
@@ -141,7 +140,7 @@ for idx, mode in ipairs(colors) do
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
 end
 
--- === [ شريحة 2: اللاعب (تم تعديل القفز وإضافة الطيران هنا) ] ===
+-- === [ شريحة 2: اللاعب ] ===
 local PlayerPage = Pages[2]
 
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
@@ -171,7 +170,6 @@ SpeedBtn.MouseButton1Click:Connect(function()
     if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
 end)
 
--- تم تعديل نظام القفز هنا ليدعم الـ JumpHeight والـ JumpPower معاً لحل المشكلة نهائياً
 local JumpLabel = Instance.new("TextLabel", PlayerPage)
 JumpLabel.Size = UDim2.new(0.3, 0, 0, 30) JumpLabel.Position = UDim2.new(0.05, 0, 0, 60)
 JumpLabel.Text = "القفز:" JumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255) JumpLabel.BackgroundTransparency = 1
@@ -203,7 +201,7 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر الطيران الجديد والسهل
+-- زر الطيران السهل
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تفعيل الطيران السهل (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -234,12 +232,12 @@ FlyBtn.MouseButton1Click:Connect(function()
             if Player.Character and torso and bodyVelocity and bodyGyro then
                 bodyGyro.CFrame = workspace.CurrentCamera.CFrame
                 local moveDirection = Player.Character.Humanoid.MoveDirection
-                local velocity = moveDirection * 70 -- سرعة الطيران
+                local velocity = moveDirection * 70
                 
                 if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                    velocity = velocity + Vector3.new(0, 50, 0) -- الارتفاع للأعلى
+                    velocity = velocity + Vector3.new(0, 50, 0)
                 elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                    velocity = velocity + Vector3.new(0, -50, 0) -- النزول للأسفل
+                    velocity = velocity + Vector3.new(0, -50, 0)
                 end
                 bodyVelocity.Velocity = velocity
             end
@@ -306,6 +304,7 @@ local ListContainer = Instance.new("ScrollingFrame", CheckpointPage)
 ListContainer.Size = UDim2.new(0.9, 0, 0, 160) ListContainer.Position = UDim2.new(0.05, 0, 0, 50)
 ListContainer.BackgroundTransparency = 0.9 ListContainer.CanvasSize = UDim2.new(0, 0, 0, 600) ListContainer.ScrollBarThickness = 4
 
+local savedLocations = {}
 local function updateCPList()
     ListContainer:ClearAllChildren()
     local count = 0
@@ -338,7 +337,7 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 5: التأثيرات والأدوات (تم إصلاح نظام البارتكلز بالكامل هنا) ] ===
+-- === [ شريحة 5: التأثيرات والأدوات ] ===
 local EffectsPage = Pages[5]
 
 local function clearAllEffects()
@@ -388,4 +387,5 @@ createEffectBtn("إزالة كافة التأثيرات والبارتكلز ف�
 -- زر إغلاق القائمة الرئيسي (X)
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
 
--- تفعيل اللون الأصفر الافتراضي عند تشغيل المنيو لأول مرة لجميع العنا
+-- [ التثبيت النهائي ] - يتم الاستدعاء هنا بعد امتلاء الجدول تماماً بالأزرار لتغيير الألوان فوراً وبنجاح
+setBorderColor("Yellow")
