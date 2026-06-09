@@ -66,7 +66,7 @@ table.insert(yellowElements, Title)
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-SideMenu.CanvasSize = UDim2.new(0, 0, 0, 300)
+SideMenu.CanvasSize = UDim2.new(0, 0, 0, 350)
 SideMenu.ScrollBarThickness = 5
 
 local ContentArea = Instance.new("Frame", MainFrame)
@@ -74,7 +74,7 @@ ContentArea.Size = UDim2.new(1, -130, 1, -35) ContentArea.Position = UDim2.new(0
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
-local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات"}
+local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "IY"}
 
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
@@ -340,4 +340,11 @@ createEffectBtn("تفعيل تأثير الإضاءة المشعة الشامل�
 createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
-local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
+
+-- === [ شريحة 6: IY ] ===
+local IYPage = Pages[6]
+
+local SpinBtn = Instance.new("TextButton", IYPage)
+SpinBtn.Size = UDim2.new(0.9, 0, 0, 32) SpinBtn.Position = UDim2.new(0.05, 0, 0, 10)
+SpinBtn.Text = "تفعيل الدوران (Spin)" SpinBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) SpinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Spin
