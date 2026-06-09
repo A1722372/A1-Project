@@ -1,61 +1,49 @@
--- سكريبت أيهم الأسطوري V12 - تحديث التمرير وزر الإخفاء
+-- سكريبت أيهم الأسطوري V12 - المحدث (مع التمرير وزر الإخفاء)
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+local RunService = game:GetService("RunService")
+local PlayersService = game:GetService("Players")
 
--- تنظيف النسخ السابقة
+-- تنظيف النسخ القديمة
 if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamSuperMenu"
 
--- زر الإخفاء (الأيقونة)
-local ToggleButton = Instance.new("ImageButton", ScreenGui) -- يمكنك استبداله بـ TextButton إذا أردت
+-- 1. زر الإخفاء (الأيقونة في الجانب)
+local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 50, 0, 50)
 ToggleButton.Position = UDim2.new(0, 20, 0.5, -25)
 ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
 ToggleButton.Text = "MENU"
-ToggleButton.Font = Enum.Font.SourceSansBold
 ToggleButton.Active = true
-ToggleButton.Draggable = true -- يمكنك تحريك زر الإخفاء في الشاشة
-ToggleButton.Layer = 1
+ToggleButton.Draggable = true
 
+-- 2. الإطار الرئيسي
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 500, 0, 400)
 MainFrame.Position = UDim2.new(0.5, -250, 0.5, -200)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-MainFrame.Visible = false -- يبدأ مخفياً
+MainFrame.Visible = false 
 
--- وظيفة زر الإخفاء
-ToggleButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = not MainFrame.Visible
-end)
+ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
--- القائمة الجانبية (تم تفعيل ScrollBar)
+-- 3. القائمة الجانبية (مع التمرير)
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 140, 1, 0)
-SideMenu.CanvasSize = UDim2.new(0, 0, 2, 0) -- مساحة كافية للتمرير
-SideMenu.ScrollBarThickness = 6
+SideMenu.CanvasSize = UDim2.new(0, 0, 1.5, 0) -- سعة التمرير
+SideMenu.ScrollBarThickness = 5
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 
--- منطقة المحتوى (تم تفعيل ScrollBar)
+-- 4. منطقة المحتوى (مع التمرير لكل صفحة)
 local ContentArea = Instance.new("Frame", MainFrame)
 ContentArea.Size = UDim2.new(1, -140, 1, 0)
 ContentArea.Position = UDim2.new(0, 140, 0, 0)
 ContentArea.BackgroundTransparency = 1
 
--- دالة إنشاء الصفحات مع خاصية Scroll
-local function createPage()
-    local page = Instance.new("ScrollingFrame", ContentArea)
-    page.Size = UDim2.new(1, 0, 1, 0)
-    page.CanvasSize = UDim2.new(0, 0, 2, 0) -- لجعل الصفحة قابلة للتمرير
-    page.ScrollBarThickness = 8
-    page.BackgroundTransparency = 1
-    page.Visible = false
-    return page
-end
-
--- تجربة بناء القوائم
 local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "الأنيميشن", "إضافات", "معلومات"}
+local Pages = {}
+
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
     btn.Size = UDim2.new(0.9, 0, 0, 40)
@@ -63,11 +51,17 @@ for i, name in ipairs(tabs) do
     btn.Text = name
     btn.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
     
-    local page = createPage()
+    local page = Instance.new("ScrollingFrame", ContentArea)
+    page.Size = UDim2.new(1, 0, 1, 0)
+    page.CanvasSize = UDim2.new(0, 0, 2, 0) -- تفعيل ScrollBar
+    page.BackgroundTransparency = 1
+    page.Visible = (i == 1)
+    Pages[i] = page
+    
     btn.MouseButton1Click:Connect(function()
-        for _, child in pairs(ContentArea:GetChildren()) do
-            if child:IsA("ScrollingFrame") then child.Visible = false end
-        end
+        for _, p in ipairs(Pages) do p.Visible = false end
         page.Visible = true
     end)
 end
+
+-- الآن السكربت أصبح جاهزاً لاستقبال الكود الخاص بك في كل صفحة (Pages[1] للماب، Pages[2] للاعب، إلخ..)
