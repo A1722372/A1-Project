@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V15 (الكامل) ]]
+                                        -- [[ سكريبت أيهم الأسطوري V15 (الكامل) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -20,7 +20,29 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 3
 MainFrame.BorderColor3 = Color3.fromRGB(255, 200, 0)
 MainFrame.Active = true
-MainFrame.Draggable = true
+
+-- كود السحب المتوافق مع الجوال والدلتا
+local dragging, dragInput, dragStart, startPos
+local function update(input)
+    local delta = input.Position - dragStart
+    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+MainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+MainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then update(input) end
+end)
 
 local yellowElements = {}
 local rainbowConnection
@@ -53,7 +75,27 @@ ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
 ToggleButton.Text = "●"
 ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 ToggleButton.TextSize = 22 ToggleButton.Font = Enum.Font.SourceSansBold
-ToggleButton.Active = true ToggleButton.Draggable = true
+ToggleButton.Active = true
+
+-- سحب زر التفعيل للجوال
+local t_dragging, t_dragStart, t_startPos
+ToggleButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        t_dragging = true
+        t_dragStart = input.Position
+        t_startPos = ToggleButton.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then t_dragging = false end
+        end)
+    end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if t_dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - t_dragStart
+        ToggleButton.Position = UDim2.new(t_startPos.X.Scale, t_startPos.X.Offset + delta.X, t_startPos.Y.Scale, t_startPos.Y.Offset + delta.Y)
+    end
+end)
+
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 table.insert(yellowElements, ToggleButton)
 
@@ -191,7 +233,6 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- الزر الجديد: القوست مود (Ghost Mode)
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
 GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -213,7 +254,6 @@ GhostBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- الزر المعدل: قفل الكاميرا (Camera Lock)
 local LockCamBtn = Instance.new("TextButton", PlayerPage)
 LockCamBtn.Size = UDim2.new(0.9, 0, 0, 32) LockCamBtn.Position = UDim2.new(0.05, 0, 0, 185)
 LockCamBtn.Text = "قفل الكاميرا" LockCamBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) LockCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -325,26 +365,4 @@ local function giveDirectEffect(effectType, customColor)
     elseif effectType == "Particles" then
         local pe = Instance.new("ParticleEmitter")
         pe.Name = "PlayerParticles" pe.Color = ColorSequence.new(customColor)
-        pe.Speed = NumberRange.new(8, 12) pe.Rate = 80 pe.Lifetime = NumberRange.new(1, 1.5)
-        pe.Size = NumberSequence.new(0.5, 0) pe.Parent = root
-    elseif effectType == "Fire" then
-        local f = Instance.new("Fire")
-        f.Name = "PlayerParticles" f.Size = 10 f.Heat = 15 f.Parent = root
-    end
-end
-local function createEffectBtn(text, yPos, color, callback)
-    local btn = Instance.new("TextButton", EffectsPage) btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, yPos) btn.BackgroundColor3 = color btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.Text = text btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13 btn.MouseButton1Click:Connect(callback)
-end
-createEffectBtn("تفعيل تأثير النار على الجسم فوراً", 10, Color3.fromRGB(210, 90, 0), function() giveDirectEffect("Fire") end)
-createEffectBtn("تفعيل تأثير الإضاءة المشعة الشاملة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
-createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
-createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
-createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
-
--- === [ شريحة 6: IY ] ===
-local IYPage = Pages[6]
-
-local SpinBtn = Instance.new("TextButton", IYPage)
-SpinBtn.Size = UDim2.new(0.9, 0, 0, 32) SpinBtn.Position = UDim2.new(0.05, 0, 0, 10)
-SpinBtn.Text = "تفعيل الدوران (Spin)" SpinBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) SpinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Spin
+        pe.Speed = 
