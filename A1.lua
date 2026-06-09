@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - مع زر الاختفاء بالسماء ]]
+-- [[ سكريبت أيهم الأسطوري V12 - مع زر الاختفاء المطور ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -109,7 +109,7 @@ end)
 local BrightBtn = Instance.new("TextButton", MapPage)
 BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 50)
 BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-BrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255) ShaderBtn.Font = Enum.Font.SourceSansBold BrightBtn.TextSize = 13
+BrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255) BrightBtn.Font = Enum.Font.SourceSansBold BrightBtn.TextSize = 13
 local brightActive = false
 local originalBrightness = Lighting.Brightness
 local originalAmbient = Lighting.Ambient
@@ -191,22 +191,27 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- هذا هو زر الاختفاء الذي طلبته (مثل الفيديو)
+-- كود الاختفاء المطور الجديد
 local InviBtn = Instance.new("TextButton", PlayerPage)
 InviBtn.Size = UDim2.new(0.9, 0, 0, 32) InviBtn.Position = UDim2.new(0.05, 0, 0, 145)
-InviBtn.Text = "تفعيل الاختفاء (Sky)" InviBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InviBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+InviBtn.Text = "تفعيل الاختفاء (المنظور الحر)" InviBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InviBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local inviActive = false
-local lastPosition = nil
+local cam = game.Workspace.CurrentCamera
+local originalCFrame = nil
 InviBtn.MouseButton1Click:Connect(function()
     inviActive = not inviActive
     InviBtn.BackgroundColor3 = inviActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
     local char = Player.Character
     if char and char:FindFirstChild("HumanoidRootPart") then
         if inviActive then
-            lastPosition = char.HumanoidRootPart.CFrame
-            char.HumanoidRootPart.CFrame = CFrame.new(0, 5000, 0)
+            originalCFrame = cam.CFrame
+            cam.CameraType = Enum.CameraType.Scriptable
+            cam.CFrame = originalCFrame
+            char.HumanoidRootPart.CFrame = CFrame.new(0, -5000, 0)
         else
-            if lastPosition then char.HumanoidRootPart.CFrame = lastPosition end
+            cam.CameraType = Enum.CameraType.Custom
+            cam.CameraSubject = char:FindFirstChild("Humanoid")
+            if originalCFrame then char.HumanoidRootPart.CFrame = originalCFrame end
         end
     end
 end)
