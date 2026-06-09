@@ -7,11 +7,22 @@ local PlayersService = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 
-if PlayerGui:FindFirstChild("AihamSuperMenu") then PlayerGui.AihamSuperMenu:Destroy() end
+-- تغيير CoreGui بدل PlayerGui لإصلاح مشكلة دلتا
+local function getSafeGui()
+    local success, result = pcall(function()
+        return game:GetService("CoreGui")
+    end)
+    if success then return result end
+    return PlayerGui
+end
 
-local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+local GuiParent = getSafeGui()
+if GuiParent:FindFirstChild("AihamSuperMenu") then GuiParent.AihamSuperMenu:Destroy() end
+
+local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "AihamSuperMenu"
 ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = GuiParent
 
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 480, 0, 320)
@@ -50,7 +61,7 @@ local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 40, 0, 40)
 ToggleButton.Position = UDim2.new(0, 10, 0.5, -20)
 ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
-ToggleButton.Text = "●"
+ToggleButton.Text = "o"
 ToggleButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 ToggleButton.TextSize = 22
 ToggleButton.Font = Enum.Font.SourceSansBold
@@ -62,7 +73,7 @@ table.insert(yellowElements, ToggleButton)
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 35)
 Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-Title.Text = "صنع من قبل المطور الأسطوري أيهم"
+Title.Text = "صنع من قبل المطور الاسطوري ايهم"
 Title.TextColor3 = Color3.fromRGB(255, 200, 0)
 Title.TextSize = 16
 Title.Font = Enum.Font.SourceSansBold
@@ -81,7 +92,7 @@ ContentArea.Position = UDim2.new(0, 130, 0, 35)
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
-local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "IY"}
+local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التاثيرات", "IY"}
 
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
@@ -416,7 +427,7 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === شريحة 5: التأثيرات ===
+-- === شريحة 5: التاثيرات ===
 local EffectsPage = Pages[5]
 local function clearAllEffects()
     if Player.Character then
@@ -469,7 +480,5 @@ local function createEffectBtn(text, yPos, color, callback)
     btn.TextSize = 13
     btn.MouseButton1Click:Connect(callback)
 end
-createEffectBtn("تفعيل تأثير النار على الجسم فوراً", 10, Color3.fromRGB(210, 90, 0), function() giveDirectEffect("Fire") end)
-createEffectBtn("تفعيل تأثير الإضاءة المشعة الشاملة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
-createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
-createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Par
+createEffectBtn("تفعيل تاثير النار على الجسم", 10, Color3.fromRGB(210, 90, 0), function() giveDirectEffect("Fire") end)
+createEffectBtn("تفعيل الاضاءة المشعة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Hig
