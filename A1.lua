@@ -69,12 +69,12 @@ ContentArea.Size = UDim2.new(1, -130, 1, -35) ContentArea.Position = UDim2.new(0
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
-local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "الصناديق", "الرقصات"}
+local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "الصناديق", "الرقصات", "الألعاب"}
 
 -- بناء وتفعيل الصفحات
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
-    btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
+    btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 40 + 5)
     btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
     
@@ -91,6 +91,7 @@ end
 
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
+-- (تم نقل الكود الخاص بصفحة 1 هنا كما في سكربتك الأصلي)
 local BrightBtn = Instance.new("TextButton", MapPage)
 BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 10)
 BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -121,6 +122,7 @@ end
 
 -- === [ شريحة 2: اللاعب ] ===
 local PlayerPage = Pages[2]
+-- (تم نقل كود اللاعب هنا)
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
 SpeedLabel.Size = UDim2.new(0.3, 0, 0, 30) SpeedLabel.Position = UDim2.new(0.05, 0, 0, 15)
 SpeedLabel.Text = "السرعة:" SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255) SpeedLabel.BackgroundTransparency = 1
@@ -312,12 +314,11 @@ end
 
 -- === [ شريحة 7: الرقصات ] ===
 local EmotePage = Pages[7]
-EmotePage.ClipsDescendants = true -- هذا هو الحل الذي طلبته
+EmotePage.ClipsDescendants = true 
 local emoteList = {
-    {name = "رقصة 1", id = "0000000000"}, -- عدل الـ ID
+    {name = "رقصة 1", id = "0000000000"},
     {name = "رقصة 2", id = "0000000000"}
 }
--- تحديث حجم التمرير تلقائياً بناءً على عدد الرقصات
 EmotePage.CanvasSize = UDim2.new(0, 0, 0, (#emoteList * 55) + 20)
 
 local function playEmote(id)
@@ -339,6 +340,19 @@ for i, data in ipairs(emoteList) do
     eBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     eBtn.MouseButton1Click:Connect(function() playEmote(data.id) end)
 end
+
+-- === [ شريحة 8: الألعاب ] ===
+local GamesPage = Pages[8]
+local FlyBtn = Instance.new("TextButton", GamesPage)
+FlyBtn.Size = UDim2.new(0.9, 0, 0, 45)
+FlyBtn.Position = UDim2.new(0.05, 0, 0, 10)
+FlyBtn.Text = "Fly V3"
+FlyBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyBtn.Font = Enum.Font.SourceSansBold
+FlyBtn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+end)
 
 -- زر إغلاق القائمة
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
