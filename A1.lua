@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V15 (الكامل) ]]
+-- [[ سكريبت أيهم الأسطوري V16 (الكامل والمصلح) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -66,7 +66,7 @@ table.insert(yellowElements, Title)
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-SideMenu.CanvasSize = UDim2.new(0, 0, 0, 300)
+SideMenu.CanvasSize = UDim2.new(0, 0, 0, 380) -- تكبير مساحة القائمة الجانبية لتستوعب الأزرار الجديدة
 SideMenu.ScrollBarThickness = 5
 
 local ContentArea = Instance.new("Frame", MainFrame)
@@ -74,7 +74,7 @@ ContentArea.Size = UDim2.new(1, -130, 1, -35) ContentArea.Position = UDim2.new(0
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
-local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات"}
+local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "أي يو (IY)", "أدوات إضافية"}
 
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
@@ -82,10 +82,13 @@ for i, name in ipairs(tabs) do
     btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
     table.insert(yellowElements, btn)
+    
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
-    page.CanvasSize = UDim2.new(0, 0, 0, 450) page.ScrollBarThickness = 5
-    page.Visible = (i == 1) Pages[i] = page
+    page.CanvasSize = UDim2.new(0, 0, 0, 500) page.ScrollBarThickness = 5
+    page.Visible = (i == 1) 
+    Pages[i] = page
+    
     btn.MouseButton1Click:Connect(function()
         for _, p in ipairs(Pages) do p.Visible = false end
         page.Visible = true
@@ -191,7 +194,6 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- الزر الجديد: القوست مود (Ghost Mode)
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
 GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -213,7 +215,6 @@ GhostBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- الزر المعدل: قفل الكاميرا (Camera Lock)
 local LockCamBtn = Instance.new("TextButton", PlayerPage)
 LockCamBtn.Size = UDim2.new(0.9, 0, 0, 32) LockCamBtn.Position = UDim2.new(0.05, 0, 0, 185)
 LockCamBtn.Text = "قفل الكاميرا" LockCamBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) LockCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -249,6 +250,7 @@ UserInputService.JumpRequest:Connect(function()
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
+-- === [ شريحة 3: الاستهداف ] ===
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
@@ -263,6 +265,7 @@ TeleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- === [ شريحة 4: نقاط الحفظ ] ===
 local CheckpointPage = Pages[4]
 local CPInput = Instance.new("TextBox", CheckpointPage)
 CPInput.Size = UDim2.new(0.55, 0, 0, 32) CPInput.Position = UDim2.new(0.05, 0, 0, 10)
@@ -300,6 +303,7 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- === [ شريحة 5: التأثيرات ] ===
 local EffectsPage = Pages[5]
 local function clearAllEffects()
     if Player.Character then
@@ -340,4 +344,11 @@ createEffectBtn("تفعيل تأثير الإضاءة المشعة الشامل�
 createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
-local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
+
+
+-- ==========================================
+-- === [ شريحة 6: أي يو (IY) - مصلحة بالكامل ] ===
+-- ==========================================
+local IYPage = Pages[6]
+
+local function createIYButton(text, yPos, c
