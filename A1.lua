@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - نسخة الصناديق بدون طيران - مصلح ]]
+-- [[ سكريبت أيهم الأسطوري V12 - نسخة الصناديق بدون طيران - مصلح ومحدث ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -23,7 +23,6 @@ MainFrame.BorderSizePixel = 3
 MainFrame.Active = true
 MainFrame.Draggable = true
 
--- جدول نقاط الحفظ الخاص بشريحة الحفظ
 local savedLocations = {}
 
 -- نظام ألوان الحواف الكامل لجميع الشرائح
@@ -71,7 +70,6 @@ ContentArea.BackgroundTransparency = 1
 local Pages = {}
 local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "الصناديق", "الرقصات"}
 
--- بناء وتفعيل الصفحات
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
     btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
@@ -91,8 +89,25 @@ end
 
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
+
+-- زر الشادر الجديد
+local ShaderBtn = Instance.new("TextButton", MapPage)
+ShaderBtn.Size = UDim2.new(0.9, 0, 0, 35) ShaderBtn.Position = UDim2.new(0.05, 0, 0, 10)
+ShaderBtn.Text = "تفعيل الشادر (Shader)" ShaderBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 80)
+ShaderBtn.TextColor3 = Color3.fromRGB(255, 255, 255) ShaderBtn.Font = Enum.Font.SourceSansBold
+local shaderActive = false local shaderEffect
+ShaderBtn.MouseButton1Click:Connect(function()
+    shaderActive = not shaderActive
+    ShaderBtn.BackgroundColor3 = shaderActive and Color3.fromRGB(150, 0, 150) or Color3.fromRGB(80, 0, 80)
+    if shaderActive then
+        shaderEffect = Instance.new("ColorCorrectionEffect", Lighting)
+        shaderEffect.Name = "CustomShader"
+        shaderEffect.Brightness = 0.1 shaderEffect.Contrast = 0.2 shaderEffect.Saturation = 0.4
+    elseif shaderEffect then shaderEffect:Destroy() shaderEffect = nil end
+end)
+
 local BrightBtn = Instance.new("TextButton", MapPage)
-BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 10)
+BrightBtn.Size = UDim2.new(0.9, 0, 0, 35) BrightBtn.Position = UDim2.new(0.05, 0, 0, 50)
 BrightBtn.Text = "جعل الماب مضوي بالكامل (FullBright)" BrightBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 BrightBtn.TextColor3 = Color3.fromRGB(255, 255, 255) BrightBtn.Font = Enum.Font.SourceSansBold BrightBtn.TextSize = 13
 local brightActive = false
@@ -113,7 +128,7 @@ local colorNames = {Rainbow = "حواف قوس قزح", Red = "حواف حمرا
 for idx, mode in ipairs(colors) do
     local cBtn = Instance.new("TextButton", MapPage)
     cBtn.Size = UDim2.new(0.42, 0, 0, 32)
-    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 60 or 100)
+    cBtn.Position = UDim2.new(idx % 2 == 1 and 0.05 or 0.53, 0, 0, idx <= 2 and 90 or 130)
     cBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) cBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
@@ -121,7 +136,6 @@ end
 
 -- === [ شريحة 2: اللاعب ] ===
 local PlayerPage = Pages[2]
--- زر Fly V3 مضاف في شريحة اللاعب
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 185)
 FlyBtn.Text = "Fly V3" FlyBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -200,7 +214,7 @@ UserInputService.JumpRequest:Connect(function()
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
--- باقي الشرائح كما كانت...
+-- باقي الشرائح...
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
