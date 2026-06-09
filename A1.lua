@@ -194,22 +194,20 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- زر الاختفاء الجديد (نقل كامل الشخصية)
+-- زر الاختفاء الجديد (إخفاء الجسد فقط)
 local InviBtn = Instance.new("TextButton", PlayerPage)
 InviBtn.Size = UDim2.new(0.9, 0, 0, 32) InviBtn.Position = UDim2.new(0.05, 0, 0, 145)
 InviBtn.Text = "تفعيل الاختفاء" InviBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InviBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local inviActive = false
-local lastCFrame = nil
 InviBtn.MouseButton1Click:Connect(function()
     inviActive = not inviActive
     InviBtn.BackgroundColor3 = inviActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
     local character = Player.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        if inviActive then
-            lastCFrame = character.HumanoidRootPart.CFrame
-            character:MoveTo(Vector3.new(0, 10000, 0))
-        else
-            if lastCFrame then character:MoveTo(lastCFrame.Position) end
+    if character then
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") or part:IsA("Decal") then
+                part.Transparency = inviActive and 1 or 0
+            end
         end
     end
 end)
@@ -238,7 +236,7 @@ UserInputService.JumpRequest:Connect(function()
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
--- باقي القائمة (الاستهداف، نقاط الحفظ، التأثيرات) كما هي تماماً
+-- باقي القائمة (الاستهداف، نقاط الحفظ، التأثيرات)
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
