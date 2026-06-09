@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - مع ميزة الطيران السهل والمصلح بالكامل ]]
+-- [[ سكريبت أيهم الأسطوري V12 - نسخة القائمة الجانبية المرنة مع شريحة الصناديق ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -77,23 +77,27 @@ Title.Text = "صنع من قبل المطور الأسطوري أيهم"
 Title.TextColor3 = Color3.fromRGB(255, 200, 0) Title.TextSize = 16 Title.Font = Enum.Font.SourceSansBold
 table.insert(yellowElements, Title)
 
--- القائمة الجانبية للتنقل
-local SideMenu = Instance.new("Frame", MainFrame)
+-- [ تعديل طلبك 1 ] القائمة الجانبية للتنقل أصبحت الآن ScrollingFrame لدعم التمرير (Scroll Bar)
+local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+SideMenu.BorderSizePixel = 0
+SideMenu.CanvasSize = UDim2.new(0, 0, 0, 260) -- مساحة تضمن ظهور الـ Scroll Bar بوضوح عند كثرة الشرائح
+SideMenu.ScrollBarThickness = 5
+SideMenu.ScrollBarImageColor3 = Color3.fromRGB(255, 200, 0)
 
 local ContentArea = Instance.new("Frame", MainFrame)
 ContentArea.Size = UDim2.new(1, -130, 1, -35) ContentArea.Position = UDim2.new(0, 130, 0, 35)
 ContentArea.BackgroundTransparency = 1
 
 local Pages = {}
--- تم إضافة "التحليل" إلى قائمة الشرائح الأساسية لطلبك
-local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "التحليل"}
+-- [ تعديل طلبك 2 ] تغيير اسم الشريحة الأخيرة من التحليل إلى "صناديق"
+local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "صناديق"}
 
 -- بناء وتفعيل الصفحات والشرائح بالكامل
 for i, name in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
-    btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 36 + 8)
+    btn.Size = UDim2.new(0.85, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 38 + 8)
     btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
     table.insert(yellowElements, btn)
@@ -202,7 +206,6 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر الطيران السهل الاصلي
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تفعيل الطيران السهل (Fly)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -386,12 +389,10 @@ createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
 
--- === [ شريحة 6 الجديدة: شريحة التحليل الذكية والشغالة ] ===
-local AnalyticsPage = Pages[6]
+-- === [ شريحة 6 المعدلة: شريحة "صناديق" ] ===
+-- [ تعديل طلبك 3 ] تم حذف كافة أزرار التحليل وأصبحت فارغة تماماً وجاهزة لأكوادك الخاصة
+local BoxesPage = Pages[6]
 
-local StartAnalysisBtn = Instance.new("TextButton", AnalyticsPage)
-StartAnalysisBtn.Size = UDim2.new(0.9, 0, 0, 35) StartAnalysisBtn.Position = UDim2.new(0.05, 0, 0, 10)
-StartAnalysisBtn.Text = "بدء التحليل الإحصائي الفوري للماب 📊" StartAnalysisBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 200)
-StartAnalysisBtn.TextColor3 = Color3.fromRGB(255, 255, 255) StartAnalysisBtn.Font = Enum.Font.SourceSansBold StartAnalysisBtn.TextSize = 13
 
--- نصوص عرض البيانات النا
+-- زر إغلاق القائمة الرئيسي (X)
+local CloseBtn = Instance.new("TextButton", MainFrame) CloseBt
