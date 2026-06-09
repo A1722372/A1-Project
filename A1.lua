@@ -113,13 +113,13 @@ end
 -- === [ شريحة 1: اعدادات الماب ] ===
 local MapPage = Pages[1]
 
--- زر الشادر
+-- زر الشادر (تمت إضافته هنا)
 local ShaderBtn = Instance.new("TextButton", MapPage)
 ShaderBtn.Size = UDim2.new(0.9, 0, 0, 35) ShaderBtn.Position = UDim2.new(0.05, 0, 0, 10)
 ShaderBtn.Text = "شادر" ShaderBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 ShaderBtn.TextColor3 = Color3.fromRGB(255, 255, 255) ShaderBtn.Font = Enum.Font.SourceSansBold ShaderBtn.TextSize = 13
 ShaderBtn.MouseButton1Click:Connect(function() 
-    -- وضع برمجة الشادر هنا
+    -- مكان برمجة الشادر
 end)
 
 local BrightBtn = Instance.new("TextButton", MapPage)
@@ -396,4 +396,4 @@ createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
 -- زر إغلاق القائمة الرئيسي (X)
-local CloseBtn = Instance.new("Text")
+local CloseBtn = Inst
