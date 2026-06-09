@@ -191,7 +191,7 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- الزر الجديد: القوست مود (Ghost Mode)
+-- الزر المصلح: القوست مود (Ghost Mode)
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
 GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -204,6 +204,10 @@ GhostBtn.MouseButton1Click:Connect(function()
         local currentPos = char.HumanoidRootPart.CFrame
         char.HumanoidRootPart.CFrame = CFrame.new(0, -99999, 0)
         char.HumanoidRootPart.Anchored = true
+        
+        -- [ السطر الجديد المصلح الذي يسمح بنسخ الشخصية بنجاح ]
+        char.Archivable = true
+        
         ghostChar = char:Clone() ghostChar.Parent = workspace
         ghostChar.HumanoidRootPart.CFrame = currentPos
         workspace.CurrentCamera.CameraSubject = ghostChar:FindFirstChild("Humanoid")
@@ -340,11 +344,9 @@ end
 local function createEffectBtn(text, yPos, color, callback)
     local btn = Instance.new("TextButton", EffectsPage) btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, yPos) btn.BackgroundColor3 = color btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.Text = text btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13 btn.MouseButton1Click:Connect(callback)
 end
+
 createEffectBtn("تفعيل تأثير النار على الجسم فوراً", 10, Color3.fromRGB(210, 90, 0), function() giveDirectEffect("Fire") end)
 createEffectBtn("تفعيل تأثير الإضاءة المشعة الشاملة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
 createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
-createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
-
--- [ السطر المصحح والمغلق بشكل كامل بدون تعديل أي ميزة ]
-local C
+createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRG
