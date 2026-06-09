@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V16 (الكامل مع تاب IY الجديد) ]]
+-- [[ سكريبت أيهم الأسطوري V16 (الكامل والمصحح المقاسات 100%) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -66,7 +66,7 @@ table.insert(yellowElements, Title)
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-SideMenu.CanvasSize = UDim2.new(0, 0, 0, 350)
+SideMenu.CanvasSize = UDim2.new(0, 0, 0, 380) -- تم تعديل المساحة هنا لتستوعب التاب السادس بدون كراش
 SideMenu.ScrollBarThickness = 5
 
 local ContentArea = Instance.new("Frame", MainFrame)
@@ -168,7 +168,7 @@ JumpBtn.Size = UDim2.new(0.35, 0, 0, 30) JumpBtn.Position = UDim2.new(0.6, 0, 0,
 JumpBtn.Text = "تفعيل القفز" JumpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) JumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local jumpActive = false
 JumpBtn.MouseButton1Click:Connect(function()
-    jumpActive = not jumpActive
+    not jumpActive
     JumpBtn.BackgroundColor3 = jumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
     if Player.Character and Player.Character:FindFirstChild("Humanoid") then
         local val = tonumber(JumpInput.Text) or 120
@@ -191,7 +191,6 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- الزر الجديد: القوست مود (Ghost Mode)
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
 GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -213,7 +212,6 @@ GhostBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- الزر المعدل: قفل الكاميرا (Camera Lock)
 local LockCamBtn = Instance.new("TextButton", PlayerPage)
 LockCamBtn.Size = UDim2.new(0.9, 0, 0, 32) LockCamBtn.Position = UDim2.new(0.05, 0, 0, 185)
 LockCamBtn.Text = "قفل الكاميرا" LockCamBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) LockCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -249,7 +247,6 @@ UserInputService.JumpRequest:Connect(function()
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
--- === [ شريحة 3: الاستهداف ] ===
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
@@ -264,7 +261,6 @@ TeleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 4: نقاط الحفظ ] ===
 local CheckpointPage = Pages[4]
 local CPInput = Instance.new("TextBox", CheckpointPage)
 CPInput.Size = UDim2.new(0.55, 0, 0, 32) CPInput.Position = UDim2.new(0.05, 0, 0, 10)
@@ -302,7 +298,6 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === [ شريحة 5: التأثيرات ] ===
 local EffectsPage = Pages[5]
 local function clearAllEffects()
     if Player.Character then
@@ -349,4 +344,7 @@ local IYPage = Pages[6]
 
 local function createIYButton(text, yPos, callback)
     local btn = Instance.new("TextButton", IYPage)
-    btn.Size = UDim2.new(0.9
+    btn.Size = UDim2.new(0.9, 0, 0, 35)
+    btn.Position = UDim2.new(0.05, 0, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.TextColor3 = Color
