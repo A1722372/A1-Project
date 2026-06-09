@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - مع إضافة زر الاختفاء ]]
+-- [[ سكريبت أيهم الأسطوري V12 - مع تعديل الاختفاء ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -185,7 +185,7 @@ JumpBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر الطيران (FlyGuiV3)
+-- زر الطيران
 local FlyBtn = Instance.new("TextButton", PlayerPage)
 FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 105)
 FlyBtn.Text = "تفعيل الطيران (FlyGuiV3)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -194,20 +194,20 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- زر الاختفاء (Invisible)
+-- زر الاختفاء (المعدل للنقل بعيداً)
 local InviBtn = Instance.new("TextButton", PlayerPage)
 InviBtn.Size = UDim2.new(0.9, 0, 0, 32) InviBtn.Position = UDim2.new(0.05, 0, 0, 145)
 InviBtn.Text = "تفعيل الاختفاء" InviBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) InviBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local inviActive = false
+local lastPos = nil
 InviBtn.MouseButton1Click:Connect(function()
     inviActive = not inviActive
     InviBtn.BackgroundColor3 = inviActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
-    if Player.Character then
-        for _, part in ipairs(Player.Character:GetDescendants()) do
-            if part:IsA("BasePart") or part:IsA("Decal") then
-                part.Transparency = inviActive and 1 or 0
-            end
-        end
+    if inviActive then
+        lastPos = Player.Character.HumanoidRootPart.CFrame
+        Player.Character.HumanoidRootPart.CFrame = CFrame.new(0, -5000, 0)
+    else
+        if lastPos then Player.Character.HumanoidRootPart.CFrame = lastPos end
     end
 end)
 
@@ -235,7 +235,7 @@ UserInputService.JumpRequest:Connect(function()
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
--- باقي القائمة كما هي
+-- باقي القائمة (الاستهداف، نقاط الحفظ، التأثيرات) كما هي
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
