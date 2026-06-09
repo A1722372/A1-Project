@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V16 (الكامل والمصلح) ]]
+-- [[ سكريبت أيهم الأسطوري V16 - النسخة المستقرة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -66,7 +66,7 @@ table.insert(yellowElements, Title)
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 130, 1, -35) SideMenu.Position = UDim2.new(0, 0, 0, 35)
 SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-SideMenu.CanvasSize = UDim2.new(0, 0, 0, 380) -- تكبير مساحة القائمة الجانبية لتستوعب الأزرار الجديدة
+SideMenu.CanvasSize = UDim2.new(0, 0, 0, 380)
 SideMenu.ScrollBarThickness = 5
 
 local ContentArea = Instance.new("Frame", MainFrame)
@@ -77,17 +77,17 @@ local Pages = {}
 local tabs = {"اعدادات الماب", "اللاعب", "الاستهداف", "نقاط الحفظ", "التأثيرات", "أي يو (IY)", "أدوات إضافية"}
 
 for i, name in ipairs(tabs) do
-    local btn = Instance.new("TextButton", SideMenu)
-    btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
-    btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
-    btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
-    table.insert(yellowElements, btn)
-    
     local page = Instance.new("ScrollingFrame", ContentArea)
     page.Size = UDim2.new(1, 0, 1, 0) page.BackgroundTransparency = 1
     page.CanvasSize = UDim2.new(0, 0, 0, 500) page.ScrollBarThickness = 5
     page.Visible = (i == 1) 
     Pages[i] = page
+
+    local btn = Instance.new("TextButton", SideMenu)
+    btn.Size = UDim2.new(0.9, 0, 0, 38) btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 44 + 12)
+    btn.Text = name btn.BackgroundColor3 = Color3.fromRGB(235, 185, 0) btn.TextColor3 = Color3.fromRGB(0, 0, 0)
+    btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13
+    table.insert(yellowElements, btn)
     
     btn.MouseButton1Click:Connect(function()
         for _, p in ipairs(Pages) do p.Visible = false end
@@ -347,8 +347,10 @@ createEffectBtn("إزالة كافة التأثيرات والبارتكلز ف�
 
 
 -- ==========================================
--- === [ شريحة 6: أي يو (IY) - مصلحة بالكامل ] ===
+-- === [ شريحة 6: أي يو (IY) ] ===
 -- ==========================================
 local IYPage = Pages[6]
 
-local function createIYButton(text, yPos, c
+local function createIYButton(text, yPos, callback)
+    local btn = Instance.new("TextButton", IYPage)
+    btn.Size = 
