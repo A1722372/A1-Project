@@ -201,6 +201,7 @@ GhostBtn.Text = "الجوست مود المطور (تعديل المنظور)" G
 
 local ghostActive = false
 local ghostBody = nil
+local moveConnection = nil
 
 GhostBtn.MouseButton1Click:Connect(function()
     ghostActive = not ghostActive
@@ -235,19 +236,18 @@ GhostBtn.MouseButton1Click:Connect(function()
                 end
             end
             
-            -- 4. العبقرية هنا: تحويل منظور الكاميرا فوراً ليلحق الجسد الجوست!
+            -- 4. تعديل الكاميرا لتتبع الـ Humanoid الخاص بجسد الجوست فوراً!
             if ghostBody:FindFirstChild("Humanoid") then
                 Camera.CameraSubject = ghostBody.Humanoid
             end
             
-            -- ربط التحكم بالجسد المستنسخ ليتحرك معك
-            local moveConnection
+            -- ربط التحكم بالجسد المستنسخ ليتحرك معك بسلاسة
             moveConnection = RunService.RenderStepped:Connect(function()
                 if not ghostActive or not ghostBody or not ghostBody:FindFirstChild("HumanoidRootPart") or not originalChar:FindFirstChild("HumanoidRootPart") then
-                    if moveConnection then moveConnection:Disconnect() end
+                    if moveConnection then moveConnection:Disconnect() moveConnection = nil end
                     return
                 end
-                -- نقل إحداثيات الحركة من تحكمك الأساسي إلى الجوست
+                -- نقل إحداثيات الحركة والقفز من تحكمك الأساسي إلى الجوست
                 ghostBody.Humanoid:Move(originalChar.Humanoid.MoveDirection, true)
                 if originalChar.Humanoid.Jump then
                     ghostBody.Humanoid.Jump = true
@@ -256,10 +256,12 @@ GhostBtn.MouseButton1Click:Connect(function()
             
         else
             -- عند إلغاء التفعيل: إرجاع منظور الكاميرا للجسد الأصلي وحذف الجوست
+            if moveConnection then moveConnection:Disconnect() moveConnection = nil end
+            
             if originalChar and originalChar:FindFirstChild("Humanoid") then
                 Camera.CameraSubject = originalChar.Humanoid
                 
-                -- إعادة إظهار الجسد الأساسي الحقيقي
+                -- إعادة إظهار الجسد الأساسي الحقيقي وإعادة الاصطدام
                 for _, part in ipairs(originalChar:GetChildren()) do
                     if part:IsA("BasePart") then
                         part.Transparency = 0
@@ -270,7 +272,7 @@ GhostBtn.MouseButton1Click:Connect(function()
                 end
             end
             
-            -- حذف الجسد الشبح
+            -- حذف الجسد الشبح من الماب
             if ghostBody then
                 ghostBody:Destroy()
                 ghostBody = nil
@@ -366,10 +368,8 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- === [ شريحة 5: التأثيرات - مكملة بالكامل ] ===
 local EffectsPage = Pages[5]
 local function clearAllEffects()
     if Player.Character then
-        for _, item in ipairs(Player.Character:GetChildren()) do
-            if item:IsA("Highlight") or item.Name == "PlayerParticles" then item:Destroy() end
-        end
-        local root = Player.Character and Player.Chara
+        for _, item in 
