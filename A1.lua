@@ -1,28 +1,29 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V33 - إصلاح نهائي للأيقونة ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V34 النهائية ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
 
--- تنظيف أي نسخة قديمة
+-- تنظيف أي نسخة سابقة
 if PlayerGui:FindFirstChild("AihamScript_Main") then
     PlayerGui.AihamScript_Main:Destroy()
 end
 
--- [1] الحاوية
+-- [1] الحاوية بأعلى ترتيب ممكن
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamScript_Main"
 ScreenGui.ResetOnSpawn = false
-ScreenGui.DisplayOrder = 999999
+ScreenGui.DisplayOrder = 2147483647 
 
--- [2] زر التحكم (مربع أيقوني مضمون الظهور)
+-- [2] زر التحكم (المربع الأسود المضمون)
 local ToggleBtn = Instance.new("TextButton", ScreenGui)
 ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
 ToggleBtn.Position = UDim2.new(0.9, -60, 0.1, 0)
-ToggleBtn.Text = "■" -- المربع
-ToggleBtn.TextColor3 = Color3.fromRGB(255, 200, 0)
+ToggleBtn.Text = "■" 
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 0)
 ToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 ToggleBtn.TextSize = 30
 ToggleBtn.Draggable = true
+ToggleBtn.ZIndex = 100
 Instance.new("UICorner", ToggleBtn)
 
 -- [3] الإطار الرئيسي
@@ -30,11 +31,12 @@ local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 400, 0, 300)
 MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 0
 MainFrame.Active = true 
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame)
 
--- [4] التبويبات والمحتوى (نفس التنسيق المعتمد)
+-- [4] التبويبات والمحتوى
 local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 120, 1, 0)
@@ -72,7 +74,7 @@ end
 -- [5] الميزات (إعدادات الماب)
 local MapPage = AllPages["اعدادات الماب"]
 
--- أ. تغيير اللون
+-- زر تغيير اللون
 local ColorBtn = Instance.new("TextButton", MapPage)
 ColorBtn.Size = UDim2.new(0.9, 0, 0, 40)
 ColorBtn.Position = UDim2.new(0.05, 0, 0, 10)
@@ -86,7 +88,7 @@ ColorBtn.MouseButton1Click:Connect(function()
     MainFrame.BackgroundColor3 = colors[cIdx]
 end)
 
--- ب. السطوع (On/Off)
+-- زر السطوع
 local FBEnabled = false
 local FBButton = Instance.new("TextButton", MapPage)
 FBButton.Size = UDim2.new(0.9, 0, 0, 40)
@@ -102,7 +104,7 @@ FBButton.MouseButton1Click:Connect(function()
     FBButton.BackgroundColor3 = FBEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- [6] زر الإخفاء
+-- [6] منطق زر الإخفاء
 ToggleBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
