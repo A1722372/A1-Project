@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V12 - نسخة الصناديق بدون طيران ]]
+-- [[ سكريبت أيهم الأسطوري V12 - نسخة الصناديق بدون طيران - مصلح ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -312,6 +312,7 @@ end
 
 -- === [ شريحة 7: الرقصات ] ===
 local EmotePage = Pages[7]
+EmotePage.ClipsDescendants = true -- هذا هو الحل الذي طلبته
 local emoteList = {
     {name = "رقصة 1", id = "0000000000"}, -- عدل الـ ID
     {name = "رقصة 2", id = "0000000000"}
