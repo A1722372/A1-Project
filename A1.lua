@@ -1,9 +1,11 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.2 الأصلية ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V41.3 الأصلية ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
+
+if not getgenv().AihamSavedPositions then getgenv().AihamSavedPositions = {} end
 
 if PlayerGui:FindFirstChild("AihamScript_Main") then PlayerGui.AihamScript_Main:Destroy() end
 
@@ -144,15 +146,24 @@ local SavePage = AllPages["المحفوظات"]
 local SaveInput = Instance.new("TextBox", SavePage); SaveInput.Size = UDim2.new(0.7, 0, 0, 40); SaveInput.Position = UDim2.new(0.05, 0, 0, 10); SaveInput.PlaceholderText = "اسم المكان"; SaveInput.TextColor3 = Color3.new(1,1,1); SaveInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SaveInput)
 local SaveBtn = Instance.new("TextButton", SavePage); SaveBtn.Size = UDim2.new(0.2, 0, 0, 40); SaveBtn.Position = UDim2.new(0.75, 0, 0, 10); SaveBtn.Text = "حفظ"; SaveBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", SaveBtn)
 
-SaveBtn.MouseButton1Click:Connect(function()
-    if SaveInput.Text ~= "" and Player.Character:FindFirstChild("HumanoidRootPart") then
-        local pos = Player.Character.HumanoidRootPart.CFrame
+local function RefreshSaves()
+    for _, child in pairs(SavePage:GetChildren()) do if child:IsA("Frame") then child:Destroy() end end
+    for name, pos in pairs(getgenv().AihamSavedPositions) do
         local Container = Instance.new("Frame", SavePage); Container.Size = UDim2.new(0.9, 0, 0, 40); Container.Position = UDim2.new(0.05, 0, 0, 60 + (#SavePage:GetChildren() * 45)); Container.BackgroundTransparency = 1
-        local GoBtn = Instance.new("TextButton", Container); GoBtn.Size = UDim2.new(0.8, 0, 1, 0); GoBtn.Text = SaveInput.Text; GoBtn.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", GoBtn)
+        local GoBtn = Instance.new("TextButton", Container); GoBtn.Size = UDim2.new(0.8, 0, 1, 0); GoBtn.Text = name; GoBtn.BackgroundColor3 = Color3.fromRGB(60,60,60); GoBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", GoBtn)
         local DelBtn = Instance.new("TextButton", Container); DelBtn.Size = UDim2.new(0.15, 0, 1, 0); DelBtn.Position = UDim2.new(0.85, 0, 0, 0); DelBtn.Text = "X"; DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", DelBtn)
         GoBtn.MouseButton1Click:Connect(function() Player.Character.HumanoidRootPart.CFrame = pos end)
-        DelBtn.MouseButton1Click:Connect(function() Container:Destroy() end)
+        DelBtn.MouseButton1Click:Connect(function() getgenv().AihamSavedPositions[name] = nil; RefreshSaves() end)
+    end
+end
+
+SaveBtn.MouseButton1Click:Connect(function()
+    if SaveInput.Text ~= "" and Player.Character:FindFirstChild("HumanoidRootPart") then
+        getgenv().AihamSavedPositions[SaveInput.Text] = Player.Character.HumanoidRootPart.CFrame
+        RefreshSaves()
+        SaveInput.Text = ""
     end
 end)
 
+RefreshSaves()
 ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
