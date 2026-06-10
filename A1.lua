@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V42 الكاملة والنهائية ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V42.1 (المحدثة) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -12,7 +12,6 @@ ScreenGui.Name = "AihamScript_Main"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 2147483647 
 
--- الزر المربع الأساسي
 local ToggleBtn = Instance.new("TextButton", ScreenGui)
 ToggleBtn.Name = "ToggleBtn"
 ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
@@ -25,7 +24,6 @@ ToggleBtn.Draggable = true
 ToggleBtn.ZIndex = 100
 Instance.new("UICorner", ToggleBtn)
 
--- الإطار الرئيسي
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 400, 0, 350)
@@ -66,22 +64,17 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
+-- [إعدادات الماب - إضافة زر الشادر والتوقيع]
+local MapPage = AllPages["اعدادات الماب"]
+local CreditLabel = Instance.new("TextLabel", MapPage); CreditLabel.Size = UDim2.new(0.9, 0, 0, 30); CreditLabel.Position = UDim2.new(0.05, 0, 0, 10); CreditLabel.Text = "صنع بواسطة أيهم"; CreditLabel.TextColor3 = Color3.fromRGB(255, 255, 255); CreditLabel.BackgroundTransparency = 1
+local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 50); ShaderBtn.Text = "تفعيل الشادر"; ShaderBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0); ShaderBtn.TextColor3 = Color3.fromRGB(255, 255, 255); Instance.new("UICorner", ShaderBtn)
+ShaderBtn.MouseButton1Click:Connect(function() Lighting.Ambient = Color3.new(1, 1, 1); Lighting.Brightness = 2; Lighting.OutdoorAmbient = Color3.new(1, 1, 1) end)
+
 -- [تبويب اللاعب]
 local PlayerPage = AllPages["اللاعب"]
+local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
+FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
 
--- زر الطيران Fly V3
-local FlyV3Btn = Instance.new("TextButton", PlayerPage)
-FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40)
-FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210)
-FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"
-FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
-FlyV3Btn.TextColor3 = Color3.new(1, 1, 1)
-Instance.new("UICorner", FlyV3Btn)
-FlyV3Btn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
-end)
-
--- (تم الاحتفاظ بباقي الأزرار هنا لتكتمل النسخة)
 local SpeedInput = Instance.new("TextBox", PlayerPage); SpeedInput.Size = UDim2.new(0.5, 0, 0, 40); SpeedInput.Position = UDim2.new(0.05, 0, 0, 10); SpeedInput.PlaceholderText = "السرعة"; Instance.new("UICorner", SpeedInput)
 local SpeedBtn = Instance.new("TextButton", PlayerPage); SpeedBtn.Size = UDim2.new(0.35, 0, 0, 40); SpeedBtn.Position = UDim2.new(0.6, 0, 0, 10); SpeedBtn.Text = "تفعيل"; SpeedBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", SpeedBtn)
 local SpeedEnabled = false; SpeedBtn.MouseButton1Click:Connect(function() SpeedEnabled = not SpeedEnabled; SpeedBtn.Text = SpeedEnabled and "مفعل" or "تفعيل"; SpeedBtn.BackgroundColor3 = SpeedEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
