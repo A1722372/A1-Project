@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة الكاملة والمحدثة ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة النهائية المحدثة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -64,7 +64,7 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- تبويب الماب (مع الأزرار المضافة)
+-- تبويب الماب (التعديلات المطلوبة)
 local MapPage = AllPages["اعدادات الماب"]
 local FBButton = Instance.new("TextButton", MapPage); FBButton.Size = UDim2.new(0.9, 0, 0, 40); FBButton.Position = UDim2.new(0.05, 0, 0, 10); FBButton.Text = "السطوع: مطفأ"; FBButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", FBButton)
 local FBEnabled = false; FBButton.MouseButton1Click:Connect(function() FBEnabled = not FBEnabled; Lighting.Ambient = FBEnabled and Color3.new(1,1,1) or Color3.new(0,0,0); FBButton.Text = FBEnabled and "السطوع: شغال" or "السطوع: مطفأ"; FBButton.BackgroundColor3 = FBEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
@@ -72,9 +72,11 @@ local FBEnabled = false; FBButton.MouseButton1Click:Connect(function() FBEnabled
 local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60); ShaderBtn.Text = "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", ShaderBtn)
 local ShaderEnabled = false; ShaderBtn.MouseButton1Click:Connect(function() ShaderEnabled = not ShaderEnabled; Lighting.Brightness = ShaderEnabled and 3 or 2; Lighting.ClockTime = ShaderEnabled and 12 or 14; ShaderBtn.Text = ShaderEnabled and "الشادر: شغال" or "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
 
+-- زر تغيير لون السكربت
 local ColorBtn = Instance.new("TextButton", MapPage); ColorBtn.Size = UDim2.new(0.9, 0, 0, 40); ColorBtn.Position = UDim2.new(0.05, 0, 0, 110); ColorBtn.Text = "تغيير لون السكربت"; ColorBtn.BackgroundColor3 = Color3.fromRGB(100, 0, 100); Instance.new("UICorner", ColorBtn)
 ColorBtn.MouseButton1Click:Connect(function() MainFrame.BackgroundColor3 = Color3.new(math.random(), math.random(), math.random()) end)
 
+-- زر سيرفر الديسكورد
 local DiscordBtn = Instance.new("TextButton", MapPage); DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40); DiscordBtn.Position = UDim2.new(0.05, 0, 0, 160); DiscordBtn.Text = "سيرفر الديسكورد"; DiscordBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40); DiscordBtn.TextColor3 = Color3.new(0, 0.6, 1); Instance.new("UICorner", DiscordBtn)
 DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/7rRwEm3bjx") end)
 
@@ -112,7 +114,7 @@ for i, bName in ipairs(BNames) do
     b.MouseButton1Click:Connect(function() if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then if bName == "انتقال" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame elseif bName == "استهداف" then workspace.CurrentCamera.CameraSubject = TargetPlayer.Character.Humanoid elseif bName == "ESP" then if not TargetPlayer.Character:FindFirstChild("Highlight") then Instance.new("Highlight", TargetPlayer.Character) end elseif bName == "جلوس فوق" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0) end end end)
 end
 
--- تبويب التأثيرات (النار المرئية للجميع)
+-- تبويب التأثيرات
 local EffectPage = AllPages["التأثيرات"]
 local Effects = {{"نار خضراء", Color3.fromRGB(0, 255, 0)}, {"نار حمراء", Color3.fromRGB(255, 0, 0)}}
 for i, effectData in ipairs(Effects) do
