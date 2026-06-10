@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.2 الأصلية + إضافة الخانة الرابعة ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة الكاملة والمحدثة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -64,13 +64,21 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- تبويب الماب
+-- تبويب الماب (مع الأزرار المضافة)
 local MapPage = AllPages["اعدادات الماب"]
 local FBButton = Instance.new("TextButton", MapPage); FBButton.Size = UDim2.new(0.9, 0, 0, 40); FBButton.Position = UDim2.new(0.05, 0, 0, 10); FBButton.Text = "السطوع: مطفأ"; FBButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", FBButton)
 local FBEnabled = false; FBButton.MouseButton1Click:Connect(function() FBEnabled = not FBEnabled; Lighting.Ambient = FBEnabled and Color3.new(1,1,1) or Color3.new(0,0,0); FBButton.Text = FBEnabled and "السطوع: شغال" or "السطوع: مطفأ"; FBButton.BackgroundColor3 = FBEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
 
 local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60); ShaderBtn.Text = "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", ShaderBtn)
 local ShaderEnabled = false; ShaderBtn.MouseButton1Click:Connect(function() ShaderEnabled = not ShaderEnabled; Lighting.Brightness = ShaderEnabled and 3 or 2; Lighting.ClockTime = ShaderEnabled and 12 or 14; ShaderBtn.Text = ShaderEnabled and "الشادر: شغال" or "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
+
+local ColorBtn = Instance.new("TextButton", MapPage); ColorBtn.Size = UDim2.new(0.9, 0, 0, 40); ColorBtn.Position = UDim2.new(0.05, 0, 0, 110); ColorBtn.Text = "تغيير لون السكربت"; ColorBtn.BackgroundColor3 = Color3.fromRGB(100, 0, 100); Instance.new("UICorner", ColorBtn)
+ColorBtn.MouseButton1Click:Connect(function() MainFrame.BackgroundColor3 = Color3.new(math.random(), math.random(), math.random()) end)
+
+local DiscordBtn = Instance.new("TextButton", MapPage); DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40); DiscordBtn.Position = UDim2.new(0.05, 0, 0, 160); DiscordBtn.Text = "سيرفر الديسكورد"; DiscordBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40); DiscordBtn.TextColor3 = Color3.new(0, 0.6, 1); Instance.new("UICorner", DiscordBtn)
+DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/7rRwEm3bjx") end)
+
+local InfoBox = Instance.new("TextLabel", MapPage); InfoBox.Size = UDim2.new(0.9, 0, 0, 60); InfoBox.Position = UDim2.new(0.05, 0, 0, 210); InfoBox.Text = "تم صناعة هذا السكربت بواسطة anxam"; InfoBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40); InfoBox.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", InfoBox)
 
 -- تبويب اللاعب
 local PlayerPage = AllPages["اللاعب"]
@@ -92,9 +100,7 @@ local JumpEnabled = false; InfJumpBtn.MouseButton1Click:Connect(function() JumpE
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40); NoclipBtn.Position = UDim2.new(0.05, 0, 0, 160); NoclipBtn.Text = "اختراق الجدران"; NoclipBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", NoclipBtn); local NoclipEnabled = false; NoclipBtn.MouseButton1Click:Connect(function() NoclipEnabled = not NoclipEnabled; NoclipBtn.BackgroundColor3 = NoclipEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
 
-local InfoBox = Instance.new("TextLabel", MapPage); InfoBox.Size = UDim2.new(0.9, 0, 0, 80); InfoBox.Position = UDim2.new(0.05, 0, 0, 160); InfoBox.Text = "تم صناعة هذا السكربت بواسطة anxam"; InfoBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40); InfoBox.TextColor3 = Color3.new(1, 1, 1); InfoBox.TextWrapped = true; Instance.new("UICorner", InfoBox)
-
--- الخانة الثالثة (الاستهداف)
+-- تبويب الاستهداف
 local TargetPage = AllPages["الاستهداف"]
 local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
 local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 50, 0, 50); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundTransparency = 1; Instance.new("UICorner", PlayerImg)
@@ -106,18 +112,20 @@ for i, bName in ipairs(BNames) do
     b.MouseButton1Click:Connect(function() if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then if bName == "انتقال" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame elseif bName == "استهداف" then workspace.CurrentCamera.CameraSubject = TargetPlayer.Character.Humanoid elseif bName == "ESP" then if not TargetPlayer.Character:FindFirstChild("Highlight") then Instance.new("Highlight", TargetPlayer.Character) end elseif bName == "جلوس فوق" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0) end end end)
 end
 
--- [الخانة الرابعة: التأثيرات]
+-- تبويب التأثيرات (النار المرئية للجميع)
 local EffectPage = AllPages["التأثيرات"]
 local Effects = {{"نار خضراء", Color3.fromRGB(0, 255, 0)}, {"نار حمراء", Color3.fromRGB(255, 0, 0)}}
 for i, effectData in ipairs(Effects) do
     local b = Instance.new("TextButton", EffectPage); b.Size = UDim2.new(0.9, 0, 0, 40); b.Position = UDim2.new(0.05, 0, 0, 10 + (i-1) * 45); b.Text = effectData[1]; b.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", b)
-    local activeFire = nil
     b.MouseButton1Click:Connect(function()
-        if activeFire then activeFire:Destroy(); activeFire = nil; return end
-        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            activeFire = Instance.new("Fire", Player.Character.HumanoidRootPart)
-            activeFire.Color = effectData[2]
-            activeFire.SecondaryColor = effectData[2]
+        local char = Player.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            for _, v in pairs(char.HumanoidRootPart:GetChildren()) do if v.Name == "CustomFire" then v:Destroy() end end
+            local f = Instance.new("Fire", char.HumanoidRootPart)
+            f.Name = "CustomFire"
+            f.Color = effectData[2]
+            f.SecondaryColor = effectData[2]
+            f.Size = 10
         end
     end)
 end
