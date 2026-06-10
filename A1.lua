@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.2 الأصلية + إضافة صورة اللاعب فقط ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V41.2 الأصلية + إضافة الخانة الرابعة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -94,7 +94,7 @@ local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2
 
 local InfoBox = Instance.new("TextLabel", MapPage); InfoBox.Size = UDim2.new(0.9, 0, 0, 80); InfoBox.Position = UDim2.new(0.05, 0, 0, 160); InfoBox.Text = "تم صناعة هذا السكربت بواسطة anxam"; InfoBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40); InfoBox.TextColor3 = Color3.new(1, 1, 1); InfoBox.TextWrapped = true; Instance.new("UICorner", InfoBox)
 
--- [الخانة الثالثة: الاستهداف مع إضافة الصورة]
+-- الخانة الثالثة (الاستهداف)
 local TargetPage = AllPages["الاستهداف"]
 local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
 local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 50, 0, 50); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundTransparency = 1; Instance.new("UICorner", PlayerImg)
@@ -104,6 +104,22 @@ local BNames = {"انتقال", "استهداف", "ESP", "جلوس فوق"}
 for i, bName in ipairs(BNames) do
     local b = Instance.new("TextButton", TargetPage); b.Size = UDim2.new(0.9, 0, 0, 35); b.Position = UDim2.new(0.05, 0, 0, 120 + (i-1) * 40); b.Text = bName; b.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", b)
     b.MouseButton1Click:Connect(function() if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then if bName == "انتقال" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame elseif bName == "استهداف" then workspace.CurrentCamera.CameraSubject = TargetPlayer.Character.Humanoid elseif bName == "ESP" then if not TargetPlayer.Character:FindFirstChild("Highlight") then Instance.new("Highlight", TargetPlayer.Character) end elseif bName == "جلوس فوق" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0) end end end)
+end
+
+-- [الخانة الرابعة: التأثيرات]
+local EffectPage = AllPages["التأثيرات"]
+local Effects = {{"نار خضراء", Color3.fromRGB(0, 255, 0)}, {"نار حمراء", Color3.fromRGB(255, 0, 0)}}
+for i, effectData in ipairs(Effects) do
+    local b = Instance.new("TextButton", EffectPage); b.Size = UDim2.new(0.9, 0, 0, 40); b.Position = UDim2.new(0.05, 0, 0, 10 + (i-1) * 45); b.Text = effectData[1]; b.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", b)
+    local activeFire = nil
+    b.MouseButton1Click:Connect(function()
+        if activeFire then activeFire:Destroy(); activeFire = nil; return end
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            activeFire = Instance.new("Fire", Player.Character.HumanoidRootPart)
+            activeFire.Color = effectData[2]
+            activeFire.SecondaryColor = effectData[2]
+        end
+    end)
 end
 
 ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
