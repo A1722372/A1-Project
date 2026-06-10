@@ -1,10 +1,9 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.4 الأصلية ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V41.5 الأصلية ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 if not getgenv().AihamSavedPositions then getgenv().AihamSavedPositions = {} end
 
@@ -166,13 +165,20 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- تبويب التأثيرات (الإسبام)
+-- تبويب التأثيرات
 local EffectsPage = AllPages["التأثيرات"]
 local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
 local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
 local OffBtn = Instance.new("TextButton", EffectsPage); OffBtn.Size = UDim2.new(0.43, 0, 0, 40); OffBtn.Position = UDim2.new(0.52, 0, 0, 60); OffBtn.Text = "إلغاء الإسبام"; OffBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", OffBtn)
 local SpamEnabled = false; OnBtn.MouseButton1Click:Connect(function() SpamEnabled = true end); OffBtn.MouseButton1Click:Connect(function() SpamEnabled = false end)
-spawn(function() while true do if SpamEnabled then game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(SpamInput.Text, "All") end; wait(1) end end)
+spawn(function()
+    while true do
+        if SpamEnabled and SpamInput.Text ~= "" then
+            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(SpamInput.Text, "All")
+        end
+        wait(2.5) -- تأخير زمني لمنع طردك من السيرفر
+    end
+end)
 
 RefreshSaves()
 ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
