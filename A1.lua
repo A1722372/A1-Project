@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - التعديل النهائي الدقيق ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة المستقرة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -33,7 +33,7 @@ MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame)
 
--- نظام الألوان المطور
+-- نظام تغيير الألوان
 local ColorModes = {Color3.fromRGB(20, 20, 20), Color3.fromRGB(0, 255, 0), Color3.fromRGB(255, 255, 0), "Rainbow"}
 local CurrentMode = 1
 local IsRainbow = false
@@ -87,15 +87,24 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- تبويب الماب
+-- استعادة كافة الوظائف الأصلية
 local MapPage = AllPages["اعدادات الماب"]
 local ColorBtn = Instance.new("TextButton", MapPage); ColorBtn.Size = UDim2.new(0.9, 0, 0, 40); ColorBtn.Position = UDim2.new(0.05, 0, 0, 10); ColorBtn.Text = "تغيير اللون"; ColorBtn.TextColor3 = Color3.fromRGB(255, 255, 255); ColorBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40); Instance.new("UICorner", ColorBtn)
 ColorBtn.MouseButton1Click:Connect(function() CurrentMode = (CurrentMode % #ColorModes) + 1; ApplyColor(ColorModes[CurrentMode]) end)
 
-local DiscordBtn = Instance.new("TextButton", MapPage); DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40); DiscordBtn.Position = UDim2.new(0.05, 0, 0, 60); DiscordBtn.Text = "سيرفر الديسكورد"; DiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255); DiscordBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40); Instance.new("UICorner", DiscordBtn)
-DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/7rRwEm3bjx") end)
+local FBButton = Instance.new("TextButton", MapPage); FBButton.Size = UDim2.new(0.9, 0, 0, 40); FBButton.Position = UDim2.new(0.05, 0, 0, 60); FBButton.Text = "السطوع"; FBButton.TextColor3 = Color3.fromRGB(255, 255, 255); FBButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", FBButton)
+FBButton.MouseButton1Click:Connect(function() Lighting.Ambient = (Lighting.Ambient == Color3.new(0,0,0)) and Color3.new(1,1,1) or Color3.new(0,0,0) end)
 
--- تبويب التأثيرات (نار تظهر للجميع باستخدام تقنية التزامن)
+-- وظائف اللاعب
+local PlayerPage = AllPages["اللاعب"]
+local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 10); FlyV3Btn.Text = "طيران"; FlyV3Btn.TextColor3 = Color3.fromRGB(255, 255, 255); FlyV3Btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", FlyV3Btn)
+FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
+
+-- وظائف الاستهداف
+local TargetPage = AllPages["الاستهداف"]
+local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "اسم اللاعب"; TInput.TextColor3 = Color3.fromRGB(255, 255, 255); Instance.new("UICorner", TInput)
+
+-- وظائف التأثيرات (نار تظهر للجميع)
 local EffectPage = AllPages["التأثيرات"]
 local function CreateFire(color)
     local char = Player.Character
@@ -111,7 +120,7 @@ local function CreateFire(color)
 end
 local Effects = {{"نار خضراء", Color3.fromRGB(0, 255, 0)}, {"نار حمراء", Color3.fromRGB(255, 0, 0)}}
 for i, effectData in ipairs(Effects) do
-    local b = Instance.new("TextButton", EffectPage); b.Size = UDim2.new(0.9, 0, 0, 40); b.Position = UDim2.new(0.05, 0, 0, 10 + (i-1) * 45); b.Text = effectData[1]; b.TextColor3 = Color3.fromRGB(255, 255, 255); b.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", b)
+    local b = Instance.new("TextButton", EffectPage); b.Size = UDim2.new(0.9, 0, 0, 40); b.Position = UDim2.new(0.05, 0, 0, 10 + (i-1) * 45); b.Text = effectData[1]; b.TextColor3 = Color3.fromRGB(255, 255, 255); b.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", b)
     b.MouseButton1Click:Connect(function() CreateFire(effectData[2]) end)
 end
 
