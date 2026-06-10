@@ -72,14 +72,11 @@ local FBEnabled = false; FBButton.MouseButton1Click:Connect(function() FBEnabled
 local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60); ShaderBtn.Text = "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", ShaderBtn)
 local ShaderEnabled = false; ShaderBtn.MouseButton1Click:Connect(function() ShaderEnabled = not ShaderEnabled; Lighting.Brightness = ShaderEnabled and 3 or 2; Lighting.ClockTime = ShaderEnabled and 12 or 14; ShaderBtn.Text = ShaderEnabled and "الشادر: شغال" or "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
 
--- [طلباتك الإضافية]
--- زر تغيير لون اللاعب
-local RainbowBtn = Instance.new("TextButton", MapPage); RainbowBtn.Size = UDim2.new(0.9, 0, 0, 40); RainbowBtn.Position = UDim2.new(0.05, 0, 0, 110); RainbowBtn.Text = "لون رينبو: مطفأ"; RainbowBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", RainbowBtn)
-local RainbowEnabled = false; RainbowBtn.MouseButton1Click:Connect(function() RainbowEnabled = not RainbowEnabled; RainbowBtn.Text = RainbowEnabled and "لون رينبو: شغال" or "لون رينبو: مطفأ"; RainbowBtn.BackgroundColor3 = RainbowEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
-RunService.Heartbeat:Connect(function() if RainbowEnabled and Player.Character then for _, p in pairs(Player.Character:GetChildren()) do if p:IsA("BasePart") then p.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1) end end end)
+-- [الإضافات الجديدة]
+local ColorBtn = Instance.new("TextButton", MapPage); ColorBtn.Size = UDim2.new(0.9, 0, 0, 40); ColorBtn.Position = UDim2.new(0.05, 0, 0, 110); ColorBtn.Text = "تغيير لون اللاعب"; ColorBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", ColorBtn)
+ColorBtn.MouseButton1Click:Connect(function() if Player.Character then for _,p in pairs(Player.Character:GetChildren()) do if p:IsA("BasePart") then p.Color = Color3.fromHSV(math.random(), 1, 1) end end end end)
 
--- زر نسخ الديسكورد
-local DiscordBtn = Instance.new("TextButton", MapPage); DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40); DiscordBtn.Position = UDim2.new(0.05, 0, 0, 160); DiscordBtn.Text = "نسخ رابط الديسكورد"; DiscordBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", DiscordBtn)
+local DiscordBtn = Instance.new("TextButton", MapPage); DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40); DiscordBtn.Position = UDim2.new(0.05, 0, 0, 155); DiscordBtn.Text = "نسخ سيرفر الديسكورد"; DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", DiscordBtn)
 DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/WrxQZDVps") end)
 
 -- تبويب اللاعب
@@ -102,7 +99,7 @@ local JumpEnabled = false; InfJumpBtn.MouseButton1Click:Connect(function() JumpE
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40); NoclipBtn.Position = UDim2.new(0.05, 0, 0, 160); NoclipBtn.Text = "اختراق الجدران"; NoclipBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", NoclipBtn); local NoclipEnabled = false; NoclipBtn.MouseButton1Click:Connect(function() NoclipEnabled = not NoclipEnabled; NoclipBtn.BackgroundColor3 = NoclipEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
 
-local InfoBox = Instance.new("TextLabel", MapPage); InfoBox.Size = UDim2.new(0.9, 0, 0, 80); InfoBox.Position = UDim2.new(0.05, 0, 0, 210); InfoBox.Text = "تم صناعة هذا السكربت بواسطة anxam"; InfoBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40); InfoBox.TextColor3 = Color3.new(1, 1, 1); InfoBox.TextWrapped = true; Instance.new("UICorner", InfoBox)
+local InfoBox = Instance.new("TextLabel", MapPage); InfoBox.Size = UDim2.new(0.9, 0, 0, 80); InfoBox.Position = UDim2.new(0.05, 0, 0, 200); InfoBox.Text = "تم صناعة هذا السكربت بواسطة anxam"; InfoBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40); InfoBox.TextColor3 = Color3.new(1, 1, 1); InfoBox.TextWrapped = true; Instance.new("UICorner", InfoBox)
 
 -- [الخانة الثالثة: الاستهداف مع إضافة الصورة]
 local TargetPage = AllPages["الاستهداف"]
@@ -117,4 +114,3 @@ for i, bName in ipairs(BNames) do
 end
 
 ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
-    
