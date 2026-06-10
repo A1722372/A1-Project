@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.2 الأصلية + إضافة صورة اللاعب فقط ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V41.2 الأصلية ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -72,9 +72,25 @@ local FBEnabled = false; FBButton.MouseButton1Click:Connect(function() FBEnabled
 local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60); ShaderBtn.Text = "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", ShaderBtn)
 local ShaderEnabled = false; ShaderBtn.MouseButton1Click:Connect(function() ShaderEnabled = not ShaderEnabled; Lighting.Brightness = ShaderEnabled and 3 or 2; Lighting.ClockTime = ShaderEnabled and 12 or 14; ShaderBtn.Text = ShaderEnabled and "الشادر: شغال" or "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
 
--- [الإضافات الجديدة]
-local ColorBtn = Instance.new("TextButton", MapPage); ColorBtn.Size = UDim2.new(0.9, 0, 0, 40); ColorBtn.Position = UDim2.new(0.05, 0, 0, 110); ColorBtn.Text = "تغيير لون اللاعب"; ColorBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", ColorBtn)
-ColorBtn.MouseButton1Click:Connect(function() if Player.Character then for _,p in pairs(Player.Character:GetChildren()) do if p:IsA("BasePart") then p.Color = Color3.fromHSV(math.random(), 1, 1) end end end end)
+-- [زر تغيير لون القائمة الجديد]
+local ThemeBtn = Instance.new("TextButton", MapPage); ThemeBtn.Size = UDim2.new(0.9, 0, 0, 40); ThemeBtn.Position = UDim2.new(0.05, 0, 0, 110); ThemeBtn.Text = "تغيير لون القائمة"; ThemeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", ThemeBtn)
+local Themes = {{Name = "أسود", Color = Color3.fromRGB(20, 20, 20)}, {Name = "أبيض", Color = Color3.fromRGB(200, 200, 200)}, {Name = "أزرق", Color = Color3.fromRGB(0, 50, 100)}, {Name = "رينبو", Color = "Rainbow"}}
+local currentTheme = 1
+ThemeBtn.MouseButton1Click:Connect(function()
+    currentTheme = currentTheme % #Themes + 1
+    local choice = Themes[currentTheme]
+    ThemeBtn.Text = "اللون: " .. choice.Name
+    if choice.Color == "Rainbow" then
+        spawn(function()
+            while choice.Color == "Rainbow" and ThemeBtn.Text == "اللون: رينبو" do
+                local c = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+                MainFrame.BackgroundColor3 = c; SideMenu.BackgroundColor3 = Color3.new(c.r*0.5, c.g*0.5, c.b*0.5); wait(0.1)
+            end
+        end)
+    else
+        MainFrame.BackgroundColor3 = choice.Color; SideMenu.BackgroundColor3 = Color3.new(choice.Color.r*0.5, choice.Color.g*0.5, choice.Color.b*0.5)
+    end
+end)
 
 local DiscordBtn = Instance.new("TextButton", MapPage); DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40); DiscordBtn.Position = UDim2.new(0.05, 0, 0, 155); DiscordBtn.Text = "نسخ سيرفر الديسكورد"; DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", DiscordBtn)
 DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/WrxQZDVps") end)
@@ -101,7 +117,6 @@ local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2
 
 local InfoBox = Instance.new("TextLabel", MapPage); InfoBox.Size = UDim2.new(0.9, 0, 0, 80); InfoBox.Position = UDim2.new(0.05, 0, 0, 200); InfoBox.Text = "تم صناعة هذا السكربت بواسطة anxam"; InfoBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40); InfoBox.TextColor3 = Color3.new(1, 1, 1); InfoBox.TextWrapped = true; Instance.new("UICorner", InfoBox)
 
--- [الخانة الثالثة: الاستهداف مع إضافة الصورة]
 local TargetPage = AllPages["الاستهداف"]
 local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
 local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 50, 0, 50); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundTransparency = 1; Instance.new("UICorner", PlayerImg)
