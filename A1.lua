@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V42 الكاملة والنهائية ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V41.2 (المدمجة مع Fly V3) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -12,7 +12,6 @@ ScreenGui.Name = "AihamScript_Main"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 2147483647 
 
--- الزر المربع الأساسي
 local ToggleBtn = Instance.new("TextButton", ScreenGui)
 ToggleBtn.Name = "ToggleBtn"
 ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
@@ -25,7 +24,6 @@ ToggleBtn.Draggable = true
 ToggleBtn.ZIndex = 100
 Instance.new("UICorner", ToggleBtn)
 
--- الإطار الرئيسي
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 400, 0, 350)
@@ -66,22 +64,22 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- [تبويب اللاعب]
+-- تبويب الماب
+local MapPage = AllPages["اعدادات الماب"]
+local FBButton = Instance.new("TextButton", MapPage); FBButton.Size = UDim2.new(0.9, 0, 0, 40); FBButton.Position = UDim2.new(0.05, 0, 0, 10); FBButton.Text = "السطوع: مطفأ"; FBButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", FBButton)
+local FBEnabled = false; FBButton.MouseButton1Click:Connect(function() FBEnabled = not FBEnabled; Lighting.Ambient = FBEnabled and Color3.new(1,1,1) or Color3.new(0,0,0); FBButton.Text = FBEnabled and "السطوع: شغال" or "السطوع: مطفأ"; FBButton.BackgroundColor3 = FBEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
+
+local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60); ShaderBtn.Text = "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", ShaderBtn)
+local ShaderEnabled = false; ShaderBtn.MouseButton1Click:Connect(function() ShaderEnabled = not ShaderEnabled; Lighting.Brightness = ShaderEnabled and 3 or 2; Lighting.ClockTime = ShaderEnabled and 12 or 14; ShaderBtn.Text = ShaderEnabled and "الشادر: شغال" or "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
+
+-- تبويب اللاعب
 local PlayerPage = AllPages["اللاعب"]
 
--- زر الطيران Fly V3
-local FlyV3Btn = Instance.new("TextButton", PlayerPage)
-FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40)
-FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210)
-FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"
-FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
-FlyV3Btn.TextColor3 = Color3.new(1, 1, 1)
-Instance.new("UICorner", FlyV3Btn)
-FlyV3Btn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
-end)
+-- [إضافة Fly V3 المدمج]
+local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
+FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
 
--- (تم الاحتفاظ بباقي الأزرار هنا لتكتمل النسخة)
+-- باقي الأزرار
 local SpeedInput = Instance.new("TextBox", PlayerPage); SpeedInput.Size = UDim2.new(0.5, 0, 0, 40); SpeedInput.Position = UDim2.new(0.05, 0, 0, 10); SpeedInput.PlaceholderText = "السرعة"; Instance.new("UICorner", SpeedInput)
 local SpeedBtn = Instance.new("TextButton", PlayerPage); SpeedBtn.Size = UDim2.new(0.35, 0, 0, 40); SpeedBtn.Position = UDim2.new(0.6, 0, 0, 10); SpeedBtn.Text = "تفعيل"; SpeedBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", SpeedBtn)
 local SpeedEnabled = false; SpeedBtn.MouseButton1Click:Connect(function() SpeedEnabled = not SpeedEnabled; SpeedBtn.Text = SpeedEnabled and "مفعل" or "تفعيل"; SpeedBtn.BackgroundColor3 = SpeedEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
@@ -96,5 +94,7 @@ local InfJumpBtn = Instance.new("TextButton", PlayerPage); InfJumpBtn.Size = UDi
 local JumpEnabled = false; InfJumpBtn.MouseButton1Click:Connect(function() JumpEnabled = not JumpEnabled; InfJumpBtn.BackgroundColor3 = JumpEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); UIS.JumpRequest:Connect(function() if JumpEnabled then Player.Character.Humanoid:ChangeState("Jumping") end end)
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40); NoclipBtn.Position = UDim2.new(0.05, 0, 0, 160); NoclipBtn.Text = "اختراق الجدران"; NoclipBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", NoclipBtn); local NoclipEnabled = false; NoclipBtn.MouseButton1Click:Connect(function() NoclipEnabled = not NoclipEnabled; NoclipBtn.BackgroundColor3 = NoclipEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
+
+local InfoBox = Instance.new("TextLabel", MapPage); InfoBox.Size = UDim2.new(0.9, 0, 0, 80); InfoBox.Position = UDim2.new(0.05, 0, 0, 160); InfoBox.Text = "تم صناعة هذا السكربت بواسطة anxam"; InfoBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40); InfoBox.TextColor3 = Color3.new(1, 1, 1); InfoBox.TextWrapped = true; Instance.new("UICorner", InfoBox)
 
 ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
