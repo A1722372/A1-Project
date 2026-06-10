@@ -72,7 +72,6 @@ local FBEnabled = false; FBButton.MouseButton1Click:Connect(function() FBEnabled
 local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60); ShaderBtn.Text = "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", ShaderBtn)
 local ShaderEnabled = false; ShaderBtn.MouseButton1Click:Connect(function() ShaderEnabled = not ShaderEnabled; Lighting.Brightness = ShaderEnabled and 3 or 2; Lighting.ClockTime = ShaderEnabled and 12 or 14; ShaderBtn.Text = ShaderEnabled and "الشادر: شغال" or "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
 
--- [زر تغيير لون القائمة الجديد]
 local ThemeBtn = Instance.new("TextButton", MapPage); ThemeBtn.Size = UDim2.new(0.9, 0, 0, 40); ThemeBtn.Position = UDim2.new(0.05, 0, 0, 110); ThemeBtn.Text = "تغيير لون القائمة"; ThemeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", ThemeBtn)
 local Themes = {{Name = "أسود", Color = Color3.fromRGB(20, 20, 20)}, {Name = "أبيض", Color = Color3.fromRGB(200, 200, 200)}, {Name = "أزرق", Color = Color3.fromRGB(0, 50, 100)}, {Name = "رينبو", Color = "Rainbow"}}
 local currentTheme = 1
@@ -119,9 +118,17 @@ local InfoBox = Instance.new("TextLabel", MapPage); InfoBox.Size = UDim2.new(0.9
 
 local TargetPage = AllPages["الاستهداف"]
 local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
-local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 50, 0, 50); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundTransparency = 1; Instance.new("UICorner", PlayerImg)
+local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 80, 0, 80); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", PlayerImg)
 local TargetPlayer = nil
-TInput.FocusLost:Connect(function() for _, plr in pairs(game.Players:GetPlayers()) do if string.sub(string.lower(plr.Name), 1, 3) == string.lower(string.sub(TInput.Text, 1, 3)) then TargetPlayer = plr; PlayerImg.Image = game.Players:GetUserThumbnailAsync(plr.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420); break end end end)
+TInput.FocusLost:Connect(function() 
+    for _, plr in pairs(game.Players:GetPlayers()) do 
+        if string.sub(string.lower(plr.Name), 1, 3) == string.lower(string.sub(TInput.Text, 1, 3)) then 
+            TargetPlayer = plr
+            PlayerImg.Image = "rbxthumb://type=AvatarHeadShot&id=" .. plr.UserId .. "&w=420&h=420"
+            break 
+        end 
+    end 
+end)
 local BNames = {"انتقال", "استهداف", "ESP", "جلوس فوق"}
 for i, bName in ipairs(BNames) do
     local b = Instance.new("TextButton", TargetPage); b.Size = UDim2.new(0.9, 0, 0, 35); b.Position = UDim2.new(0.05, 0, 0, 120 + (i-1) * 40); b.Text = bName; b.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", b)
