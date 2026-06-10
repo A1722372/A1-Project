@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V44 الكاملة ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V48 (التثبيت الجذري لكل خانة) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -10,7 +10,6 @@ if PlayerGui:FindFirstChild("AihamScript_Main") then PlayerGui.AihamScript_Main:
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamScript_Main"
 ScreenGui.ResetOnSpawn = false
-ScreenGui.DisplayOrder = 2147483647 
 
 local ToggleBtn = Instance.new("TextButton", ScreenGui)
 ToggleBtn.Size = UDim2.new(0, 50, 0, 50); ToggleBtn.Position = UDim2.new(0.9, -60, 0.1, 0)
@@ -43,38 +42,37 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- [1] إعدادات الماب
+-- [1] الخانة الأولى (شغالة)
 local MapPage = AllPages["اعدادات الماب"]
-local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 10); ShaderBtn.Text = "تفعيل الشادر"; ShaderBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", ShaderBtn)
-ShaderBtn.MouseButton1Click:Connect(function() Lighting.Brightness = 3; Lighting.ClockTime = 12 end)
+local SBtn = Instance.new("TextButton", MapPage); SBtn.Size = UDim2.new(0.9, 0, 0, 40); SBtn.Position = UDim2.new(0.05, 0, 0, 10); SBtn.Text = "تفعيل الشادر"; SBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", SBtn)
+SBtn.MouseButton1Click:Connect(function() Lighting.Brightness = 3; Lighting.ClockTime = 12 end)
 
--- [2] اللاعب
+-- [2] الخانة الثانية (شغالة)
 local PlayerPage = AllPages["اللاعب"]
-local FlyBtn = Instance.new("TextButton", PlayerPage); FlyBtn.Size = UDim2.new(0.9, 0, 0, 40); FlyBtn.Position = UDim2.new(0.05, 0, 0, 10); FlyBtn.Text = "تفعيل الطيران"; FlyBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); Instance.new("UICorner", FlyBtn)
-FlyBtn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
+local FBtn = Instance.new("TextButton", PlayerPage); FBtn.Size = UDim2.new(0.9, 0, 0, 40); FBtn.Position = UDim2.new(0.05, 0, 0, 10); FBtn.Text = "تفعيل الطيران"; FBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); Instance.new("UICorner", FBtn)
+FBtn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
 
--- [3] الاستهداف
+-- [3] الخانة الثالثة (الاستهداف - منفصلة تماماً)
 local TargetPage = AllPages["الاستهداف"]
-local NameInput = Instance.new("TextBox", TargetPage); NameInput.Size = UDim2.new(0.9, 0, 0, 40); NameInput.Position = UDim2.new(0.05, 0, 0, 10); NameInput.PlaceholderText = "أول 3 حروف"; Instance.new("UICorner", NameInput)
+local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
 local TargetPlayer = nil
-NameInput.FocusLost:Connect(function()
+TInput.FocusLost:Connect(function()
     for _, plr in pairs(game.Players:GetPlayers()) do
-        if string.sub(string.lower(plr.Name), 1, 3) == string.lower(string.sub(NameInput.Text, 1, 3)) then
+        if string.sub(string.lower(plr.Name), 1, 3) == string.lower(string.sub(TInput.Text, 1, 3)) then
             TargetPlayer = plr; break
         end
     end
 end)
 
-local Buttons = {"مشاهدة", "انتقال", "Bang", "ESP", "جلسة فوق"}
-for i, btnName in ipairs(Buttons) do
-    local btn = Instance.new("TextButton", TargetPage); btn.Size = UDim2.new(0.9, 0, 0, 35); btn.Position = UDim2.new(0.05, 0, 0, 60 + (i-1) * 40)
-    btn.Text = btnName; btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", btn)
-    btn.MouseButton1Click:Connect(function()
+local BNames = {"مشاهدة", "انتقال", "Bang", "ESP", "جلسة فوق"}
+for i, bName in ipairs(BNames) do
+    local b = Instance.new("TextButton", TargetPage); b.Size = UDim2.new(0.9, 0, 0, 35); b.Position = UDim2.new(0.05, 0, 0, 60 + (i-1) * 40); b.Text = bName; b.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", b)
+    b.MouseButton1Click:Connect(function()
         if TargetPlayer and TargetPlayer.Character then
-            if btnName == "مشاهدة" then workspace.CurrentCamera.CameraSubject = TargetPlayer.Character.Humanoid
-            elseif btnName == "انتقال" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
-            elseif btnName == "ESP" then Instance.new("Highlight", TargetPlayer.Character)
-            elseif btnName == "جلسة فوق" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+            if bName == "مشاهدة" then workspace.CurrentCamera.CameraSubject = TargetPlayer.Character.Humanoid
+            elseif bName == "انتقال" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
+            elseif bName == "ESP" then Instance.new("Highlight", TargetPlayer.Character)
+            elseif bName == "جلسة فوق" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
             end
         end
     end)
