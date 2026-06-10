@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة النهائية المخصصة ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V42 الكاملة والنهائية ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -7,38 +7,94 @@ local UIS = game:GetService("UserInputService")
 
 if PlayerGui:FindFirstChild("AihamScript_Main") then PlayerGui.AihamScript_Main:Destroy() end
 
-local ScreenGui = Instance.new("ScreenGui", PlayerGui); ScreenGui.Name = "AihamScript_Main"
-local MainFrame = Instance.new("Frame", ScreenGui); MainFrame.Size = UDim2.new(0, 400, 0, 350); MainFrame.Position = UDim2.new(0.5, -200, 0.5, -175); MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20); MainFrame.Active = true; MainFrame.Draggable = true; Instance.new("UICorner", MainFrame)
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+ScreenGui.Name = "AihamScript_Main"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 2147483647 
+
+-- الزر المربع الأساسي
+local ToggleBtn = Instance.new("TextButton", ScreenGui)
+ToggleBtn.Name = "ToggleBtn"
+ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
+ToggleBtn.Position = UDim2.new(0.9, -60, 0.1, 0)
+ToggleBtn.Text = "⚫" 
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 0)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ToggleBtn.TextSize = 30
+ToggleBtn.Draggable = true
+ToggleBtn.ZIndex = 100
+Instance.new("UICorner", ToggleBtn)
+
+-- الإطار الرئيسي
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 400, 0, 350)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -175)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Active = true 
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame)
 
 local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
-local SideMenu = Instance.new("ScrollingFrame", MainFrame); SideMenu.Size = UDim2.new(0, 120, 1, 0); SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-local ContentArea = Instance.new("Frame", MainFrame); ContentArea.Size = UDim2.new(1, -120, 1, 0); ContentArea.Position = UDim2.new(0, 120, 0, 0); ContentArea.BackgroundTransparency = 1
-local AllPages = {}
+local SideMenu = Instance.new("ScrollingFrame", MainFrame)
+SideMenu.Size = UDim2.new(0, 120, 1, 0)
+SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Instance.new("UICorner", SideMenu)
 
+local ContentArea = Instance.new("Frame", MainFrame)
+ContentArea.Size = UDim2.new(1, -120, 1, 0)
+ContentArea.Position = UDim2.new(0, 120, 0, 0)
+ContentArea.BackgroundTransparency = 1
+
+local AllPages = {}
 for i, name in ipairs(MenuConfig) do
-    local btn = Instance.new("TextButton", SideMenu); btn.Size = UDim2.new(0.9, 0, 0, 40); btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 45 + 5); btn.Text = name; btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40); Instance.new("UICorner", btn)
-    local page = Instance.new("ScrollingFrame", ContentArea); page.Size = UDim2.new(1, 0, 1, 0); page.BackgroundTransparency = 1; page.Visible = (i == 1); AllPages[name] = page
-    btn.MouseButton1Click:Connect(function() for _, p in pairs(AllPages) do p.Visible = false end; page.Visible = true end)
+    local btn = Instance.new("TextButton", SideMenu)
+    btn.Size = UDim2.new(0.9, 0, 0, 40)
+    btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 45 + 5)
+    btn.Text = name
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", btn)
+    local page = Instance.new("ScrollingFrame", ContentArea)
+    page.Size = UDim2.new(1, 0, 1, 0)
+    page.BackgroundTransparency = 1
+    page.Visible = (i == 1)
+    AllPages[name] = page
+    btn.MouseButton1Click:Connect(function()
+        for _, p in pairs(AllPages) do p.Visible = false end
+        page.Visible = true
+    end)
 end
 
--- [1] الخانة الأولى: الماب
-local MapPage = AllPages["اعدادات الماب"]
-Instance.new("TextButton", MapPage).Text = "تغيير لون السكريبت"; -- أضف كود التغيير هنا
-Instance.new("TextButton", MapPage).Text = "تفعيل الشادر"; -- أضف كود الشادر هنا
-local Info = Instance.new("TextBox", MapPage); Info.Size = UDim2.new(0.9, 0, 0, 60); Info.Position = UDim2.new(0.05, 0, 0, 100); Info.Text = "تم صنعه من قبل انكسام \n ديسكورد: [رابطك هنا]"
-
--- [2] الخانة الثانية: اللاعب
+-- [تبويب اللاعب]
 local PlayerPage = AllPages["اللاعب"]
--- أزرار: السرعة، قوة النط، قفز لا نهائي، اختراق الجدران، طيران
-local function AddPBtn(txt, func) local b = Instance.new("TextButton", PlayerPage); b.Size = UDim2.new(0.9, 0, 0, 35); b.Text = txt; b.Position = UDim2.new(0.05, 0, 0, #PlayerPage:GetChildren() * 40); b.MouseButton1Click:Connect(func) end
-AddPBtn("سرعة: 100", function() Player.Character.Humanoid.WalkSpeed = 100 end)
-AddPBtn("قفز: 100", function() Player.Character.Humanoid.JumpPower = 100 end)
-AddPBtn("قفز لا نهائي", function() -- كود القفز اللانهائي
-end)
-AddPBtn("اختراق الجدران", function() -- كود النوكليب
-end)
-AddPBtn("طيران", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
 
--- [3] الخانة الثالثة: الاستهداف (كما طلبت سابقاً)
-local TargetPage = AllPages["الاستهداف"]
--- (نفس أكواد الاستهداف السابقة التي تحتاج تعديل)
+-- زر الطيران Fly V3
+local FlyV3Btn = Instance.new("TextButton", PlayerPage)
+FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40)
+FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210)
+FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"
+FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+FlyV3Btn.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", FlyV3Btn)
+FlyV3Btn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+end)
+
+-- (تم الاحتفاظ بباقي الأزرار هنا لتكتمل النسخة)
+local SpeedInput = Instance.new("TextBox", PlayerPage); SpeedInput.Size = UDim2.new(0.5, 0, 0, 40); SpeedInput.Position = UDim2.new(0.05, 0, 0, 10); SpeedInput.PlaceholderText = "السرعة"; Instance.new("UICorner", SpeedInput)
+local SpeedBtn = Instance.new("TextButton", PlayerPage); SpeedBtn.Size = UDim2.new(0.35, 0, 0, 40); SpeedBtn.Position = UDim2.new(0.6, 0, 0, 10); SpeedBtn.Text = "تفعيل"; SpeedBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", SpeedBtn)
+local SpeedEnabled = false; SpeedBtn.MouseButton1Click:Connect(function() SpeedEnabled = not SpeedEnabled; SpeedBtn.Text = SpeedEnabled and "مفعل" or "تفعيل"; SpeedBtn.BackgroundColor3 = SpeedEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
+RunService.Heartbeat:Connect(function() if SpeedEnabled and Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 16 end end)
+
+local JumpInput = Instance.new("TextBox", PlayerPage); JumpInput.Size = UDim2.new(0.5, 0, 0, 40); JumpInput.Position = UDim2.new(0.05, 0, 0, 60); JumpInput.PlaceholderText = "قوة القفز"; Instance.new("UICorner", JumpInput)
+local JumpBtn = Instance.new("TextButton", PlayerPage); JumpBtn.Size = UDim2.new(0.35, 0, 0, 40); JumpBtn.Position = UDim2.new(0.6, 0, 0, 60); JumpBtn.Text = "تفعيل"; JumpBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", JumpBtn)
+local JumpEnabledInput = false; JumpBtn.MouseButton1Click:Connect(function() JumpEnabledInput = not JumpEnabledInput; JumpBtn.Text = JumpEnabledInput and "مفعل" or "تفعيل"; JumpBtn.BackgroundColor3 = JumpEnabledInput and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
+RunService.Heartbeat:Connect(function() if JumpEnabledInput and Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid.UseJumpPower = true; Player.Character.Humanoid.JumpPower = tonumber(JumpInput.Text) or 50 end end)
+
+local InfJumpBtn = Instance.new("TextButton", PlayerPage); InfJumpBtn.Size = UDim2.new(0.9, 0, 0, 40); InfJumpBtn.Position = UDim2.new(0.05, 0, 0, 110); InfJumpBtn.Text = "قفز لا نهائي"; InfJumpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", InfJumpBtn)
+local JumpEnabled = false; InfJumpBtn.MouseButton1Click:Connect(function() JumpEnabled = not JumpEnabled; InfJumpBtn.BackgroundColor3 = JumpEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); UIS.JumpRequest:Connect(function() if JumpEnabled then Player.Character.Humanoid:ChangeState("Jumping") end end)
+
+local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40); NoclipBtn.Position = UDim2.new(0.05, 0, 0, 160); NoclipBtn.Text = "اختراق الجدران"; NoclipBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", NoclipBtn); local NoclipEnabled = false; NoclipBtn.MouseButton1Click:Connect(function() NoclipEnabled = not NoclipEnabled; NoclipBtn.BackgroundColor3 = NoclipEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
+
+ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
