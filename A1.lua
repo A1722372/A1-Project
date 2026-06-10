@@ -1,9 +1,10 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.6 الأصلية ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V41.7 الأصلية ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
+local TextChatService = game:GetService("TextChatService")
 
 if not getgenv().AihamSavedPositions then getgenv().AihamSavedPositions = {} end
 
@@ -178,9 +179,14 @@ OffBtn.MouseButton1Click:Connect(function() SpamEnabled = false end)
 spawn(function()
     while true do
         if SpamEnabled and SpamInput.Text ~= "" then
-            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(SpamInput.Text, "All")
+            local textChannel = TextChatService.TextChannels.RBXGeneral
+            if textChannel then
+                textChannel:SendAsync(SpamInput.Text)
+            else
+                game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(SpamInput.Text, "All")
+            end
         end
-        task.wait(0.1) -- إسبام سريع جداً
+        task.wait(0.1)
     end
 end)
 
