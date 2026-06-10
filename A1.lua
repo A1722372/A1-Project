@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V45 (إصلاح كامل) ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V43 الكاملة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -19,10 +19,10 @@ Instance.new("UICorner", ToggleBtn); ToggleBtn.Draggable = true
 
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 400, 0, 350); MainFrame.Position = UDim2.new(0.5, -200, 0.5, -175)
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20); MainFrame.Active = true; MainFrame.Draggable = true
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20); MainFrame.Visible = true; MainFrame.Active = true; MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame)
 
-local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
+local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف"}
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 120, 1, 0); SideMenu.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 local ContentArea = Instance.new("Frame", MainFrame)
@@ -45,37 +45,36 @@ end
 
 -- [1] إعدادات الماب
 local MapPage = AllPages["اعدادات الماب"]
-local FBButton = Instance.new("TextButton", MapPage); FBButton.Size = UDim2.new(0.9, 0, 0, 40); FBButton.Position = UDim2.new(0.05, 0, 0, 10); FBButton.Text = "السطوع"; FBButton.Parent = MapPage
-local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60); ShaderBtn.Text = "تفعيل الشادر"; ShaderBtn.Parent = MapPage
-FBButton.MouseButton1Click:Connect(function() Lighting.Ambient = Color3.new(1,1,1) end)
-ShaderBtn.MouseButton1Click:Connect(function() Lighting.Brightness = 3; Lighting.ClockTime = 12 end)
+-- أضف هنا أزرار الماب (السطوع والشادر)
 
 -- [2] اللاعب
 local PlayerPage = AllPages["اللاعب"]
-local FlyBtn = Instance.new("TextButton", PlayerPage); FlyBtn.Size = UDim2.new(0.9, 0, 0, 40); FlyBtn.Position = UDim2.new(0.05, 0, 0, 10); FlyBtn.Text = "تفعيل الطيران"; FlyBtn.Parent = PlayerPage
-FlyBtn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
+-- أضف هنا أزرار اللاعب (الطيران، السرعة، القفز)
 
 -- [3] الاستهداف
 local TargetPage = AllPages["الاستهداف"]
-local NameInput = Instance.new("TextBox", TargetPage); NameInput.Size = UDim2.new(0.9, 0, 0, 40); NameInput.Position = UDim2.new(0.05, 0, 0, 10); NameInput.PlaceholderText = "أول 3 حروف"; NameInput.Parent = TargetPage
+local NameInput = Instance.new("TextBox", TargetPage); NameInput.Size = UDim2.new(0.9, 0, 0, 40); NameInput.Position = UDim2.new(0.05, 0, 0, 10); NameInput.PlaceholderText = "اكتب أول 3 أحرف"; Instance.new("UICorner", NameInput)
+
 local TargetPlayer = nil
 NameInput.FocusLost:Connect(function()
     for _, plr in pairs(game.Players:GetPlayers()) do
         if string.sub(string.lower(plr.Name), 1, 3) == string.lower(string.sub(NameInput.Text, 1, 3)) then
-            TargetPlayer = plr; break
+            TargetPlayer = plr
+            break
         end
     end
 end)
 
 local Buttons = {"مشاهدة", "انتقال", "Bang", "ESP", "جلسة فوق"}
 for i, btnName in ipairs(Buttons) do
-    local btn = Instance.new("TextButton", TargetPage); btn.Size = UDim2.new(0.9, 0, 0, 35); btn.Position = UDim2.new(0.05, 0, 0, 60 + (i-1) * 40)
-    btn.Text = btnName; btn.Parent = TargetPage
+    local btn = Instance.new("TextButton", TargetPage)
+    btn.Size = UDim2.new(0.9, 0, 0, 35); btn.Position = UDim2.new(0.05, 0, 0, 60 + (i-1) * 40)
+    btn.Text = btnName; btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", btn)
     btn.MouseButton1Click:Connect(function()
         if TargetPlayer and TargetPlayer.Character then
             if btnName == "مشاهدة" then workspace.CurrentCamera.CameraSubject = TargetPlayer.Character.Humanoid
             elseif btnName == "انتقال" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
-            elseif btnName == "ESP" then Instance.new("Highlight", TargetPlayer.Character)
+            elseif btnName == "ESP" then local h = Instance.new("Highlight", TargetPlayer.Character)
             elseif btnName == "جلسة فوق" then Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
             end
         end
