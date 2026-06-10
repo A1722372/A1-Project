@@ -1,14 +1,14 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V47 (إصلاح الكلتشات) ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V48 (إصلاح نهائي) ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
-local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
+-- تنظيف تام
 if PlayerGui:FindFirstChild("AihamScript_Main") then PlayerGui.AihamScript_Main:Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "AihamScript_Main"
-ScreenGui.ResetOnSpawn = false
 
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 400, 0, 350)
@@ -18,58 +18,18 @@ MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame)
 
-local SideMenu = Instance.new("ScrollingFrame", MainFrame)
-SideMenu.Size = UDim2.new(0, 120, 1, 0)
-SideMenu.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Instance.new("UICorner", SideMenu)
+-- تبويب اللاعب (مباشر داخل الإطار)
+local PlayerPage = Instance.new("Frame", MainFrame)
+PlayerPage.Size = UDim2.new(1, 0, 1, 0)
+PlayerPage.BackgroundTransparency = 1
 
-local ContentArea = Instance.new("Frame", MainFrame)
-ContentArea.Size = UDim2.new(1, -120, 1, 0)
-ContentArea.Position = UDim2.new(0, 120, 0, 0)
-ContentArea.BackgroundTransparency = 1
-
-local AllPages = {}
-local MenuConfig = {"اعدادات الماب", "اللاعب"}
-
-for i, name in ipairs(MenuConfig) do
-    local btn = Instance.new("TextButton", SideMenu)
-    btn.Size = UDim2.new(0.9, 0, 0, 40)
-    btn.Position = UDim2.new(0.05, 0, 0, (i-1) * 45 + 5)
-    btn.Text = name
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    Instance.new("UICorner", btn)
-    
-    local page = Instance.new("ScrollingFrame", ContentArea)
-    page.Size = UDim2.new(1, 0, 1, 0)
-    page.BackgroundTransparency = 1
-    page.Visible = (i == 1)
-    AllPages[name] = page
-    btn.MouseButton1Click:Connect(function()
-        for _, p in pairs(AllPages) do p.Visible = false end
-        page.Visible = true
-    end)
-end
-
--- [إصلاح القائمة الأولى]
-local MapPage = AllPages["اعدادات الماب"]
-local BrightBtn = Instance.new("TextButton", MapPage)
-BrightBtn.Size = UDim2.new(0.9, 0, 0, 40)
-BrightBtn.Position = UDim2.new(0.05, 0, 0, 10)
-BrightBtn.Text = "تفعيل السطوع الكامل"
-BrightBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Instance.new("UICorner", BrightBtn)
-BrightBtn.MouseButton1Click:Connect(function() game:GetService("Lighting").Ambient = Color3.new(1,1,1) end)
-
--- [إصلاح القائمة الثانية]
-local PlayerPage = AllPages["اللاعب"]
-
--- زر اختراق الجدران (On/Off)
+-- 1. زر اختراق الجدران (مع التبديل)
 local NoclipBtn = Instance.new("TextButton", PlayerPage)
-NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40)
-NoclipBtn.Position = UDim2.new(0.05, 0, 0, 10)
+NoclipBtn.Size = UDim2.new(0.8, 0, 0, 50)
+NoclipBtn.Position = UDim2.new(0.1, 0, 0, 20)
 NoclipBtn.Text = "اختراق الجدران: OFF"
 NoclipBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+NoclipBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", NoclipBtn)
 local NoclipOn = false
 NoclipBtn.MouseButton1Click:Connect(function()
@@ -83,12 +43,13 @@ RunService.Stepped:Connect(function()
     end
 end)
 
--- زر قفز لا نهائي (On/Off)
+-- 2. زر القفز اللانهائي (مع التبديل)
 local InfJumpBtn = Instance.new("TextButton", PlayerPage)
-InfJumpBtn.Size = UDim2.new(0.9, 0, 0, 40)
-InfJumpBtn.Position = UDim2.new(0.05, 0, 0, 60)
+InfJumpBtn.Size = UDim2.new(0.8, 0, 0, 50)
+InfJumpBtn.Position = UDim2.new(0.1, 0, 0, 80)
 InfJumpBtn.Text = "قفز لا نهائي: OFF"
 InfJumpBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+InfJumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", InfJumpBtn)
 local JumpOn = false
 InfJumpBtn.MouseButton1Click:Connect(function()
@@ -98,11 +59,22 @@ InfJumpBtn.MouseButton1Click:Connect(function()
 end)
 UIS.JumpRequest:Connect(function() if JumpOn then Player.Character.Humanoid:ChangeState("Jumping") end end)
 
--- زر Fly V3
-local FlyV3Btn = Instance.new("TextButton", PlayerPage)
-FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40)
-FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 110)
-FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"
-FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
-Instance.new("UICorner", FlyV3Btn)
-FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
+-- 3. زر الطيران
+local FlyBtn = Instance.new("TextButton", PlayerPage)
+FlyBtn.Size = UDim2.new(0.8, 0, 0, 50)
+FlyBtn.Position = UDim2.new(0.1, 0, 0, 140)
+FlyBtn.Text = "تفعيل الطيران (Fly V3)"
+FlyBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", FlyBtn)
+FlyBtn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
+
+-- 4. زر السطوع (إصلاح القائمة الأولى)
+local LightBtn = Instance.new("TextButton", PlayerPage)
+LightBtn.Size = UDim2.new(0.8, 0, 0, 50)
+LightBtn.Position = UDim2.new(0.1, 0, 0, 200)
+LightBtn.Text = "تفعيل السطوع الكامل"
+LightBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+LightBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", LightBtn)
+LightBtn.MouseButton1Click:Connect(function() game:GetService("Lighting").Ambient = Color3.new(1,1,1) end)
