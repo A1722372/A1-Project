@@ -188,7 +188,7 @@ local AihamImg = Instance.new("ImageLabel", InfoBox)
 AihamImg.Size = UDim2.new(0, 55, 0, 55)
 AihamImg.Position = UDim2.new(0.25, -27.5, 0, 50)
 AihamImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-AihamImg.Image = "http://www.roblox.com/asset/?id=134011422703814" -- معرف صورة Anxam المحددة والمحدثة للرابط المباشر
+AihamImg.Image = "http://www.roblox.com/asset/?id=134011422703814"
 Instance.new("UICorner", AihamImg).CornerRadius = UDim.new(0, 8)
 
 -- عرض صورة أسامة (صورة الممثل دكستر)
@@ -196,7 +196,7 @@ local OsamaImg = Instance.new("ImageLabel", InfoBox)
 OsamaImg.Size = UDim2.new(0, 55, 0, 55)
 OsamaImg.Position = UDim2.new(0.75, -27.5, 0, 50)
 OsamaImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-OsamaImg.Image = "http://www.roblox.com/asset/?id=135891391910243" -- معرف صورة أسامة المحددة والمحدثة للرابط المباشر
+OsamaImg.Image = "http://www.roblox.com/asset/?id=135891391910243"
 Instance.new("UICorner", OsamaImg).CornerRadius = UDim.new(0, 8)
 
 -- نظام احتساب مستخدمي السكريبت الفعليين داخل الخادم الحالي
@@ -218,7 +218,6 @@ local function UpdateScriptUsers()
     ScriptUsersLabel.Text = "مستخدمي السكريبت النشطين حالياً: " .. tostring(activeCount)
 end
 
--- إنشاء علامة تتبع داخل اللاعب لتأكيد استخدامه للسكريبت
 local tag = Player:FindFirstChild("Using_AihamScript") or Instance.new("StringValue", Player)
 tag.Name = "Using_AihamScript"
 
@@ -228,7 +227,83 @@ task.spawn(function()
     end
 end)
 
--- ========================================================================
+-- ==================== تبويب العسكرية 🎖️ (المضاف حديثاً) ====================
+local MilitaryPage = AllPages["العسكرية 🎖️"]
+MilitaryPage.CanvasSize = UDim2.new(0, 0, 0, 260)
+
+-- إحداثيات المواقع الثلاثة المباشرة
+local MilitaryPositions = {
+    Location1 = CFrame.new(250, 10, -150),
+    Location2 = CFrame.new(-300, 10, 400),
+    Location3 = CFrame.new(500, 10, 50)
+}
+
+local function QuickTeleport(targetCFrame)
+    if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        Player.Character.HumanoidRootPart.CFrame = targetCFrame
+    end
+end
+
+-- 1. زر الانتقال للصندوق الفوري والمباشر
+local MilBtn1 = Instance.new("TextButton", MilitaryPage)
+MilBtn1.Size = UDim2.new(0.9, 0, 0, 40)
+MilBtn1.Position = UDim2.new(0.05, 0, 0, 10)
+MilBtn1.Text = "انتقال تلقائي للصندوق 📦"
+MilBtn1.Font = Enum.Font.SourceSansBold
+MilBtn1.TextSize = 15
+MilBtn1.TextColor3 = Color3.new(1, 1, 1)
+MilBtn1.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+Instance.new("UICorner", MilBtn1)
+
+MilBtn1.MouseButton1Click:Connect(function()
+    local targetChest = workspace:FindFirstChild("TakeChest", true)
+    if targetChest and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        Player.Character.HumanoidRootPart.CFrame = targetChest:GetPivot() * CFrame.new(0, 0, 2)
+        task.wait(0.2)
+        local prompt = targetChest:FindFirstChildWhichIsA("ProximityPrompt", true)
+        if prompt then
+            fireproximityprompt(prompt)
+        end
+    end
+end)
+
+-- 2. زر الموقع الأول
+local MilBtn2 = Instance.new("TextButton", MilitaryPage)
+MilBtn2.Size = UDim2.new(0.9, 0, 0, 40)
+MilBtn2.Position = UDim2.new(0.05, 0, 0, 60)
+MilBtn2.Text = "انتقال إلى الموقع [1]📍"
+MilBtn2.Font = Enum.Font.SourceSansBold
+MilBtn2.TextSize = 15
+MilBtn2.TextColor3 = Color3.new(1, 1, 1)
+MilBtn2.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", MilBtn2)
+MilBtn2.MouseButton1Click:Connect(function() QuickTeleport(MilitaryPositions.Location1) end)
+
+-- 3. زر الموقع الثاني
+local MilBtn3 = Instance.new("TextButton", MilitaryPage)
+MilBtn3.Size = UDim2.new(0.9, 0, 0, 40)
+MilBtn3.Position = UDim2.new(0.05, 0, 0, 110)
+MilBtn3.Text = "انتقال إلى الموقع [2]📍"
+MilBtn3.Font = Enum.Font.SourceSansBold
+MilBtn3.TextSize = 15
+MilBtn3.TextColor3 = Color3.new(1, 1, 1)
+MilBtn3.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", MilBtn3)
+MilBtn3.MouseButton1Click:Connect(function() QuickTeleport(MilitaryPositions.Location2) end)
+
+-- 4. زر الموقع الثالث
+local MilBtn4 = Instance.new("TextButton", MilitaryPage)
+MilBtn4.Size = UDim2.new(0.9, 0, 0, 40)
+MilBtn4.Position = UDim2.new(0.05, 0, 0, 160)
+MilBtn4.Text = "انتقال إلى الموقع [3]📍"
+MilBtn4.Font = Enum.Font.SourceSansBold
+MilBtn4.TextSize = 15
+MilBtn4.TextColor3 = Color3.new(1, 1, 1)
+MilBtn4.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", MilBtn4)
+MilBtn4.MouseButton1Click:Connect(function() QuickTeleport(MilitaryPositions.Location3) end)
+
+-- ==================== باقي السكريبت الأصلي الشغال ====================
 
 -- تبويب اللاعب
 local PlayerPage = AllPages["اللاعب"]
@@ -291,31 +366,4 @@ local function RefreshSaves()
 end
 
 SaveBtn.MouseButton1Click:Connect(function()
-    if SaveInput.Text ~= "" and Player.Character:FindFirstChild("HumanoidRootPart") then
-        getgenv().AihamSavedPositions[SaveInput.Text] = Player.Character.HumanoidRootPart.CFrame
-        RefreshSaves()
-        SaveInput.Text = ""
-    end
-end)
-
--- تبويب التأثيرات
-local EffectsPage = AllPages["التأثيرات"]
-local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
-local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
-local OffBtn = Instance.new("TextButton", EffectsPage); OffBtn.Size = UDim2.new(0.43, 0, 0, 40); OffBtn.Position = UDim2.new(0.52, 0, 0, 60); OffBtn.Text = "إيقاف الإسبام"; OffBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", OffBtn)
-
-local SpamEnabled = false
-OnBtn.MouseButton1Click:Connect(function() SpamEnabled = true end)
-OffBtn.MouseButton1Click:Connect(function() SpamEnabled = false end)
-
-spawn(function()
-    while true do
-        if SpamEnabled and SpamInput.Text ~= "" then
-            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(SpamInput.Text, "All")
-        end
-        task.wait(0.1)
-    end
-end)
-
-RefreshSaves()
-ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+    if SaveInput.Text ~= "" and Player.Character:Find
