@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.6 الأصلية المعدلة ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V41.6 الأصلية المعدلة بالكامل ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -28,8 +28,8 @@ Instance.new("UICorner", ToggleBtn)
 
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 420, 0, 380) -- تعديل بسيط لاستيعاب التصميم المطور
-MainFrame.Position = UDim2.new(0.5, -210, 0.5, -190)
+MainFrame.Size = UDim2.new(0, 420, 0, 390) 
+MainFrame.Position = UDim2.new(0.5, -210, 0.5, -195)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.Active = true 
 MainFrame.Draggable = true
@@ -66,9 +66,9 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- ==================== تعديل تبويب الماب الجديد بالكامل ====================
+-- ==================== تبويب الماب (الواجهة المحدثة) ====================
 local MapPage = AllPages["اعدادات الماب"]
-MapPage.CanvasSize = UDim2.new(0, 0, 0, 420) -- إتاحة التمرير لتناسق العناصر
+MapPage.CanvasSize = UDim2.new(0, 0, 0, 430)
 
 -- زر السطوع
 local FBButton = Instance.new("TextButton", MapPage)
@@ -158,57 +158,75 @@ DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 Instance.new("UICorner", DiscordBtn)
 DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/WrxQZDVps") end)
 
--- قسم تعريف المطورين واللاعبين النشطين (شامل صورة osama الذكر وتعداد اللاعبين التلقائي)
+-- صندوق المطورين والإحصائيات
 local InfoBox = Instance.new("Frame", MapPage)
-InfoBox.Size = UDim2.new(0.9, 0, 0, 150)
+InfoBox.Size = UDim2.new(0.9, 0, 0, 160)
 InfoBox.Position = UDim2.new(0.05, 0, 0, 215)
 InfoBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 Instance.new("UICorner", InfoBox)
 
--- نص الحقوق الرئيسي للسكربت
 local CreditsLabel = Instance.new("TextLabel", InfoBox)
-CreditsLabel.Size = UDim2.new(1, 0, 0, 30)
+CreditsLabel.Size = UDim2.new(1, 0, 0, 25)
 CreditsLabel.Position = UDim2.new(0, 0, 0, 5)
 CreditsLabel.Text = "تم صناعة هذا السكربت بواسطة anxam"
 CreditsLabel.Font = Enum.Font.SourceSansBold
-CreditsLabel.TextSize = 16
+CreditsLabel.TextSize = 15
 CreditsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 CreditsLabel.BackgroundTransparency = 1
 
--- عنوان المطور الثاني الفني
 local DevLabel = Instance.new("TextLabel", InfoBox)
-DevLabel.Size = UDim2.new(1, 0, 0, 25)
-DevLabel.Position = UDim2.new(0, 0, 0, 35)
-DevLabel.Text = "Developer: osama"
+DevLabel.Size = UDim2.new(1, 0, 0, 20)
+DevLabel.Position = UDim2.new(0, 0, 0, 25)
+DevLabel.Text = "Developers: Aiham & osama"
 DevLabel.Font = Enum.Font.SourceSansItalic
-DevLabel.TextSize = 15
+DevLabel.TextSize = 14
 DevLabel.TextColor3 = Color3.fromRGB(0, 180, 255)
 DevLabel.BackgroundTransparency = 1
 
--- صورة الأفاتار الخاص بـ osama (تم استخدام صورة رمزية لذكر محارب نينجا أنيق ومتناسق)
-local DevImg = Instance.new("ImageLabel", InfoBox)
-DevImg.Size = UDim2.new(0, 55, 0, 55)
-DevImg.Position = UDim2.new(0.5, -27.5, 0, 60)
-DevImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-DevImg.Image = "rbxassetid://10852150337" -- خلفية تجسيدية مناسبة لشخصيات النينجا الذكور
-Instance.new("UICorner", DevImg).CornerRadius = UDim.new(0, 10)
+-- عرض صورة أيهم (صورة الأنمي ريال مدريد)
+local AihamImg = Instance.new("ImageLabel", InfoBox)
+AihamImg.Size = UDim2.new(0, 55, 0, 55)
+AihamImg.Position = UDim2.new(0.25, -27.5, 0, 50)
+AihamImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+AihamImg.Image = "rbxassetid://134011422703814" -- معرف صورة أيهم المحددة
+Instance.new("UICorner", AihamImg).CornerRadius = UDim.new(0, 8)
 
--- عداد اللاعبين النشطين حالياً في السيرفر (يتحدث تلقائياً)
-local ActivePlayersLabel = Instance.new("TextLabel", InfoBox)
-ActivePlayersLabel.Size = UDim2.new(1, 0, 0, 25)
-ActivePlayersLabel.Position = UDim2.new(0, 0, 1, -25)
-ActivePlayersLabel.Font = Enum.Font.SourceSansBold
-ActivePlayersLabel.TextSize = 14
-ActivePlayersLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
-ActivePlayersLabel.BackgroundTransparency = 1
+-- عرض صورة أسامة (صورة الممثل دكستر)
+local OsamaImg = Instance.new("ImageLabel", InfoBox)
+OsamaImg.Size = UDim2.new(0, 55, 0, 55)
+OsamaImg.Position = UDim2.new(0.75, -27.5, 0, 50)
+OsamaImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+OsamaImg.Image = "rbxassetid://135891391910243" -- معرف صورة أسامة المحددة
+Instance.new("UICorner", OsamaImg).CornerRadius = UDim.new(0, 8)
 
-local function UpdatePlayersCount()
-    local count = #game.Players:GetPlayers()
-    ActivePlayersLabel.Text = "اللاعبين النشطين بالخادم حالياً: " .. tostring(count)
+-- نظام احتساب مستخدمي السكريبت الفعليين داخل الخادم الحالي
+local ScriptUsersLabel = Instance.new("TextLabel", InfoBox)
+ScriptUsersLabel.Size = UDim2.new(1, 0, 0, 25)
+ScriptUsersLabel.Position = UDim2.new(0, 0, 1, -30)
+ScriptUsersLabel.Font = Enum.Font.SourceSansBold
+ScriptUsersLabel.TextSize = 14
+ScriptUsersLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+ScriptUsersLabel.BackgroundTransparency = 1
+
+local function UpdateScriptUsers()
+    local activeCount = 0
+    for _, p in pairs(game.Players:GetPlayers()) do
+        if p:FindFirstChild("Using_AihamScript") then
+            activeCount = activeCount + 1
+        end
+    end
+    ScriptUsersLabel.Text = "مستخدمي السكريبت النشطين حالياً: " .. tostring(activeCount)
 end
-UpdatePlayersCount()
-game.Players.PlayerAdded:Connect(UpdatePlayersCount)
-game.Players.PlayerRemoving:Connect(UpdatePlayersCount)
+
+-- إنشاء علامة تتبع داخل اللاعب لتأكيد استخدامه للسكريبت
+local tag = Player:FindFirstChild("Using_AihamScript") or Instance.new("StringValue", Player)
+tag.Name = "Using_AihamScript"
+
+task.spawn(function()
+    while task.wait(1) do
+        UpdateScriptUsers()
+    end
+end)
 
 -- ========================================================================
 
