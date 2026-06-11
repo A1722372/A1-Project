@@ -232,7 +232,7 @@ end)
 
 -- تبويب اللاعب
 local PlayerPage = AllPages["اللاعب"]
-PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 310) -- مساحة تضمن ظهور الأزرار القديمة والجديد بامتياز
+PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 310) 
 
 local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
 FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
@@ -252,9 +252,25 @@ local JumpEnabled = false; InfJumpBtn.MouseButton1Click:Connect(function() JumpE
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40); NoclipBtn.Position = UDim2.new(0.05, 0, 0, 160); NoclipBtn.Text = "اختراق الجدران"; NoclipBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", NoclipBtn); local NoclipEnabled = false; NoclipBtn.MouseButton1Click:Connect(function() NoclipEnabled = not NoclipEnabled; NoclipBtn.BackgroundColor3 = NoclipEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
 
--- [ إضافة زر إبداعي واحد فقط: إعادة الرسبون الفوري والمضمون ]
-local ResetBtn = Instance.new("TextButton", PlayerPage); ResetBtn.Size = UDim2.new(0.9, 0, 0, 40); ResetBtn.Position = UDim2.new(0.05, 0, 0, 260); ResetBtn.Text = "إعادة رسوَن فوري (Instant Reset)"; ResetBtn.BackgroundColor3 = Color3.fromRGB(120, 30, 30); ResetBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", ResetBtn)
-ResetBtn.MouseButton1Click:Connect(function() if Player.Character then Player.Character:BreakJoints() end end)
+-- [ زر إعادة الرسبون الفوري - مضاف إليه ميزة العودة لمكان الموت التلقائية ]
+local ResetBtn = Instance.new("TextButton", PlayerPage); ResetBtn.Size = UDim2.new(0.9, 0, 0, 40); ResetBtn.Position = UDim2.new(0.05, 0, 0, 260); ResetBtn.Text = "إعادة رسوَن فوري وتيليبورت لمكان الموت"; ResetBtn.BackgroundColor3 = Color3.fromRGB(120, 30, 30); ResetBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", ResetBtn)
+
+ResetBtn.MouseButton1Click:Connect(function()
+    if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        local deathPos = Player.Character.HumanoidRootPart.CFrame
+        Player.Character:BreakJoints()
+        
+        local connect
+        connect = Player.CharacterAdded:Connect(function(newChar)
+            local root = newChar:WaitForChild("HumanoidRootPart", 5)
+            if root then
+                task.wait(0.1) -- تأخير بسيط جداً للتأكد من رسبون اللاعب بالكامل لمنع الـ Glitch
+                root.CFrame = deathPos
+            end
+            connect:Disconnect()
+        end)
+    end
+end)
 
 -- ========================================================================
 
@@ -326,4 +342,4 @@ spawn(function()
 end)
 
 RefreshSaves()
-ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visi
