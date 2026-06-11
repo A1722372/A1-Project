@@ -221,7 +221,7 @@ end)
 
 -- ==================== تبويب اللاعب المحدث والثابت ====================
 local PlayerPage = AllPages["اللاعب"]
-PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 460) -- زيادة الحجم لتناسب الزر الجديد تماماً
+PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 460)
 
 local SpeedInput = Instance.new("TextBox", PlayerPage); SpeedInput.Size = UDim2.new(0.5, 0, 0, 40); SpeedInput.Position = UDim2.new(0.05, 0, 0, 10); SpeedInput.PlaceholderText = "السرعة"; SpeedInput.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", SpeedInput)
 local SpeedBtn = Instance.new("TextButton", PlayerPage); SpeedBtn.Size = UDim2.new(0.35, 0, 0, 40); SpeedBtn.Position = UDim2.new(0.6, 0, 0, 10); SpeedBtn.Text = "تفعيل"; SpeedBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", SpeedBtn)
@@ -241,15 +241,13 @@ local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2
 local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
 FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
 
--- [ الزر 1: رسبون فوري ]
 local ResetBtn = Instance.new("TextButton", PlayerPage); ResetBtn.Size = UDim2.new(0.9, 0, 0, 40); ResetBtn.Position = UDim2.new(0.05, 0, 0, 260); ResetBtn.Text = "إعادة رسوَن فوري (Instant Reset)"; ResetBtn.BackgroundColor3 = Color3.fromRGB(120, 30, 30); ResetBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", ResetBtn)
 ResetBtn.MouseButton1Click:Connect(function() if Player.Character then Player.Character:BreakJoints() end end)
 
--- [ الزر 2: الجاذبية المنخفضة ]
 local GravityBtn = Instance.new("TextButton", PlayerPage); GravityBtn.Size = UDim2.new(0.9, 0, 0, 40); GravityBtn.Position = UDim2.new(0.05, 0, 0, 310); GravityBtn.Text = "الجاذبية: طبيعية"; GravityBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); GravityBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", GravityBtn)
 local LowGrav = false; GravityBtn.MouseButton1Click:Connect(function() LowGrav = not LowGrav; workspace.Gravity = LowGrav and 35 or 196.2; GravityBtn.Text = LowGrav and "الجاذبية: منخفضة (قمرية)" or "الجاذبية: طبيعية"; GravityBtn.BackgroundColor3 = LowGrav and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end)
 
--- [ زر الحصول على أداة التليبارت TPTool الجديد في خانة اللاعب ]
+-- زر الـ TPTool الجديد في تبويب اللاعب
 local TPToolBtn = Instance.new("TextButton", PlayerPage)
 TPToolBtn.Size = UDim2.new(0.9, 0, 0, 40)
 TPToolBtn.Position = UDim2.new(0.05, 0, 0, 360)
@@ -327,4 +325,6 @@ end)
 local EffectsPage = AllPages["التأثيرات"]
 local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
 local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
-local OffBtn = Instance.new("TextButton", EffectsPage); OffBtn.Size = UDim2.new(0.43, 0, 0, 40); OffBtn.Position = UDim2.new(0.52, 0, 0, 60)
+local OffBtn = Instance.new("TextButton", EffectsPage); OffBtn.Size = UDim2.new(0.43, 0, 0, 40); OffBtn.Position = UDim2.new(0.52, 0, 0, 60); OffBtn.Text = "إيقاف الإسبام"; OffBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", OffBtn)
+
+local
