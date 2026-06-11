@@ -232,6 +232,8 @@ end)
 
 -- تبويب اللاعب
 local PlayerPage = AllPages["اللاعب"]
+PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 500) -- تكبير مساحة التمرير لتستوعب الأزرار الاحترافية الجديدة
+
 local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
 FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
 
@@ -249,6 +251,30 @@ local InfJumpBtn = Instance.new("TextButton", PlayerPage); InfJumpBtn.Size = UDi
 local JumpEnabled = false; InfJumpBtn.MouseButton1Click:Connect(function() JumpEnabled = not JumpEnabled; InfJumpBtn.BackgroundColor3 = JumpEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); UIS.JumpRequest:Connect(function() if JumpEnabled then Player.Character.Humanoid:ChangeState("Jumping") end end)
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40); NoclipBtn.Position = UDim2.new(0.05, 0, 0, 160); NoclipBtn.Text = "اختراق الجدران"; NoclipBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", NoclipBtn); local NoclipEnabled = false; NoclipBtn.MouseButton1Click:Connect(function() NoclipEnabled = not NoclipEnabled; NoclipBtn.BackgroundColor3 = NoclipEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
+
+-- [ الأزرار الإبداعية الخمسة المضافة حديثاً ]
+
+-- 1. زر إعادة الرسبون الفوري
+local ResetBtn = Instance.new("TextButton", PlayerPage); ResetBtn.Size = UDim2.new(0.9, 0, 0, 40); ResetBtn.Position = UDim2.new(0.05, 0, 0, 260); ResetBtn.Text = "إعادة رسوَن فوري (Instant Reset)"; ResetBtn.BackgroundColor3 = Color3.fromRGB(120, 30, 30); ResetBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", ResetBtn)
+ResetBtn.MouseButton1Click:Connect(function() if Player.Character then Player.Character:BreakJoints() end end)
+
+-- 2. زر الجاذبية المنخفضة
+local GravityBtn = Instance.new("TextButton", PlayerPage); GravityBtn.Size = UDim2.new(0.9, 0, 0, 40); GravityBtn.Position = UDim2.new(0.05, 0, 0, 310); GravityBtn.Text = "الجاذبية: طبيعية"; GravityBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); GravityBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", GravityBtn)
+local LowGrav = false; GravityBtn.MouseButton1Click:Connect(function() LowGrav = not LowGrav; workspace.Gravity = LowGrav and 35 or 196.2; GravityBtn.Text = LowGrav and "الجاذبية: منخفضة (قمرية)" or "الجاذبية: طبيعية"; GravityBtn.BackgroundColor3 = LowGrav and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end)
+
+-- 3. زر منظور الشخص الأول اللانهائي
+local ZoomBtn = Instance.new("TextButton", PlayerPage); ZoomBtn.Size = UDim2.new(0.9, 0, 0, 40); ZoomBtn.Position = UDim2.new(0.05, 0, 0, 360); ZoomBtn.Text = "الزوم اللانهائي: مقفل"; ZoomBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); ZoomBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", ZoomBtn)
+local InfZoom = false; ZoomBtn.MouseButton1Click:Connect(function() InfZoom = not InfZoom; Player.CameraMaxZoomDistance = InfZoom and 999999 or 400; ZoomBtn.Text = InfZoom and "الزوم اللانهائي: مفتوح ✅" or "الزوم اللانهائي: مقفل"; ZoomBtn.BackgroundColor3 = InfZoom and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end)
+
+-- 4. زر مسح الضباب والبيئة المضيئة
+local NoFogBtn = Instance.new("TextButton", PlayerPage); NoFogBtn.Size = UDim2.new(0.9, 0, 0, 40); NoFogBtn.Position = UDim2.new(0.05, 0, 0, 410); NoFogBtn.Text = "إزالة الضباب وتوضيح الرؤية"; NoFogBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 100); NoFogBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", NoFogBtn)
+NoFogBtn.MouseButton1Click:Connect(function() Lighting.FogEnd = 999999; Lighting.Brightness = 4; Lighting.ClockTime = 14 end)
+
+-- 5. زر مسح اللاق وتحسين الأداء الفوري (حذف الماتيريالز لتسريع اللعبة)
+local AntiLagBtn = Instance.new("TextButton", PlayerPage); AntiLagBtn.Size = UDim2.new(0.9, 0, 0, 40); AntiLagBtn.Position = UDim2.new(0.05, 0, 0, 460); AntiLagBtn.Text = "حذف اللاق الفوري (Boost FPS)"; AntiLagBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 50); AntiLagBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", AntiLagBtn)
+AntiLagBtn.MouseButton1Click:Connect(function() for _, v in pairs(workspace:GetDescendants()) do if v:IsA("BasePart") and not v:IsA("MeshPart") then v.Material = Enum.Material.SmoothPlastic end end end)
+
+-- ========================================================================
 
 -- تبويب الاستهداف
 local TargetPage = AllPages["الاستهداف"]
@@ -284,38 +310,4 @@ local function RefreshSaves()
     for name, pos in pairs(getgenv().AihamSavedPositions) do
         local Container = Instance.new("Frame", SavePage); Container.Size = UDim2.new(0.9, 0, 0, 40); Container.Position = UDim2.new(0.05, 0, 0, 60 + (#SavePage:GetChildren() * 45)); Container.BackgroundTransparency = 1
         local GoBtn = Instance.new("TextButton", Container); GoBtn.Size = UDim2.new(0.8, 0, 1, 0); GoBtn.Text = name; GoBtn.BackgroundColor3 = Color3.fromRGB(60,60,60); GoBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", GoBtn)
-        local DelBtn = Instance.new("TextButton", Container); DelBtn.Size = UDim2.new(0.15, 0, 1, 0); DelBtn.Position = UDim2.new(0.85, 0, 0, 0); DelBtn.Text = "X"; DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", DelBtn)
-        GoBtn.MouseButton1Click:Connect(function() Player.Character.HumanoidRootPart.CFrame = pos end)
-        DelBtn.MouseButton1Click:Connect(function() getgenv().AihamSavedPositions[name] = nil; RefreshSaves() end)
-    end
-end
-
-SaveBtn.MouseButton1Click:Connect(function()
-    if SaveInput.Text ~= "" and Player.Character:FindFirstChild("HumanoidRootPart") then
-        getgenv().AihamSavedPositions[SaveInput.Text] = Player.Character.HumanoidRootPart.CFrame
-        RefreshSaves()
-        SaveInput.Text = ""
-    end
-end)
-
--- تبويب التأثيرات
-local EffectsPage = AllPages["التأثيرات"]
-local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
-local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
-local OffBtn = Instance.new("TextButton", EffectsPage); OffBtn.Size = UDim2.new(0.43, 0, 0, 40); OffBtn.Position = UDim2.new(0.52, 0, 0, 60); OffBtn.Text = "إيقاف الإسبام"; OffBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", OffBtn)
-
-local SpamEnabled = false
-OnBtn.MouseButton1Click:Connect(function() SpamEnabled = true end)
-OffBtn.MouseButton1Click:Connect(function() SpamEnabled = false end)
-
-spawn(function()
-    while true do
-        if SpamEnabled and SpamInput.Text ~= "" then
-            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(SpamInput.Text, "All")
-        end
-        task.wait(0.1)
-    end
-end)
-
-RefreshSaves()
-ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+        local DelBtn = Instance.new("TextButton", Container); DelBtn.Size = UDim2.new(0.15, 0, 1, 0); DelBtn.Position = UDim2.new(0.85, 0, 0, 0); DelBtn.Text = "X"; DelBtn.BackgroundColor3 = Color3.fromRGB(1
