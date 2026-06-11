@@ -188,6 +188,7 @@ local Img1 = Instance.new("ImageLabel", InfoBox)
 Img1.Size = UDim2.new(0, 50, 0, 50)
 Img1.Position = UDim2.new(0.15, -25, 0, 60)
 Img1.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Img1.Image = "rbxassetid://81945110813195" -- [تمت إضافة المعرف الجديد هنا بنجاح]
 Instance.new("UICorner", Img1).CornerRadius = UDim.new(0, 8)
 
 -- الصورة الثانية (1000001117.jpg)
