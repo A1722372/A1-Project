@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.6 الأصلية المعدلة بالكامل ]]
+-- [[ سكريبت anxam الأسطوري - النسخة V41.6 الأصلية المعدلة بالكامل ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -177,26 +177,26 @@ CreditsLabel.BackgroundTransparency = 1
 local DevLabel = Instance.new("TextLabel", InfoBox)
 DevLabel.Size = UDim2.new(1, 0, 0, 20)
 DevLabel.Position = UDim2.new(0, 0, 0, 25)
-DevLabel.Text = "Developers: Aiham & osama"
+DevLabel.Text = "Developers: anxam & osama"
 DevLabel.Font = Enum.Font.SourceSansItalic
 DevLabel.TextSize = 14
 DevLabel.TextColor3 = Color3.fromRGB(0, 180, 255)
 DevLabel.BackgroundTransparency = 1
 
--- عرض صورة أيهم (صورة الأنمي ريال مدريد)
+-- عرض صورة anxam (الأنمي ريال مدريد) باستخدام الرابط المباشر الثابت
 local AihamImg = Instance.new("ImageLabel", InfoBox)
 AihamImg.Size = UDim2.new(0, 55, 0, 55)
 AihamImg.Position = UDim2.new(0.25, -27.5, 0, 50)
 AihamImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-AihamImg.Image = "rbxassetid://134011422703814" -- معرف صورة أيهم المحددة
+AihamImg.Image = "https://www.roblox.com/asset-thumbnail/image?assetId=134011422703814&width=420&height=420&format=png"
 Instance.new("UICorner", AihamImg).CornerRadius = UDim.new(0, 8)
 
--- عرض صورة أسامة (صورة الممثل دكستر)
+-- عرض صورة أسامة (الممثل دكستر) باستخدام الرابط المباشر الثابت
 local OsamaImg = Instance.new("ImageLabel", InfoBox)
 OsamaImg.Size = UDim2.new(0, 55, 0, 55)
 OsamaImg.Position = UDim2.new(0.75, -27.5, 0, 50)
 OsamaImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-OsamaImg.Image = "rbxassetid://135891391910243" -- معرف صورة أسامة المحددة
+OsamaImg.Image = "https://www.roblox.com/asset-thumbnail/image?assetId=135891391910243&width=420&height=420&format=png"
 Instance.new("UICorner", OsamaImg).CornerRadius = UDim.new(0, 8)
 
 -- نظام احتساب مستخدمي السكريبت الفعليين داخل الخادم الحالي
@@ -300,22 +300,4 @@ end)
 
 -- تبويب التأثيرات
 local EffectsPage = AllPages["التأثيرات"]
-local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
-local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
-local OffBtn = Instance.new("TextButton", EffectsPage); OffBtn.Size = UDim2.new(0.43, 0, 0, 40); OffBtn.Position = UDim2.new(0.52, 0, 0, 60); OffBtn.Text = "إيقاف الإسبام"; OffBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", OffBtn)
-
-local SpamEnabled = false
-OnBtn.MouseButton1Click:Connect(function() SpamEnabled = true end)
-OffBtn.MouseButton1Click:Connect(function() SpamEnabled = false end)
-
-spawn(function()
-    while true do
-        if SpamEnabled and SpamInput.Text ~= "" then
-            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(SpamInput.Text, "All")
-        end
-        task.wait(0.1)
-    end
-end)
-
-RefreshSaves()
-ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size =
