@@ -1,4 +1,4 @@
--- [[ سكريبت Anxam الأسطوري - النسخة V41.8 المعدلة بالكامل ]]
+-- [[ سكريبت Anxam الأسطوري - النسخة V41.9 الشغالة بالكامل وبدون تعليق ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -68,10 +68,9 @@ for i, name in ipairs(MenuConfig) do
     page.Size = UDim2.new(1, 0, 1, 0)
     page.BackgroundTransparency = 1
     page.Visible = (i == 1)
-    page.ScrollBarThickness = 6 -- شريط التمرير الرمادي
+    page.ScrollBarThickness = 6 
     page.VerticalScrollBarButtonColor3 = Color3.fromRGB(200, 200, 200)
     
-    -- ترتيب تلقائي نظيف للعناصر يمنع التداخل
     local layout = Instance.new("UIListLayout", page)
     layout.SortOrder = Enum.SortOrder.LayoutOrder
     layout.Padding = UDim.new(0, 10)
@@ -147,12 +146,12 @@ ThemeBtn.MouseButton1Click:Connect(function()
     local choice = Themes[currentTheme]
     ThemeBtn.Text = "اللون: " .. choice.Name
     if choice.Color == "Rainbow" then
-        spawn(function()
+        task.spawn(function()
             while choice.Color == "Rainbow" and ThemeBtn.Text == "اللون: رينبو" do
                 local c = Color3.fromHSV(tick() % 5 / 5, 1, 1)
                 MainFrame.BackgroundColor3 = c
                 SideMenu.BackgroundColor3 = Color3.new(c.r*0.5, c.g*0.5, c.b*0.5)
-                wait(0.1)
+                task.wait(0.1)
             end
         end)
     else
@@ -188,7 +187,7 @@ CreditsLabel.BackgroundTransparency = 1
 local DevLabel = Instance.new("TextLabel", InfoBox)
 DevLabel.Size = UDim2.new(1, 0, 0, 20)
 DevLabel.Position = UDim2.new(0, 0, 0, 25)
-DevLabel.Text = "Developers: Anxam & osama & User"
+DevLabel.Text = "Developers: Anxam & osama"
 DevLabel.Font = Enum.Font.SourceSansItalic
 DevLabel.TextSize = 14
 DevLabel.TextColor3 = Color3.fromRGB(0, 180, 255)
@@ -228,10 +227,9 @@ local tag = Player:FindFirstChild("Using_AihamScript") or Instance.new("StringVa
 tag.Name = "Using_AihamScript"
 task.spawn(function() while task.wait(1) do UpdateScriptUsers() end end)
 
--- ==================== تبويب اللاعب المصلح بالكامل ====================
+-- ==================== تبويب اللاعب (مصلح وشغال) ====================
 local PlayerPage = AllPages["اللاعب"]
--- رفع الـ CanvasSize ليعطيك المساحة الكاملة لظهور شريط التمرير الرمادي (المستطيل) للنزول والصعود
-PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 550) 
+PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 550) -- تفعيل المستطيل الرمادي والتمرير بالكامل لقائمة اللاعب
 
 -- السرعة
 local SpeedContainer = Instance.new("Frame", PlayerPage)
@@ -258,7 +256,7 @@ local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2
 
 -- طيران
 local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
-FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
+FlyV3Btn.MouseButton1Click:Connect(function() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end) end)
 
 -- رسبون فوري
 local ResetBtn = Instance.new("TextButton", PlayerPage); ResetBtn.Size = UDim2.new(0.9, 0, 0, 40); ResetBtn.Text = "إعادة رسوَن فوري (Instant Reset)"; ResetBtn.BackgroundColor3 = Color3.fromRGB(120, 30, 30); ResetBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", ResetBtn)
@@ -324,4 +322,6 @@ local OffBtn = Instance.new("TextButton", SpamControlContainer); OffBtn.Size = U
 
 local SpamEnabled = false
 OnBtn.MouseButton1Click:Connect(function() SpamEnabled = true end)
-OffBtn.Mous
+OffBtn.MouseButton1Click:Connect(function() SpamEnabled = false end)
+
+task.spawn(functi
