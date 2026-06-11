@@ -158,9 +158,9 @@ DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 Instance.new("UICorner", DiscordBtn)
 DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/WrxQZDVps") end)
 
--- صندوق المطورين والإحصائيات (معدل لـ 3 صور)
+-- صندوق المطورين والإحصائيات
 local InfoBox = Instance.new("Frame", MapPage)
-InfoBox.Size = UDim2.new(0.9, 0, 0, 180) -- زيادة الارتفاع قليلاً
+InfoBox.Size = UDim2.new(0.9, 0, 0, 160)
 InfoBox.Position = UDim2.new(0.05, 0, 0, 215)
 InfoBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 Instance.new("UICorner", InfoBox)
@@ -177,34 +177,29 @@ CreditsLabel.BackgroundTransparency = 1
 local DevLabel = Instance.new("TextLabel", InfoBox)
 DevLabel.Size = UDim2.new(1, 0, 0, 20)
 DevLabel.Position = UDim2.new(0, 0, 0, 25)
-DevLabel.Text = "Developers: Anxam, Osama & User" -- تمت الإضافة
+DevLabel.Text = "Developers: Anxam & osama"
 DevLabel.Font = Enum.Font.SourceSansItalic
 DevLabel.TextSize = 14
 DevLabel.TextColor3 = Color3.fromRGB(0, 180, 255)
 DevLabel.BackgroundTransparency = 1
 
--- الصورة الأولى (1000001118.jpg)
-local Img1 = Instance.new("ImageLabel", InfoBox)
-Img1.Size = UDim2.new(0, 50, 0, 50)
-Img1.Position = UDim2.new(0.15, -25, 0, 60)
-Img1.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-Instance.new("UICorner", Img1).CornerRadius = UDim.new(0, 8)
+-- عرض صورة Anxam (صورة الأنمي ريال مدريد)
+local AihamImg = Instance.new("ImageLabel", InfoBox)
+AihamImg.Size = UDim2.new(0, 55, 0, 55)
+AihamImg.Position = UDim2.new(0.25, -27.5, 0, 50)
+AihamImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+AihamImg.Image = "http://www.roblox.com/asset/?id=134011422703814" -- معرف صورة Anxam المحددة والمحدثة للرابط المباشر
+Instance.new("UICorner", AihamImg).CornerRadius = UDim.new(0, 8)
 
--- الصورة الثانية (1000001117.jpg)
-local Img2 = Instance.new("ImageLabel", InfoBox)
-Img2.Size = UDim2.new(0, 50, 0, 50)
-Img2.Position = UDim2.new(0.5, -25, 0, 60)
-Img2.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-Instance.new("UICorner", Img2).CornerRadius = UDim.new(0, 8)
+-- عرض صورة أسامة (صورة الممثل دكستر)
+local OsamaImg = Instance.new("ImageLabel", InfoBox)
+OsamaImg.Size = UDim2.new(0, 55, 0, 55)
+OsamaImg.Position = UDim2.new(0.75, -27.5, 0, 50)
+OsamaImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+OsamaImg.Image = "http://www.roblox.com/asset/?id=135891391910243" -- معرف صورة أسامة المحددة والمحدثة للرابط المباشر
+Instance.new("UICorner", OsamaImg).CornerRadius = UDim.new(0, 8)
 
--- الصورة الثالثة (1000000753.jpg)
-local Img3 = Instance.new("ImageLabel", InfoBox)
-Img3.Size = UDim2.new(0, 50, 0, 50)
-Img3.Position = UDim2.new(0.85, -25, 0, 60)
-Img3.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-Instance.new("UICorner", Img3).CornerRadius = UDim.new(0, 8)
-
--- نظام احتساب مستخدمي السكريبت الفعليين
+-- نظام احتساب مستخدمي السكريبت الفعليين داخل الخادم الحالي
 local ScriptUsersLabel = Instance.new("TextLabel", InfoBox)
 ScriptUsersLabel.Size = UDim2.new(1, 0, 0, 25)
 ScriptUsersLabel.Position = UDim2.new(0, 0, 1, -30)
@@ -223,6 +218,7 @@ local function UpdateScriptUsers()
     ScriptUsersLabel.Text = "مستخدمي السكريبت النشطين حالياً: " .. tostring(activeCount)
 end
 
+-- إنشاء علامة تتبع داخل اللاعب لتأكيد استخدامه للسكريبت
 local tag = Player:FindFirstChild("Using_AihamScript") or Instance.new("StringValue", Player)
 tag.Name = "Using_AihamScript"
 
@@ -233,7 +229,8 @@ task.spawn(function()
 end)
 
 -- ========================================================================
--- [بقية السكريبت تم الحفاظ عليه كما هو]
+
+-- تبويب اللاعب
 local PlayerPage = AllPages["اللاعب"]
 local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
 FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
@@ -253,6 +250,7 @@ local JumpEnabled = false; InfJumpBtn.MouseButton1Click:Connect(function() JumpE
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40); NoclipBtn.Position = UDim2.new(0.05, 0, 0, 160); NoclipBtn.Text = "اختراق الجدران"; NoclipBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", NoclipBtn); local NoclipEnabled = false; NoclipBtn.MouseButton1Click:Connect(function() NoclipEnabled = not NoclipEnabled; NoclipBtn.BackgroundColor3 = NoclipEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
 
+-- تبويب الاستهداف
 local TargetPage = AllPages["الاستهداف"]
 local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.TextColor3 = Color3.new(1,1,1); TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
 local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 80, 0, 80); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", PlayerImg)
@@ -276,6 +274,7 @@ for i, bName in ipairs(BNames) do
     end)
 end
 
+-- تبويب المحفوظات
 local SavePage = AllPages["المحفوظات"]
 local SaveInput = Instance.new("TextBox", SavePage); SaveInput.Size = UDim2.new(0.7, 0, 0, 40); SaveInput.Position = UDim2.new(0.05, 0, 0, 10); SaveInput.PlaceholderText = "اسم المكان"; SaveInput.TextColor3 = Color3.new(1,1,1); SaveInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SaveInput)
 local SaveBtn = Instance.new("TextButton", SavePage); SaveBtn.Size = UDim2.new(0.2, 0, 0, 40); SaveBtn.Position = UDim2.new(0.75, 0, 0, 10); SaveBtn.Text = "حفظ"; SaveBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", SaveBtn)
@@ -299,6 +298,7 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- تبويب التأثيرات
 local EffectsPage = AllPages["التأثيرات"]
 local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
 local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
