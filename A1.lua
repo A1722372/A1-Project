@@ -188,7 +188,6 @@ local Img1 = Instance.new("ImageLabel", InfoBox)
 Img1.Size = UDim2.new(0, 50, 0, 50)
 Img1.Position = UDim2.new(0.15, -25, 0, 60)
 Img1.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-Img1.Image = "rbxassetid://81945110813195"
 Instance.new("UICorner", Img1).CornerRadius = UDim.new(0, 8)
 
 -- الصورة الثانية (1000001117.jpg)
@@ -196,7 +195,6 @@ local Img2 = Instance.new("ImageLabel", InfoBox)
 Img2.Size = UDim2.new(0, 50, 0, 50)
 Img2.Position = UDim2.new(0.5, -25, 0, 60)
 Img2.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-Img2.Image = "rbxassetid://124623074543613"
 Instance.new("UICorner", Img2).CornerRadius = UDim.new(0, 8)
 
 -- الصورة الثالثة (1000000753.jpg)
@@ -204,7 +202,6 @@ local Img3 = Instance.new("ImageLabel", InfoBox)
 Img3.Size = UDim2.new(0, 50, 0, 50)
 Img3.Position = UDim2.new(0.85, -25, 0, 60)
 Img3.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-Img3.Image = "rbxassetid://90056440530951" -- [تمت إضافة معرف الصورة الثالثة هنا بنجاح]
 Instance.new("UICorner", Img3).CornerRadius = UDim.new(0, 8)
 
 -- نظام احتساب مستخدمي السكريبت الفعليين
