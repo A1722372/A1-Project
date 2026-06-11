@@ -5,6 +5,14 @@ local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
 
+-- === [قسم إحداثيات المواقع الثلاثة لتسليم الصناديق] ===
+-- غير هذه الأرقام (X, Y, Z) حسب المواقع التكتيكية داخل مابك العسكري
+local MilitaryPositions = {
+    Location1 = CFrame.new(250, 10, -150), -- إحداثيات الموقع الأول
+    Location2 = CFrame.new(-300, 10, 400), -- إحداثيات الموقع الثاني
+    Location3 = CFrame.new(500, 10, 50),   -- إحداثيات الموقع الثالث
+}
+
 if not getgenv().AihamSavedPositions then getgenv().AihamSavedPositions = {} end
 
 if PlayerGui:FindFirstChild("AihamScript_Main") then PlayerGui.AihamScript_Main:Destroy() end
@@ -66,11 +74,10 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- ==================== تبويب الماب (الواجهة المحدثة) ====================
+-- ==================== تبويب الماب ====================
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 430)
 
--- زر السطوع
 local FBButton = Instance.new("TextButton", MapPage)
 FBButton.Size = UDim2.new(0.9, 0, 0, 40)
 FBButton.Position = UDim2.new(0.05, 0, 0, 10)
@@ -89,7 +96,6 @@ FBButton.MouseButton1Click:Connect(function()
     FBButton.BackgroundColor3 = FBEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- زر الشادر
 local ShaderBtn = Instance.new("TextButton", MapPage)
 ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40)
 ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60)
@@ -109,7 +115,6 @@ ShaderBtn.MouseButton1Click:Connect(function()
     ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- زر تغيير لون القائمة
 local ThemeBtn = Instance.new("TextButton", MapPage)
 ThemeBtn.Size = UDim2.new(0.9, 0, 0, 40)
 ThemeBtn.Position = UDim2.new(0.05, 0, 0, 110)
@@ -146,7 +151,6 @@ ThemeBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر نسخ سيرفر الديسكورد
 local DiscordBtn = Instance.new("TextButton", MapPage)
 DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40)
 DiscordBtn.Position = UDim2.new(0.05, 0, 0, 160)
@@ -158,9 +162,8 @@ DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 Instance.new("UICorner", DiscordBtn)
 DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/WrxQZDVps") end)
 
--- صندوق المطورين والإحصائيات (معدل لـ 3 صور)
 local InfoBox = Instance.new("Frame", MapPage)
-InfoBox.Size = UDim2.new(0.9, 0, 0, 180) -- زيادة الارتفاع قليلاً
+InfoBox.Size = UDim2.new(0.9, 0, 0, 180)
 InfoBox.Position = UDim2.new(0.05, 0, 0, 215)
 InfoBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 Instance.new("UICorner", InfoBox)
@@ -177,13 +180,12 @@ CreditsLabel.BackgroundTransparency = 1
 local DevLabel = Instance.new("TextLabel", InfoBox)
 DevLabel.Size = UDim2.new(1, 0, 0, 20)
 DevLabel.Position = UDim2.new(0, 0, 0, 25)
-DevLabel.Text = "Developers: Anxam, Osama & User" -- تمت الإضافة
+DevLabel.Text = "Developers: Anxam, Osama & User"
 DevLabel.Font = Enum.Font.SourceSansItalic
 DevLabel.TextSize = 14
 DevLabel.TextColor3 = Color3.fromRGB(0, 180, 255)
 DevLabel.BackgroundTransparency = 1
 
--- الصورة الأولى (1000001118.jpg)
 local Img1 = Instance.new("ImageLabel", InfoBox)
 Img1.Size = UDim2.new(0, 50, 0, 50)
 Img1.Position = UDim2.new(0.15, -25, 0, 60)
@@ -191,7 +193,6 @@ Img1.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 Img1.Image = "rbxassetid://81945110813195"
 Instance.new("UICorner", Img1).CornerRadius = UDim.new(0, 8)
 
--- الصورة الثانية (1000001117.jpg)
 local Img2 = Instance.new("ImageLabel", InfoBox)
 Img2.Size = UDim2.new(0, 50, 0, 50)
 Img2.Position = UDim2.new(0.5, -25, 0, 60)
@@ -199,15 +200,13 @@ Img2.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 Img2.Image = "rbxassetid://124623074543613"
 Instance.new("UICorner", Img2).CornerRadius = UDim.new(0, 8)
 
--- الصورة الثالثة (1000000753.jpg)
 local Img3 = Instance.new("ImageLabel", InfoBox)
 Img3.Size = UDim2.new(0, 50, 0, 50)
 Img3.Position = UDim2.new(0.85, -25, 0, 60)
 Img3.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-Img3.Image = "rbxassetid://90056440530951" -- [تمت إضافة معرف الصورة الثالثة هنا بنجاح]
+Img3.Image = "rbxassetid://90056440530951"
 Instance.new("UICorner", Img3).CornerRadius = UDim.new(0, 8)
 
--- نظام احتساب مستخدمي السكريبت الفعليين
 local ScriptUsersLabel = Instance.new("TextLabel", InfoBox)
 ScriptUsersLabel.Size = UDim2.new(1, 0, 0, 25)
 ScriptUsersLabel.Position = UDim2.new(0, 0, 1, -30)
@@ -235,8 +234,99 @@ task.spawn(function()
     end
 end)
 
+-- ==================== تبويب العسكرية 🎖️ (دمج كود الصناديق التلقائي من Pastebin) ====================
+local MilitaryPage = AllPages["العسكرية 🎖️"]
+MilitaryPage.CanvasSize = UDim2.new(0, 0, 0, 260)
+
+-- دالة التنقل العادية للمواقع
+local function TeleportToLocation(targetCFrame)
+    if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        Player.Character.HumanoidRootPart.CFrame = targetCFrame
+    end
+end
+
+-- الزر الأول: الانتقال التلقائي لمكان الصندوق المترسبن والتقاطه (مأخوذ من Pastebin)
+local MilBtn1 = Instance.new("TextButton", MilitaryPage)
+MilBtn1.Size = UDim2.new(0.9, 0, 0, 40)
+MilBtn1.Position = UDim2.new(0.05, 0, 0, 10)
+MilBtn1.Text = "انتقال تلقائي للصندوق 📦"
+MilBtn1.Font = Enum.Font.SourceSansBold
+MilBtn1.TextSize = 15
+MilBtn1.TextColor3 = Color3.new(1, 1, 1)
+MilBtn1.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+Instance.new("UICorner", MilBtn1)
+
+MilBtn1.MouseButton1Click:Connect(function()
+    local char = Player.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    -- البحث التلقائي عن الصندوق الفعلي بالماب بناءً على الكود المكتشف
+    local targetChest = workspace:FindFirstChild("TakeChest", true)
+    
+    if hrp and targetChest then
+        -- الانتقال فوق الصندوق بمسافة آمنة لحمايتك
+        hrp.CFrame = targetChest:GetPivot() * CFrame.new(0, 0, 2)
+        
+        -- حلقة الضغط التلقائي السريع المتفوقة والمأخوذة من سكريبتك القديم
+        task.spawn(function()
+            while true do
+                if not Player.Character or not Player.Character:FindFirstChild("HumanoidRootPart") then break end
+                local currentHrp = Player.Character.HumanoidRootPart
+                local dist = (currentHrp.Position - targetChest:GetPivot().Position).Magnitude
+                if dist > 10 then break end -- التوقف إذا ابتعدت
+                
+                local prompt = targetChest:FindFirstChildWhichIsA("ProximityPrompt", true)
+                if prompt then 
+                    fireproximityprompt(prompt) 
+                end
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+-- الزر الثاني: الانتقال اليدوي للموقع 1
+local MilBtn2 = Instance.new("TextButton", MilitaryPage)
+MilBtn2.Size = UDim2.new(0.9, 0, 0, 40)
+MilBtn2.Position = UDim2.new(0.05, 0, 0, 60)
+MilBtn2.Text = "انتقال إلى الموقع [1]📍"
+MilBtn2.Font = Enum.Font.SourceSansBold
+MilBtn2.TextSize = 15
+MilBtn2.TextColor3 = Color3.new(1, 1, 1)
+MilBtn2.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", MilBtn2)
+MilBtn2.MouseButton1Click:Connect(function()
+    TeleportToLocation(MilitaryPositions.Location1)
+end)
+
+-- الزر الثالث: الانتقال اليدوي للموقع 2
+local MilBtn3 = Instance.new("TextButton", MilitaryPage)
+MilBtn3.Size = UDim2.new(0.9, 0, 0, 40)
+MilBtn3.Position = UDim2.new(0.05, 0, 0, 110)
+MilBtn3.Text = "انتقال إلى الموقع [2]📍"
+MilBtn3.Font = Enum.Font.SourceSansBold
+MilBtn3.TextSize = 15
+MilBtn3.TextColor3 = Color3.new(1, 1, 1)
+MilBtn3.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", MilBtn3)
+MilBtn3.MouseButton1Click:Connect(function()
+    TeleportToLocation(MilitaryPositions.Location2)
+end)
+
+-- الزر الرابع: الانتقال اليدوي للموقع 3
+local MilBtn4 = Instance.new("TextButton", MilitaryPage)
+MilBtn4.Size = UDim2.new(0.9, 0, 0, 40)
+MilBtn4.Position = UDim2.new(0.05, 0, 0, 160)
+MilBtn4.Text = "انتقال إلى الموقع [3]📍"
+MilBtn4.Font = Enum.Font.SourceSansBold
+MilBtn4.TextSize = 15
+MilBtn4.TextColor3 = Color3.new(1, 1, 1)
+MilBtn4.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", MilBtn4)
+MilBtn4.MouseButton1Click:Connect(function()
+    TeleportToLocation(MilitaryPositions.Location3)
+end)
+
 -- ========================================================================
--- [بقية السكريبت تم الحفاظ عليه كما هو]
 local PlayerPage = AllPages["اللاعب"]
 local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
 FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
@@ -286,39 +376,4 @@ local SaveBtn = Instance.new("TextButton", SavePage); SaveBtn.Size = UDim2.new(0
 local function RefreshSaves()
     for _, child in pairs(SavePage:GetChildren()) do if child:IsA("Frame") then child:Destroy() end end
     for name, pos in pairs(getgenv().AihamSavedPositions) do
-        local Container = Instance.new("Frame", SavePage); Container.Size = UDim2.new(0.9, 0, 0, 40); Container.Position = UDim2.new(0.05, 0, 0, 60 + (#SavePage:GetChildren() * 45)); Container.BackgroundTransparency = 1
-        local GoBtn = Instance.new("TextButton", Container); GoBtn.Size = UDim2.new(0.8, 0, 1, 0); GoBtn.Text = name; GoBtn.BackgroundColor3 = Color3.fromRGB(60,60,60); GoBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", GoBtn)
-        local DelBtn = Instance.new("TextButton", Container); DelBtn.Size = UDim2.new(0.15, 0, 1, 0); DelBtn.Position = UDim2.new(0.85, 0, 0, 0); DelBtn.Text = "X"; DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", DelBtn)
-        GoBtn.MouseButton1Click:Connect(function() Player.Character.HumanoidRootPart.CFrame = pos end)
-        DelBtn.MouseButton1Click:Connect(function() getgenv().AihamSavedPositions[name] = nil; RefreshSaves() end)
-    end
-end
-
-SaveBtn.MouseButton1Click:Connect(function()
-    if SaveInput.Text ~= "" and Player.Character:FindFirstChild("HumanoidRootPart") then
-        getgenv().AihamSavedPositions[SaveInput.Text] = Player.Character.HumanoidRootPart.CFrame
-        RefreshSaves()
-        SaveInput.Text = ""
-    end
-end)
-
-local EffectsPage = AllPages["التأثيرات"]
-local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
-local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
-local OffBtn = Instance.new("TextButton", EffectsPage); OffBtn.Size = UDim2.new(0.43, 0, 0, 40); OffBtn.Position = UDim2.new(0.52, 0, 0, 60); OffBtn.Text = "إيقاف الإسبام"; OffBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", OffBtn)
-
-local SpamEnabled = false
-OnBtn.MouseButton1Click:Connect(function() SpamEnabled = true end)
-OffBtn.MouseButton1Click:Connect(function() SpamEnabled = false end)
-
-spawn(function()
-    while true do
-        if SpamEnabled and SpamInput.Text ~= "" then
-            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(SpamInput.Text, "All")
-        end
-        task.wait(0.1)
-    end
-end)
-
-RefreshSaves()
-ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+        local Container = Instance.new("Frame", SavePage); Container.Size = UDim2.new(0.9, 0, 0, 40); C
