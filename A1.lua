@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.6 الأصلية ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V41.3 الأصلية ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -164,3 +164,6 @@ SaveBtn.MouseButton1Click:Connect(function()
         SaveInput.Text = ""
     end
 end)
+
+RefreshSaves()
+ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
