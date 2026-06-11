@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - النسخة V41.6 الأصلية ]]
+-- [[ سكريبت أيهم الأسطوري - النسخة V41.6 الأصلية المعدلة ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -28,8 +28,8 @@ Instance.new("UICorner", ToggleBtn)
 
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 400, 0, 350)
-MainFrame.Position = UDim2.new(0.5, -200, 0.5, -175)
+MainFrame.Size = UDim2.new(0, 420, 0, 380) -- تعديل بسيط لاستيعاب التصميم المطور
+MainFrame.Position = UDim2.new(0.5, -210, 0.5, -190)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.Active = true 
 MainFrame.Draggable = true
@@ -66,16 +66,66 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- تبويب الماب
+-- ==================== تعديل تبويب الماب الجديد بالكامل ====================
 local MapPage = AllPages["اعدادات الماب"]
-local FBButton = Instance.new("TextButton", MapPage); FBButton.Size = UDim2.new(0.9, 0, 0, 40); FBButton.Position = UDim2.new(0.05, 0, 0, 10); FBButton.Text = "السطوع: مطفأ"; FBButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", FBButton)
-local FBEnabled = false; FBButton.MouseButton1Click:Connect(function() FBEnabled = not FBEnabled; Lighting.Ambient = FBEnabled and Color3.new(1,1,1) or Color3.new(0,0,0); FBButton.Text = FBEnabled and "السطوع: شغال" or "السطوع: مطفأ"; FBButton.BackgroundColor3 = FBEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
+MapPage.CanvasSize = UDim2.new(0, 0, 0, 420) -- إتاحة التمرير لتناسق العناصر
 
-local ShaderBtn = Instance.new("TextButton", MapPage); ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40); ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60); ShaderBtn.Text = "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", ShaderBtn)
-local ShaderEnabled = false; ShaderBtn.MouseButton1Click:Connect(function() ShaderEnabled = not ShaderEnabled; Lighting.Brightness = ShaderEnabled and 3 or 2; Lighting.ClockTime = ShaderEnabled and 12 or 14; ShaderBtn.Text = ShaderEnabled and "الشادر: شغال" or "الشادر: مطفأ"; ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) end)
+-- زر السطوع
+local FBButton = Instance.new("TextButton", MapPage)
+FBButton.Size = UDim2.new(0.9, 0, 0, 40)
+FBButton.Position = UDim2.new(0.05, 0, 0, 10)
+FBButton.Text = "السطوع: مطفأ"
+FBButton.Font = Enum.Font.SourceSansBold
+FBButton.TextSize = 16
+FBButton.TextColor3 = Color3.new(1, 1, 1)
+FBButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+Instance.new("UICorner", FBButton)
 
-local ThemeBtn = Instance.new("TextButton", MapPage); ThemeBtn.Size = UDim2.new(0.9, 0, 0, 40); ThemeBtn.Position = UDim2.new(0.05, 0, 0, 110); ThemeBtn.Text = "تغيير لون القائمة"; ThemeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", ThemeBtn)
-local Themes = {{Name = "أسود", Color = Color3.fromRGB(20, 20, 20)}, {Name = "أبيض", Color = Color3.fromRGB(200, 200, 200)}, {Name = "أزرق", Color = Color3.fromRGB(0, 50, 100)}, {Name = "رينبو", Color = "Rainbow"}}
+local FBEnabled = false
+FBButton.MouseButton1Click:Connect(function()
+    FBEnabled = not FBEnabled
+    Lighting.Ambient = FBEnabled and Color3.new(1,1,1) or Color3.new(0,0,0)
+    FBButton.Text = FBEnabled and "السطوع: شغال" or "السطوع: مطفأ"
+    FBButton.BackgroundColor3 = FBEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+end)
+
+-- زر الشادر
+local ShaderBtn = Instance.new("TextButton", MapPage)
+ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40)
+ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60)
+ShaderBtn.Text = "الشادر: مطفأ"
+ShaderBtn.Font = Enum.Font.SourceSansBold
+ShaderBtn.TextSize = 16
+ShaderBtn.TextColor3 = Color3.new(1, 1, 1)
+ShaderBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+Instance.new("UICorner", ShaderBtn)
+
+local ShaderEnabled = false
+ShaderBtn.MouseButton1Click:Connect(function()
+    ShaderEnabled = not ShaderEnabled
+    Lighting.Brightness = ShaderEnabled and 3 or 2
+    Lighting.ClockTime = ShaderEnabled and 12 or 14
+    ShaderBtn.Text = ShaderEnabled and "الشادر: شغال" or "الشادر: مطفأ"
+    ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+end)
+
+-- زر تغيير لون القائمة
+local ThemeBtn = Instance.new("TextButton", MapPage)
+ThemeBtn.Size = UDim2.new(0.9, 0, 0, 40)
+ThemeBtn.Position = UDim2.new(0.05, 0, 0, 110)
+ThemeBtn.Text = "اللون: أسود"
+ThemeBtn.Font = Enum.Font.SourceSansBold
+ThemeBtn.TextSize = 16
+ThemeBtn.TextColor3 = Color3.new(1, 1, 1)
+ThemeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+Instance.new("UICorner", ThemeBtn)
+
+local Themes = {
+    {Name = "أسود", Color = Color3.fromRGB(20, 20, 20)},
+    {Name = "أبيض", Color = Color3.fromRGB(200, 200, 200)},
+    {Name = "أزرق", Color = Color3.fromRGB(0, 50, 100)},
+    {Name = "رينبو", Color = "Rainbow"}
+}
 local currentTheme = 1
 ThemeBtn.MouseButton1Click:Connect(function()
     currentTheme = currentTheme % #Themes + 1
@@ -85,16 +135,82 @@ ThemeBtn.MouseButton1Click:Connect(function()
         spawn(function()
             while choice.Color == "Rainbow" and ThemeBtn.Text == "اللون: رينبو" do
                 local c = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-                MainFrame.BackgroundColor3 = c; SideMenu.BackgroundColor3 = Color3.new(c.r*0.5, c.g*0.5, c.b*0.5); wait(0.1)
+                MainFrame.BackgroundColor3 = c
+                SideMenu.BackgroundColor3 = Color3.new(c.r*0.5, c.g*0.5, c.b*0.5)
+                wait(0.1)
             end
         end)
     else
-        MainFrame.BackgroundColor3 = choice.Color; SideMenu.BackgroundColor3 = Color3.new(choice.Color.r*0.5, choice.Color.g*0.5, choice.Color.b*0.5)
+        MainFrame.BackgroundColor3 = choice.Color
+        SideMenu.BackgroundColor3 = Color3.new(choice.Color.r*0.5, choice.Color.g*0.5, choice.Color.b*0.5)
     end
 end)
 
-local DiscordBtn = Instance.new("TextButton", MapPage); DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40); DiscordBtn.Position = UDim2.new(0.05, 0, 0, 155); DiscordBtn.Text = "نسخ سيرفر الديسكورد"; DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60); Instance.new("UICorner", DiscordBtn)
+-- زر نسخ سيرفر الديسكورد
+local DiscordBtn = Instance.new("TextButton", MapPage)
+DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40)
+DiscordBtn.Position = UDim2.new(0.05, 0, 0, 160)
+DiscordBtn.Text = "نسخ سيرفر الديسكورد"
+DiscordBtn.Font = Enum.Font.SourceSansBold
+DiscordBtn.TextSize = 16
+DiscordBtn.TextColor3 = Color3.new(1, 1, 1)
+DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+Instance.new("UICorner", DiscordBtn)
 DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/WrxQZDVps") end)
+
+-- قسم تعريف المطورين واللاعبين النشطين (شامل صورة osama الذكر وتعداد اللاعبين التلقائي)
+local InfoBox = Instance.new("Frame", MapPage)
+InfoBox.Size = UDim2.new(0.9, 0, 0, 150)
+InfoBox.Position = UDim2.new(0.05, 0, 0, 215)
+InfoBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Instance.new("UICorner", InfoBox)
+
+-- نص الحقوق الرئيسي للسكربت
+local CreditsLabel = Instance.new("TextLabel", InfoBox)
+CreditsLabel.Size = UDim2.new(1, 0, 0, 30)
+CreditsLabel.Position = UDim2.new(0, 0, 0, 5)
+CreditsLabel.Text = "تم صناعة هذا السكربت بواسطة anxam"
+CreditsLabel.Font = Enum.Font.SourceSansBold
+CreditsLabel.TextSize = 16
+CreditsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+CreditsLabel.BackgroundTransparency = 1
+
+-- عنوان المطور الثاني الفني
+local DevLabel = Instance.new("TextLabel", InfoBox)
+DevLabel.Size = UDim2.new(1, 0, 0, 25)
+DevLabel.Position = UDim2.new(0, 0, 0, 35)
+DevLabel.Text = "Developer: osama"
+DevLabel.Font = Enum.Font.SourceSansItalic
+DevLabel.TextSize = 15
+DevLabel.TextColor3 = Color3.fromRGB(0, 180, 255)
+DevLabel.BackgroundTransparency = 1
+
+-- صورة الأفاتار الخاص بـ osama (تم استخدام صورة رمزية لذكر محارب نينجا أنيق ومتناسق)
+local DevImg = Instance.new("ImageLabel", InfoBox)
+DevImg.Size = UDim2.new(0, 55, 0, 55)
+DevImg.Position = UDim2.new(0.5, -27.5, 0, 60)
+DevImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+DevImg.Image = "rbxassetid://10852150337" -- خلفية تجسيدية مناسبة لشخصيات النينجا الذكور
+Instance.new("UICorner", DevImg).CornerRadius = UDim.new(0, 10)
+
+-- عداد اللاعبين النشطين حالياً في السيرفر (يتحدث تلقائياً)
+local ActivePlayersLabel = Instance.new("TextLabel", InfoBox)
+ActivePlayersLabel.Size = UDim2.new(1, 0, 0, 25)
+ActivePlayersLabel.Position = UDim2.new(0, 0, 1, -25)
+ActivePlayersLabel.Font = Enum.Font.SourceSansBold
+ActivePlayersLabel.TextSize = 14
+ActivePlayersLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+ActivePlayersLabel.BackgroundTransparency = 1
+
+local function UpdatePlayersCount()
+    local count = #game.Players:GetPlayers()
+    ActivePlayersLabel.Text = "اللاعبين النشطين بالخادم حالياً: " .. tostring(count)
+end
+UpdatePlayersCount()
+game.Players.PlayerAdded:Connect(UpdatePlayersCount)
+game.Players.PlayerRemoving:Connect(UpdatePlayersCount)
+
+-- ========================================================================
 
 -- تبويب اللاعب
 local PlayerPage = AllPages["اللاعب"]
@@ -116,8 +232,7 @@ local JumpEnabled = false; InfJumpBtn.MouseButton1Click:Connect(function() JumpE
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40); NoclipBtn.Position = UDim2.new(0.05, 0, 0, 160); NoclipBtn.Text = "اختراق الجدران"; NoclipBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", NoclipBtn); local NoclipEnabled = false; NoclipBtn.MouseButton1Click:Connect(function() NoclipEnabled = not NoclipEnabled; NoclipBtn.BackgroundColor3 = NoclipEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
 
-local InfoBox = Instance.new("TextLabel", MapPage); InfoBox.Size = UDim2.new(0.9, 0, 0, 80); InfoBox.Position = UDim2.new(0.05, 0, 0, 200); InfoBox.Text = "تم صناعة هذا السكربت بواسطة anxam"; InfoBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40); InfoBox.TextColor3 = Color3.new(1, 1, 1); InfoBox.TextWrapped = true; Instance.new("UICorner", InfoBox)
-
+-- تبويب الاستهداف
 local TargetPage = AllPages["الاستهداف"]
 local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.TextColor3 = Color3.new(1,1,1); TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
 local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 80, 0, 80); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", PlayerImg)
@@ -180,7 +295,7 @@ spawn(function()
         if SpamEnabled and SpamInput.Text ~= "" then
             game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(SpamInput.Text, "All")
         end
-        task.wait(0.1) -- إسبام سريع جداً
+        task.wait(0.1)
     end
 end)
 
