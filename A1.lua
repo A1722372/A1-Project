@@ -70,7 +70,6 @@ end
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 430)
 
--- زر السطوع
 local FBButton = Instance.new("TextButton", MapPage)
 FBButton.Size = UDim2.new(0.9, 0, 0, 40)
 FBButton.Position = UDim2.new(0.05, 0, 0, 10)
@@ -89,7 +88,6 @@ FBButton.MouseButton1Click:Connect(function()
     FBButton.BackgroundColor3 = FBEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- زر الشادر
 local ShaderBtn = Instance.new("TextButton", MapPage)
 ShaderBtn.Size = UDim2.new(0.9, 0, 0, 40)
 ShaderBtn.Position = UDim2.new(0.05, 0, 0, 60)
@@ -109,7 +107,6 @@ ShaderBtn.MouseButton1Click:Connect(function()
     ShaderBtn.BackgroundColor3 = ShaderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- زر تغيير لون القائمة
 local ThemeBtn = Instance.new("TextButton", MapPage)
 ThemeBtn.Size = UDim2.new(0.9, 0, 0, 40)
 ThemeBtn.Position = UDim2.new(0.05, 0, 0, 110)
@@ -146,7 +143,6 @@ ThemeBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- زر نسخ سيرفر الديسكورد
 local DiscordBtn = Instance.new("TextButton", MapPage)
 DiscordBtn.Size = UDim2.new(0.9, 0, 0, 40)
 DiscordBtn.Position = UDim2.new(0.05, 0, 0, 160)
@@ -158,7 +154,6 @@ DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 Instance.new("UICorner", DiscordBtn)
 DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/WrxQZDVps") end)
 
--- صندوق المطورين والإحصائيات
 local InfoBox = Instance.new("Frame", MapPage)
 InfoBox.Size = UDim2.new(0.9, 0, 0, 160)
 InfoBox.Position = UDim2.new(0.05, 0, 0, 215)
@@ -183,23 +178,20 @@ DevLabel.TextSize = 14
 DevLabel.TextColor3 = Color3.fromRGB(0, 180, 255)
 DevLabel.BackgroundTransparency = 1
 
--- عرض صورة Anxam (صورة الأنمي ريال مدريد)
 local AihamImg = Instance.new("ImageLabel", InfoBox)
 AihamImg.Size = UDim2.new(0, 55, 0, 55)
 AihamImg.Position = UDim2.new(0.25, -27.5, 0, 50)
 AihamImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-AihamImg.Image = "http://www.roblox.com/asset/?id=134011422703814" -- معرف صورة Anxam المحددة والمحدثة للرابط المباشر
+AihamImg.Image = "http://www.roblox.com/asset/?id=134011422703814"
 Instance.new("UICorner", AihamImg).CornerRadius = UDim.new(0, 8)
 
--- عرض صورة أسامة (صورة الممثل دكستر)
 local OsamaImg = Instance.new("ImageLabel", InfoBox)
 OsamaImg.Size = UDim2.new(0, 55, 0, 55)
 OsamaImg.Position = UDim2.new(0.75, -27.5, 0, 50)
 OsamaImg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-OsamaImg.Image = "http://www.roblox.com/asset/?id=135891391910243" -- معرف صورة أسامة المحددة والمحدثة للرابط المباشر
+OsamaImg.Image = "http://www.roblox.com/asset/?id=135891391910243"
 Instance.new("UICorner", OsamaImg).CornerRadius = UDim.new(0, 8)
 
--- نظام احتساب مستخدمي السكريبت الفعليين داخل الخادم الحالي
 local ScriptUsersLabel = Instance.new("TextLabel", InfoBox)
 ScriptUsersLabel.Size = UDim2.new(1, 0, 0, 25)
 ScriptUsersLabel.Position = UDim2.new(0, 0, 1, -30)
@@ -218,7 +210,6 @@ local function UpdateScriptUsers()
     ScriptUsersLabel.Text = "مستخدمي السكريبت النشطين حالياً: " .. tostring(activeCount)
 end
 
--- إنشاء علامة تتبع داخل اللاعب لتأكيد استخدامه للسكريبت
 local tag = Player:FindFirstChild("Using_AihamScript") or Instance.new("StringValue", Player)
 tag.Name = "Using_AihamScript"
 
@@ -228,12 +219,9 @@ task.spawn(function()
     end
 end)
 
--- ========================================================================
-
--- تبويب اللاعب
+-- ==================== تبويب اللاعب المحدث والثابت ====================
 local PlayerPage = AllPages["اللاعب"]
-local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
-FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
+PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 420) -- تم تكبير المساحة لضمان عمل كافة الأزرار
 
 local SpeedInput = Instance.new("TextBox", PlayerPage); SpeedInput.Size = UDim2.new(0.5, 0, 0, 40); SpeedInput.Position = UDim2.new(0.05, 0, 0, 10); SpeedInput.PlaceholderText = "السرعة"; SpeedInput.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", SpeedInput)
 local SpeedBtn = Instance.new("TextButton", PlayerPage); SpeedBtn.Size = UDim2.new(0.35, 0, 0, 40); SpeedBtn.Position = UDim2.new(0.6, 0, 0, 10); SpeedBtn.Text = "تفعيل"; SpeedBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", SpeedBtn)
@@ -249,6 +237,19 @@ local InfJumpBtn = Instance.new("TextButton", PlayerPage); InfJumpBtn.Size = UDi
 local JumpEnabled = false; InfJumpBtn.MouseButton1Click:Connect(function() JumpEnabled = not JumpEnabled; InfJumpBtn.BackgroundColor3 = JumpEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); UIS.JumpRequest:Connect(function() if JumpEnabled then Player.Character.Humanoid:ChangeState("Jumping") end end)
 
 local NoclipBtn = Instance.new("TextButton", PlayerPage); NoclipBtn.Size = UDim2.new(0.9, 0, 0, 40); NoclipBtn.Position = UDim2.new(0.05, 0, 0, 160); NoclipBtn.Text = "اختراق الجدران"; NoclipBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); Instance.new("UICorner", NoclipBtn); local NoclipEnabled = false; NoclipBtn.MouseButton1Click:Connect(function() NoclipEnabled = not NoclipEnabled; NoclipBtn.BackgroundColor3 = NoclipEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end); RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
+
+local FlyV3Btn = Instance.new("TextButton", PlayerPage); FlyV3Btn.Size = UDim2.new(0.9, 0, 0, 40); FlyV3Btn.Position = UDim2.new(0.05, 0, 0, 210); FlyV3Btn.Text = "تفعيل الطيران (Fly V3)"; FlyV3Btn.BackgroundColor3 = Color3.fromRGB(0, 100, 200); FlyV3Btn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", FlyV3Btn)
+FlyV3Btn.MouseButton1Click:Connect(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() end)
+
+-- [ الزر 1: رسبون فوري ]
+local ResetBtn = Instance.new("TextButton", PlayerPage); ResetBtn.Size = UDim2.new(0.9, 0, 0, 40); ResetBtn.Position = UDim2.new(0.05, 0, 0, 260); ResetBtn.Text = "إعادة رسوَن فوري (Instant Reset)"; ResetBtn.BackgroundColor3 = Color3.fromRGB(120, 30, 30); ResetBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", ResetBtn)
+ResetBtn.MouseButton1Click:Connect(function() if Player.Character then Player.Character:BreakJoints() end end)
+
+-- [ الزر 2: الجاذبية المنخفضة ]
+local GravityBtn = Instance.new("TextButton", PlayerPage); GravityBtn.Size = UDim2.new(0.9, 0, 0, 40); GravityBtn.Position = UDim2.new(0.05, 0, 0, 310); GravityBtn.Text = "الجاذبية: طبيعية"; GravityBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80); GravityBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", GravityBtn)
+local LowGrav = false; GravityBtn.MouseButton1Click:Connect(function() LowGrav = not LowGrav; workspace.Gravity = LowGrav and 35 or 196.2; GravityBtn.Text = LowGrav and "الجاذبية: منخفضة (قمرية)" or "الجاذبية: طبيعية"; GravityBtn.BackgroundColor3 = LowGrav and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(80, 80, 80) end)
+
+-- ========================================================================
 
 -- تبويب الاستهداف
 local TargetPage = AllPages["الاستهداف"]
