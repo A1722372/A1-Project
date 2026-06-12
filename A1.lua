@@ -275,7 +275,7 @@ end)
 
 -- ==================== تبويب الاستهداف ====================
 local TargetPage = AllPages["الاستهداف"]
-TargetPage.CanvasSize = UDim2.new(0, 0, 0, 330) -- زيادة حجم التمرير ليتسع للزر الجديد
+TargetPage.CanvasSize = UDim2.new(0, 0, 0, 330)
 
 local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.TextColor3 = Color3.new(1,1,1); TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
 local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 80, 0, 80); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", PlayerImg)
@@ -299,10 +299,10 @@ for i, bName in ipairs(BNames) do
     end)
 end
 
--- [الزر الجديد: البانق داخل تبويب الاستهداف فقط]
+-- [ تعديل أمن ومستقر لزر البانق لتجنب أي تلعثم أو كراش ]
 local BangBtn = Instance.new("TextButton", TargetPage)
 BangBtn.Size = UDim2.new(0.9, 0, 0, 35)
-BangBtn.Position = UDim2.new(0.05, 0, 0, 280) -- مكانه تحت زر جلوس فوق مباشرة
+BangBtn.Position = UDim2.new(0.05, 0, 0, 280)
 BangBtn.Text = "البانق (OFF)"
 BangBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
 Instance.new("UICorner", BangBtn)
@@ -314,15 +314,13 @@ BangBtn.MouseButton1Click:Connect(function()
     BangBtn.BackgroundColor3 = BangEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
-task.spawn(function()
-    while task.wait() do
-        if BangEnabled and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            -- حساب التوقيت لعمل حركة سريعة للأمام والخلف خلف اللاعب
-            local Speed = 30
-            local Distance = 2
-            local Offset = math.sin(tick() * Speed) * Distance
-            Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1.5 + Offset)
-        end
+-- الربط المباشر مع فريمات اللعبة لضمان أعلى سلاسة بدون استهلاك المعالج
+RunService.Heartbeat:Connect(function()
+    if BangEnabled and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        local Speed = 30
+        local Distance = 2
+        local Offset = math.sin(tick() * Speed) * Distance
+        Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1.5 + Offset)
     end
 end)
 
@@ -337,4 +335,5 @@ local function RefreshSaves()
         local Container = Instance.new("Frame", SavePage); Container.Size = UDim2.new(0.9, 0, 0, 40); Container.Position = UDim2.new(0.05, 0, 0, 60 + (#SavePage:GetChildren() * 45)); Container.BackgroundTransparency = 1
         local GoBtn = Instance.new("TextButton", Container); GoBtn.Size = UDim2.new(0.8, 0, 1, 0); GoBtn.Text = name; GoBtn.BackgroundColor3 = Color3.fromRGB(60,60,60); GoBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", GoBtn)
         local DelBtn = Instance.new("TextButton", Container); DelBtn.Size = UDim2.new(0.15, 0, 1, 0); DelBtn.Position = UDim2.new(0.85, 0, 0, 0); DelBtn.Text = "X"; DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", DelBtn)
-        GoBtn.MouseButton1Click:Connect(function() Player.Character.HumanoidRootPart.CFrame = po
+        GoBtn.MouseButton1Click:Connect(function() Player.Character.HumanoidRootPart.CFrame = pos end)
+        DelBtn.MouseButton1Click:Connect(function() getgenv().AihamSavedPositions[name] = ni
