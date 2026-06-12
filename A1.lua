@@ -35,11 +35,10 @@ MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame)
 
--- === [تعديل زر التصغير والتكبير المطلوب ليعمل 100%] ===
+-- [ زر إظهار وإخفاء القائمة ]
 ToggleBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
--- ===================================================
 
 local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
@@ -72,7 +71,7 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- ==================== تبويب الماب (الواجهة المحدثة) ====================
+-- ==================== تبويب الماب ====================
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 430)
 
@@ -225,7 +224,7 @@ task.spawn(function()
     end
 end)
 
--- ==================== تبويب اللاعب المحدث والثابت ====================
+-- ==================== تبويب اللاعب ====================
 local PlayerPage = AllPages["اللاعب"]
 PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 470)
 
@@ -276,6 +275,8 @@ end)
 
 -- ==================== تبويب الاستهداف ====================
 local TargetPage = AllPages["الاستهداف"]
+TargetPage.CanvasSize = UDim2.new(0, 0, 0, 330) -- زيادة حجم التمرير ليتسع للزر الجديد
+
 local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.TextColor3 = Color3.new(1,1,1); TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
 local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 80, 0, 80); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", PlayerImg)
 local TargetPlayer = nil
@@ -298,6 +299,33 @@ for i, bName in ipairs(BNames) do
     end)
 end
 
+-- [الزر الجديد: البانق داخل تبويب الاستهداف فقط]
+local BangBtn = Instance.new("TextButton", TargetPage)
+BangBtn.Size = UDim2.new(0.9, 0, 0, 35)
+BangBtn.Position = UDim2.new(0.05, 0, 0, 280) -- مكانه تحت زر جلوس فوق مباشرة
+BangBtn.Text = "البانق (OFF)"
+BangBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+Instance.new("UICorner", BangBtn)
+
+local BangEnabled = false
+BangBtn.MouseButton1Click:Connect(function()
+    BangEnabled = not BangEnabled
+    BangBtn.Text = "البانق" .. (BangEnabled and " (ON)" or " (OFF)")
+    BangBtn.BackgroundColor3 = BangEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+end)
+
+task.spawn(function()
+    while task.wait() do
+        if BangEnabled and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            -- حساب التوقيت لعمل حركة سريعة للأمام والخلف خلف اللاعب
+            local Speed = 30
+            local Distance = 2
+            local Offset = math.sin(tick() * Speed) * Distance
+            Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1.5 + Offset)
+        end
+    end
+end)
+
 -- ==================== تبويب المحفوظات ====================
 local SavePage = AllPages["المحفوظات"]
 local SaveInput = Instance.new("TextBox", SavePage); SaveInput.Size = UDim2.new(0.7, 0, 0, 40); SaveInput.Position = UDim2.new(0.05, 0, 0, 10); SaveInput.PlaceholderText = "اسم المكان"; SaveInput.TextColor3 = Color3.new(1,1,1); SaveInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SaveInput)
@@ -309,21 +337,4 @@ local function RefreshSaves()
         local Container = Instance.new("Frame", SavePage); Container.Size = UDim2.new(0.9, 0, 0, 40); Container.Position = UDim2.new(0.05, 0, 0, 60 + (#SavePage:GetChildren() * 45)); Container.BackgroundTransparency = 1
         local GoBtn = Instance.new("TextButton", Container); GoBtn.Size = UDim2.new(0.8, 0, 1, 0); GoBtn.Text = name; GoBtn.BackgroundColor3 = Color3.fromRGB(60,60,60); GoBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", GoBtn)
         local DelBtn = Instance.new("TextButton", Container); DelBtn.Size = UDim2.new(0.15, 0, 1, 0); DelBtn.Position = UDim2.new(0.85, 0, 0, 0); DelBtn.Text = "X"; DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", DelBtn)
-        GoBtn.MouseButton1Click:Connect(function() Player.Character.HumanoidRootPart.CFrame = pos end)
-        DelBtn.MouseButton1Click:Connect(function() getgenv().AihamSavedPositions[name] = nil; RefreshSaves() end)
-    end
-end
-
-SaveBtn.MouseButton1Click:Connect(function()
-    if SaveInput.Text ~= "" and Player.Character:FindFirstChild("HumanoidRootPart") then
-        getgenv().AihamSavedPositions[SaveInput.Text] = Player.Character.HumanoidRootPart.CFrame
-        RefreshSaves()
-        SaveInput.Text = ""
-    end
-end)
-
--- ==================== تبويب التأثيرات ====================
-local EffectsPage = AllPages["التأثيرات"]
-local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
-local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
-local OffBtn = Instance.new("TextButton", EffectsPage); OffBtn.Size = UDim2.new(0.43, 0, 0, 40)
+        GoBtn.MouseButton1Click:Connect(function() Player.Character.HumanoidRootPart.CFrame = po
