@@ -1,60 +1,61 @@
+-- سكريبت تجربة مغير السكنات التلقائي - سكريبت A1 (anxam)
+-- مصمم ومحسن بالكامل للتلفونات (Mobile)
+
 local CoreGui = game:GetService("CoreGui")
-local SoundService = game:GetService("SoundService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-if CoreGui:FindFirstChild("A1_MusicTester") then
-    CoreGui.A1_MusicTester:Destroy()
+-- تدمير النسخة القديمة لمنع تكرار القائمة على الشاشة
+if CoreGui:FindFirstChild("A1_OutfitChanger") then
+    CoreGui.A1_OutfitChanger:Destroy()
 end
 
--- الأكواد الجديدة المضمونة
-local playlist = {
-    {id = 9046863116, name = "Lo-Fi Jazz Chill"},
-    {id = 1837014695, name = "Smooth Saxophone Jazz"},
-    {id = 1839801222, name = "Classic Piano Jazz Lounge"},
-    {id = 9043232147, name = "Retro Swing Jazz"}
-}
-local currentTrackIndex = 1
-
-local bgMusic = SoundService:FindFirstChild("A1_TestMusic")
-if not bgMusic then
-    bgMusic = Instance.new("Sound")
-    bgMusic.Name = "A1_TestMusic"
-    bgMusic.Volume = 0.8 -- رفعنا الصوت شوي عشان نتأكد
-    bgMusic.Looped = true
-    bgMusic.Parent = SoundService
-end
-
-local function playTrack(index)
-    local track = playlist[index]
-    if track then
-        bgMusic:Stop()
-        bgMusic.SoundId = "rbxassetid://" .. track.id
-        bgMusic:Play()
+-- دالة إرسال الكود للتشات (تدعم نظام التشات القديم والجديد في روبلوكس)
+local function sendChatMessage(message)
+    local localPlayer = Players.LocalPlayer
+    if localPlayer then
+        local textChatService = game:GetService("TextChatService")
+        -- فحص إذا الماب يستخدم النظام الجديد
+        if textChatService and textChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+            local targetTextChannel = textChatService:FindFirstChild("TextChannels") and textChatService.TextChannels:FindFirstChild("RBXGeneral")
+            if targetTextChannel then
+                targetTextChannel:SendAsync(message)
+            end
+        else
+            -- استخدام النظام الكلاسيكي (Legacy Chat)
+            local sayMessageEvent = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents") and ReplicatedStorage.DefaultChatSystemChatEvents:FindFirstChild("SayMessageRequest")
+            if sayMessageEvent then
+                sayMessageEvent:FireServer(message, "All")
+            end
+        end
     end
 end
 
+-- بناء الواجهة البرمجية (ScreenGui)
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "A1_MusicTester"
+ScreenGui.Name = "A1_OutfitChanger"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
+-- اللوحة الرئيسية (قائمة العسكريه)
 local MainFrame = Instance.new("Frame")
-MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 320, 0, 150)
-MainFrame.Position = UDim2.new(0.5, -160, 0.4, -75)
-MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Name = "MilitaryMenu"
+MainFrame.Size = UDim2.new(0, 260, 0, 320) -- حجم مثالي ومريح لشاشات التلفون
+MainFrame.Position = UDim2.new(0.5, -130, 0.3, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
-MainFrame.Draggable = true
+MainFrame.Draggable = true -- ميزة السحب بالصبع للتلفون
 MainFrame.Parent = ScreenGui
 
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 8)
-UICorner.Parent = MainFrame
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 8)
+MainCorner.Parent = MainFrame
 
+-- شريط العنوان العلوي
 local TopBar = Instance.new("Frame")
-TopBar.Name = "TopBar"
-TopBar.Size = UDim2.new(1, 0, 0, 30)
-TopBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TopBar.Size = UDim2.new(1, 0, 0, 35)
+TopBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 TopBar.BorderSizePixel = 0
 TopBar.Parent = MainFrame
 
@@ -62,103 +63,149 @@ local TopCorner = Instance.new("UICorner")
 TopCorner.CornerRadius = UDim.new(0, 8)
 TopCorner.Parent = TopBar
 
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Size = UDim2.new(1, -40, 1, 0)
-TitleLabel.Position = UDim2.new(0, 10, 0, 0)
-TitleLabel.BackgroundTransparency = 1
-TitleLabel.Text = "A1 Music Tester - anxam"
-TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleLabel.Font = Enum.Font.SourceSansBold
-TitleLabel.TextSize = 14
-TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-TitleLabel.Parent = TopBar
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "A1 - قائمة العسكريه"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 16
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = TopBar
 
-local CloseButton = Instance.new("TextButton")
-CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Position = UDim2.new(1, -30, 0, 0)
-CloseButton.BackgroundTransparency = 1
-CloseButton.Text = "X"
-CloseButton.TextColor3 = Color3.fromRGB(200, 50, 50)
-CloseButton.Font = Enum.Font.SourceSansBold
-CloseButton.TextSize = 16
-CloseButton.Parent = TopBar
+-- زر إغلاق التيستر (X)
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 30, 0, 30)
+CloseBtn.Position = UDim2.new(1, -33, 0, 2)
+CloseBtn.BackgroundTransparency = 1
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(220, 60, 60)
+CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.TextSize = 16
+CloseBtn.Parent = TopBar
 
-CloseButton.MouseButton1Click:Connect(function()
-    bgMusic:Stop()
+CloseBtn.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
-local TrackLabel = Instance.new("TextLabel")
-TrackLabel.Size = UDim2.new(1, -20, 0, 30)
-TrackLabel.Position = UDim2.new(0, 10, 0, 45)
-TrackLabel.BackgroundTransparency = 1
-TrackLabel.Text = "Now Playing: " .. playlist[currentTrackIndex].name
-TrackLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
-TrackLabel.Font = Enum.Font.SourceSansItalic
-TrackLabel.TextSize = 14
-TrackLabel.TextWrapped = true
-TrackLabel.Parent = MainFrame
+-- قائمة التمرير (ScrollingFrame) لمنع خروج الأزرار عن إطار الشاشة
+local ScrollFrame = Instance.new("ScrollingFrame")
+ScrollFrame.Size = UDim2.new(1, -10, 1, -45)
+ScrollFrame.Position = UDim2.new(0, 5, 0, 40)
+ScrollFrame.BackgroundTransparency = 1
+ScrollFrame.BorderSizePixel = 0
+ScrollFrame.ScrollBarThickness = 4
+ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 500)
+ScrollFrame.Parent = MainFrame
 
-local ToggleButton = Instance.new("TextButton")
-ToggleButton.Name = "ToggleButton"
-ToggleButton.Size = UDim2.new(0, 135, 0, 40)
-ToggleButton.Position = UDim2.new(0, 15, 0, 90)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(40, 120, 70)
-ToggleButton.Text = "Pause Music ⏸️"
-ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleButton.Font = Enum.Font.SourceSansBold
-ToggleButton.TextSize = 14
-ToggleButton.Parent = MainFrame
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = ScrollFrame
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 5)
 
-local ToggleCorner = Instance.new("UICorner")
-ToggleCorner.CornerRadius = UDim.new(0, 5)
-ToggleCorner.Parent = ToggleButton
+-- دالة سريعة لإنشاء أزرار السكنات وتنسيقها
+local function createOutfitButton(name, command, parent)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(1, -10, 0, 35)
+    Btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Btn.Text = name
+    Btn.TextColor3 = Color3.fromRGB(240, 240, 240)
+    Btn.Font = Enum.Font.SourceSans
+    Btn.TextSize = 14
+    Btn.Parent = parent
+    
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 5)
+    Corner.Parent = Btn
+    
+    Btn.MouseButton1Click:Connect(function()
+        sendChatMessage(command)
+    end)
+end
 
-local SkipButton = Instance.new("TextButton")
-SkipButton.Name = "SkipButton"
-SkipButton.Size = UDim2.new(0, 135, 0, 40)
-SkipButton.Position = UDim2.new(1, -150, 0, 90)
-SkipButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-SkipButton.Text = "Skip Track ⏭️"
-SkipButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-SkipButton.Font = Enum.Font.SourceSansBold
-SkipButton.TextSize = 14
-SkipButton.Parent = MainFrame
+----------------------------------------------------
+-- [قسم سكنات الأولاد]
+----------------------------------------------------
+local BoysHeader = Instance.new("TextButton")
+BoysHeader.Size = UDim2.new(1, -5, 0, 35)
+BoysHeader.BackgroundColor3 = Color3.fromRGB(45, 65, 95)
+BoysHeader.Text = "👔 سكنات الأولاد (اضغط للفتح)"
+BoysHeader.TextColor3 = Color3.fromRGB(255, 255, 255)
+BoysHeader.Font = Enum.Font.SourceSansBold
+BoysHeader.TextSize = 14
+BoysHeader.Parent = ScrollFrame
 
-local SkipCorner = Instance.new("UICorner")
-SkipCorner.CornerRadius = UDim.new(0, 5)
-SkipCorner.Parent = SkipButton
+local BoysCorner = Instance.new("UICorner")
+BoysCorner.CornerRadius = UDim.new(0, 5)
+BoysCorner.Parent = BoysHeader
 
-local isPlaying = true
-playTrack(currentTrackIndex)
+local BoysContainer = Instance.new("Frame")
+BoysContainer.Size = UDim2.new(1, 0, 0, 0)
+BoysContainer.BackgroundTransparency = 1
+BoysContainer.Visible = false
+BoysContainer.Parent = ScrollFrame
 
-ToggleButton.MouseButton1Click:Connect(function()
-    if isPlaying then
-        bgMusic:Pause()
-        ToggleButton.Text = "Play Music ▶️"
-        ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 100, 150)
-        isPlaying = false
+local BoysList = Instance.new("UIListLayout")
+BoysList.Parent = BoysContainer
+BoysList.Padding = UDim.new(0, 4)
+
+-- السكن الخاص بك مضاف كأول سكن هنا:
+createOutfitButton("سكن ديربي الأساسي 👑", "/char me Soooma203040", BoysContainer)
+createOutfitButton("سكن عسكري تجريبي 1", "/char me Player1", BoysContainer)
+createOutfitButton("سكن عسكري تجريبي 2", "/char me Player2", BoysContainer)
+
+-- منطق الإخفاء والإظهار الذكي (Toggle) لقائمة الأولاد
+local boysOpen = false
+BoysHeader.MouseButton1Click:Connect(function()
+    boysOpen = not boysOpen
+    BoysContainer.Visible = boysOpen
+    if boysOpen then
+        -- حساب الحجم تلقائياً بناءً على عدد الأزرار بالداخل
+        BoysContainer.Size = UDim2.new(1, 0, 0, #BoysContainer:GetChildren() * 39)
     else
-        bgMusic:Resume()
-        if not bgMusic.IsPlaying then
-            playTrack(currentTrackIndex)
-        end
-        ToggleButton.Text = "Pause Music ⏸️"
-        ToggleButton.BackgroundColor3 = Color3.fromRGB(40, 120, 70)
-        isPlaying = true
+        BoysContainer.Size = UDim2.new(1, 0, 0, 0)
     end
 end)
 
-SkipButton.MouseButton1Click:Connect(function()
-    currentTrackIndex = currentTrackIndex + 1
-    if currentTrackIndex > #playlist then
-        currentTrackIndex = 1
+----------------------------------------------------
+-- [قسم سكنات البنات]
+----------------------------------------------------
+local GirlsHeader = Instance.new("TextButton")
+GirlsHeader.Size = UDim2.new(1, -5, 0, 35)
+GirlsHeader.BackgroundColor3 = Color3.fromRGB(95, 45, 65)
+GirlsHeader.Text = "👗 سكنات البنات (اضغط للفتح)"
+GirlsHeader.TextColor3 = Color3.fromRGB(255, 255, 255)
+GirlsHeader.Font = Enum.Font.SourceSansBold
+GirlsHeader.TextSize = 14
+GirlsHeader.Parent = ScrollFrame
+
+local GirlsCorner = Instance.new("UICorner")
+GirlsCorner.CornerRadius = UDim.new(0, 5)
+GirlsCorner.Parent = GirlsHeader
+
+local GirlsContainer = Instance.new("Frame")
+GirlsContainer.Size = UDim2.new(1, 0, 0, 0)
+GirlsContainer.BackgroundTransparency = 1
+GirlsContainer.Visible = false
+GirlsContainer.Parent = ScrollFrame
+
+local GirlsList = Instance.new("UIListLayout")
+GirlsList.Parent = GirlsContainer
+GirlsList.Padding = UDim.new(0, 4)
+
+-- سكنات البنات للتجربة:
+createOutfitButton("سكن بنت تجريبي 1", "/char me Girl1", GirlsContainer)
+createOutfitButton("سكن بنت تجريبي 2", "/char me Girl2", GirlsContainer)
+
+-- منطق الإخفاء والإظهار الذكي (Toggle) لقائمة البنات
+local girlsOpen = false
+GirlsHeader.MouseButton1Click:Connect(function()
+    girlsOpen = not girlsOpen
+    GirlsContainer.Visible = girlsOpen
+    if girlsOpen then
+        GirlsContainer.Size = UDim2.new(1, 0, 0, #GirlsContainer:GetChildren() * 39)
+    else
+        GirlsContainer.Size = UDim2.new(1, 0, 0, 0)
     end
-    
-    playTrack(currentTrackIndex)
-    TrackLabel.Text = "Now Playing: " .. playlist[currentTrackIndex].name
-    
-    isPlaying = true
-    ToggleButton.Text = "Pause Music ⏸️"
-    ToggleButton.BackgroundColor3 = Color3.fromRGB(40, 120, 70)
 end)
