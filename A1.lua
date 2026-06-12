@@ -36,7 +36,7 @@ MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame)
 
--- === [تعديل زر التصغير والتكبير المطلوب ليعمل 100%] ===
+-- === [زر التصغير والتكبير ليعمل 100%] ===
 ToggleBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
@@ -73,7 +73,7 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- ==================== تبويب الماب (الواجهة المحدثة) ====================
+-- ==================== تبويب الماب ====================
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 430)
 
@@ -226,7 +226,7 @@ task.spawn(function()
     end
 end)
 
--- ==================== تبويب اللاعب المحدث والثابت ====================
+-- ==================== تبويب اللاعب ====================
 local PlayerPage = AllPages["اللاعب"]
 PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 470)
 
@@ -325,6 +325,17 @@ end)
 
 -- ==================== تبويب التأثيرات ====================
 local EffectsPage = AllPages["التأثيرات"]
-local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
-local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
-local OffBtn = Instance.new("Tex
+-- [تم تنظيف وحذف عناصر الإسبام المعطلة بالكامل ليعود السكريبت للعمل بكفاءة]
+
+-- ==================== تبويب العسكرية 🎖️ ====================
+local MilitaryPage = AllPages["العسكرية 🎖️"]
+MilitaryPage.CanvasSize = UDim2.new(0, 0, 0, 950) 
+
+local MilitaryListLayout = Instance.new("UIListLayout", MilitaryPage)
+MilitaryListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+MilitaryListLayout.Padding = UDim.new(0, 6)
+
+local function sendOutfitChat(command)
+    local textChatService = game:GetService("TextChatService")
+    if textChatService and textChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+        local targetTextChannel = textChatServ
