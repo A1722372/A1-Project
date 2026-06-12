@@ -1,36 +1,28 @@
--- Dynamic Jazz Music Player Script for Delta Executor
--- Created for A1 Script Hub / anxam
--- Simple and Clean Layout
-
 local CoreGui = game:GetService("CoreGui")
-local TweenService = game:GetService("TweenService")
 local SoundService = game:GetService("SoundService")
 
--- منع تكرار الواجهة إذا تم تشغيل السكريبت أكثر من مرة
 if CoreGui:FindFirstChild("A1_MusicTester") then
     CoreGui.A1_MusicTester:Destroy()
 end
 
--- قائمة أغاني الجاز الأربعة الجاهزة للتجربة
+-- الأكواد الجديدة المضمونة
 local playlist = {
-    {id = 184166541, name = "Classic Smooth Jazz"},
-    {id = 184547960, name = "Retro Jazz Cafe"},
-    {id = 184149065, name = "Upbeat Big Band Jazz"},
-    {id = 183777595, name = "Elevator Jazz Style"}
+    {id = 9046863116, name = "Lo-Fi Jazz Chill"},
+    {id = 1837014695, name = "Smooth Saxophone Jazz"},
+    {id = 1839801222, name = "Classic Piano Jazz Lounge"},
+    {id = 9043232147, name = "Retro Swing Jazz"}
 }
 local currentTrackIndex = 1
 
--- إنشاء كائن الصوت داخل كود اللعبة
 local bgMusic = SoundService:FindFirstChild("A1_TestMusic")
 if not bgMusic then
     bgMusic = Instance.new("Sound")
     bgMusic.Name = "A1_TestMusic"
-    bgMusic.Volume = 0.6
+    bgMusic.Volume = 0.8 -- رفعنا الصوت شوي عشان نتأكد
     bgMusic.Looped = true
     bgMusic.Parent = SoundService
 end
 
--- دالة تشغيل الأغنية بناءً على الترتيب
 local function playTrack(index)
     local track = playlist[index]
     if track then
@@ -40,13 +32,11 @@ local function playTrack(index)
     end
 end
 
--- بناء الواجهة برمائياً (ScreenGui) لضمان عملها على المحاكيات والـ Executors
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "A1_MusicTester"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
--- الهيكل الرئيسي (Main Frame) بستايل غامق وبسيط
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 320, 0, 150)
@@ -54,15 +44,13 @@ MainFrame.Position = UDim2.new(0.5, -160, 0.4, -75)
 MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
-MainFrame.Draggable = true -- تفعيل ميزة سحب اللوحة على الشاشة
+MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
 
--- تنعيم حواف اللوحة
 local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(0, 8)
 UICorner.Parent = MainFrame
 
--- شريط العنوان العلوي (Top Bar)
 local TopBar = Instance.new("Frame")
 TopBar.Name = "TopBar"
 TopBar.Size = UDim2.new(1, 0, 0, 30)
@@ -85,7 +73,6 @@ TitleLabel.TextSize = 14
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.Parent = TopBar
 
--- زر الإغلاق الحمر (X)
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
 CloseButton.Position = UDim2.new(1, -30, 0, 0)
@@ -101,7 +88,6 @@ CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- نص عرض اسم الأغنية الشغالة حالياً
 local TrackLabel = Instance.new("TextLabel")
 TrackLabel.Size = UDim2.new(1, -20, 0, 30)
 TrackLabel.Position = UDim2.new(0, 10, 0, 45)
@@ -113,7 +99,6 @@ TrackLabel.TextSize = 14
 TrackLabel.TextWrapped = true
 TrackLabel.Parent = MainFrame
 
--- زر البدء والإيقاف (Play / Pause Button)
 local ToggleButton = Instance.new("TextButton")
 ToggleButton.Name = "ToggleButton"
 ToggleButton.Size = UDim2.new(0, 135, 0, 40)
@@ -129,7 +114,6 @@ local ToggleCorner = Instance.new("UICorner")
 ToggleCorner.CornerRadius = UDim.new(0, 5)
 ToggleCorner.Parent = ToggleButton
 
--- زر التخطي (Skip Button)
 local SkipButton = Instance.new("TextButton")
 SkipButton.Name = "SkipButton"
 SkipButton.Size = UDim2.new(0, 135, 0, 40)
@@ -145,9 +129,8 @@ local SkipCorner = Instance.new("UICorner")
 SkipCorner.CornerRadius = UDim.new(0, 5)
 SkipCorner.Parent = SkipButton
 
--- منطق التحكم بالتشغيل والتنقل
 local isPlaying = true
-playTrack(currentTrackIndex) -- تشغيل الأغنية الأولى تلقائياً عند بدء السكريبت
+playTrack(currentTrackIndex)
 
 ToggleButton.MouseButton1Click:Connect(function()
     if isPlaying then
@@ -169,13 +152,12 @@ end)
 SkipButton.MouseButton1Click:Connect(function()
     currentTrackIndex = currentTrackIndex + 1
     if currentTrackIndex > #playlist then
-        currentTrackIndex = 1 -- العودة للأولى إذا خلصت القائمة
+        currentTrackIndex = 1
     end
     
     playTrack(currentTrackIndex)
     TrackLabel.Text = "Now Playing: " .. playlist[currentTrackIndex].name
     
-    -- تأكيد إعادة الحالة إلى تشغيل تلقائي وتحديث شكل الزر
     isPlaying = true
     ToggleButton.Text = "Pause Music ⏸️"
     ToggleButton.BackgroundColor3 = Color3.fromRGB(40, 120, 70)
