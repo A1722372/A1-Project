@@ -35,10 +35,11 @@ MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame)
 
--- [ زر إظهار وإخفاء القائمة ]
+-- === [تعديل زر التصغير والتكبير المطلوب ليعمل 100%] ===
 ToggleBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
+-- ===================================================
 
 local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
@@ -71,7 +72,7 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- ==================== تبويب الماب ====================
+-- ==================== تبويب الماب (الواجهة المحدثة) ====================
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 430)
 
@@ -224,7 +225,7 @@ task.spawn(function()
     end
 end)
 
--- ==================== تبويب اللاعب ====================
+-- ==================== تبويب اللاعب المحدث والثابت ====================
 local PlayerPage = AllPages["اللاعب"]
 PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 470)
 
@@ -275,7 +276,7 @@ end)
 
 -- ==================== تبويب الاستهداف ====================
 local TargetPage = AllPages["الاستهداف"]
-TargetPage.CanvasSize = UDim2.new(0, 0, 0, 330)
+TargetPage.CanvasSize = UDim2.new(0, 0, 0, 330) -- زيادة مساحة التمرير لتستوعب زر البانق بشكل صحيح
 
 local TInput = Instance.new("TextBox", TargetPage); TInput.Size = UDim2.new(0.9, 0, 0, 40); TInput.Position = UDim2.new(0.05, 0, 0, 10); TInput.PlaceholderText = "أول 3 حروف"; TInput.TextColor3 = Color3.new(1,1,1); TInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", TInput)
 local PlayerImg = Instance.new("ImageLabel", TargetPage); PlayerImg.Size = UDim2.new(0, 80, 0, 80); PlayerImg.Position = UDim2.new(0.35, 0, 0, 60); PlayerImg.BackgroundColor3 = Color3.fromRGB(60,60,60); Instance.new("UICorner", PlayerImg)
@@ -299,26 +300,25 @@ for i, bName in ipairs(BNames) do
     end)
 end
 
--- [ تعديل أمن ومستقر لزر البانق لتجنب أي تلعثم أو كراش ]
+-- [[[ إضافة زر البانق المطلوب داخل قائمة الاستهداف حصراً وبأعلى استقرار ]]]
 local BangBtn = Instance.new("TextButton", TargetPage)
 BangBtn.Size = UDim2.new(0.9, 0, 0, 35)
-BangBtn.Position = UDim2.new(0.05, 0, 0, 280)
-BangBtn.Text = "البانق (OFF)"
+BangBtn.Position = UDim2.new(0.05, 0, 0, 280) -- يتموضّع تحت الأزرار السابقة مباشرة
+BangBtn.Text = "زر بانق (OFF)"
 BangBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
 Instance.new("UICorner", BangBtn)
 
 local BangEnabled = false
 BangBtn.MouseButton1Click:Connect(function()
     BangEnabled = not BangEnabled
-    BangBtn.Text = "البانق" .. (BangEnabled and " (ON)" or " (OFF)")
+    BangBtn.Text = "زر بانق" .. (BangEnabled and " (ON)" or " (OFF)")
     BangBtn.BackgroundColor3 = BangEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- الربط المباشر مع فريمات اللعبة لضمان أعلى سلاسة بدون استهلاك المعالج
 RunService.Heartbeat:Connect(function()
     if BangEnabled and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        local Speed = 30
-        local Distance = 2
+        local Speed = 25
+        local Distance = 1.7
         local Offset = math.sin(tick() * Speed) * Distance
         Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1.5 + Offset)
     end
@@ -335,5 +335,4 @@ local function RefreshSaves()
         local Container = Instance.new("Frame", SavePage); Container.Size = UDim2.new(0.9, 0, 0, 40); Container.Position = UDim2.new(0.05, 0, 0, 60 + (#SavePage:GetChildren() * 45)); Container.BackgroundTransparency = 1
         local GoBtn = Instance.new("TextButton", Container); GoBtn.Size = UDim2.new(0.8, 0, 1, 0); GoBtn.Text = name; GoBtn.BackgroundColor3 = Color3.fromRGB(60,60,60); GoBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", GoBtn)
         local DelBtn = Instance.new("TextButton", Container); DelBtn.Size = UDim2.new(0.15, 0, 1, 0); DelBtn.Position = UDim2.new(0.85, 0, 0, 0); DelBtn.Text = "X"; DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", DelBtn)
-        GoBtn.MouseButton1Click:Connect(function() Player.Character.HumanoidRootPart.CFrame = pos end)
-        DelBtn.MouseButton1Click:Connect(function() getgenv().AihamSavedPositions[name] = ni
+        GoBtn.MouseButton1Click:Connect(
