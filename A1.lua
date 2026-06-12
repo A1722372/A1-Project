@@ -35,10 +35,11 @@ MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame)
 
--- [ زر إظهار وإخفاء القائمة ]
+-- === [تعديل زر التصغير والتكبير المطلوب ليعمل 100%] ===
 ToggleBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
+-- ===================================================
 
 local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
@@ -71,7 +72,7 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- ==================== تبويب الماب ====================
+-- ==================== تبويب الماب (الواجهة المحدثة) ====================
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 430)
 
@@ -224,9 +225,9 @@ task.spawn(function()
     end
 end)
 
--- ==================== تبويب اللاعب ====================
+-- ==================== تبويب اللاعب المحدث والثابت ====================
 local PlayerPage = AllPages["اللاعب"]
-PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 520) 
+PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 470)
 
 local SpeedInput = Instance.new("TextBox", PlayerPage); SpeedInput.Size = UDim2.new(0.5, 0, 0, 40); SpeedInput.Position = UDim2.new(0.05, 0, 0, 10); SpeedInput.PlaceholderText = "السرعة"; SpeedInput.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", SpeedInput)
 local SpeedBtn = Instance.new("TextButton", PlayerPage); SpeedBtn.Size = UDim2.new(0.35, 0, 0, 40); SpeedBtn.Position = UDim2.new(0.6, 0, 0, 10); SpeedBtn.Text = "تفعيل"; SpeedBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", SpeedBtn)
@@ -259,6 +260,7 @@ TPToolBtn.Text = "الحصول على TPTool"
 TPToolBtn.BackgroundColor3 = Color3.fromRGB(140, 0, 140)
 TPToolBtn.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", TPToolBtn)
+
 TPToolBtn.MouseButton1Click:Connect(function()
     local Tool = Instance.new("Tool")
     Tool.Name = "TPTool"
@@ -270,30 +272,6 @@ TPToolBtn.MouseButton1Click:Connect(function()
         end
     end)
     Tool.Parent = Player.Backpack
-end)
-
--- [الزر الجديد: نمط الشبح]
-local GhostBtn = Instance.new("TextButton", PlayerPage); GhostBtn.Size = UDim2.new(0.9, 0, 0, 40); GhostBtn.Position = UDim2.new(0.05, 0, 0, 410); GhostBtn.Text = "نمط الشبح (Ghost Mode)"; GhostBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 100); GhostBtn.TextColor3 = Color3.new(1, 1, 1); Instance.new("UICorner", GhostBtn)
-local GhostEnabled = false
-local OriginalPos = nil
-GhostBtn.MouseButton1Click:Connect(function()
-    GhostEnabled = not GhostEnabled
-    if GhostEnabled then
-        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            OriginalPos = Player.Character.HumanoidRootPart.CFrame
-            Player.Character.HumanoidRootPart.CFrame = CFrame.new(0, -500, 0)
-            Player.Character.HumanoidRootPart.Anchored = true
-            for _,v in pairs(Player.Character:GetDescendants()) do if v:IsA("BasePart") then v.Transparency = 1 end end
-            GhostBtn.Text = "نمط الشبح (ON)"
-        end
-    else
-        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            Player.Character.HumanoidRootPart.CFrame = OriginalPos
-            Player.Character.HumanoidRootPart.Anchored = false
-            for _,v in pairs(Player.Character:GetDescendants()) do if v:IsA("BasePart") then v.Transparency = 0 end end
-            GhostBtn.Text = "نمط الشبح (Ghost Mode)"
-        end
-    end
 end)
 
 -- ==================== تبويب الاستهداف ====================
@@ -331,4 +309,21 @@ local function RefreshSaves()
         local Container = Instance.new("Frame", SavePage); Container.Size = UDim2.new(0.9, 0, 0, 40); Container.Position = UDim2.new(0.05, 0, 0, 60 + (#SavePage:GetChildren() * 45)); Container.BackgroundTransparency = 1
         local GoBtn = Instance.new("TextButton", Container); GoBtn.Size = UDim2.new(0.8, 0, 1, 0); GoBtn.Text = name; GoBtn.BackgroundColor3 = Color3.fromRGB(60,60,60); GoBtn.TextColor3 = Color3.new(1,1,1); Instance.new("UICorner", GoBtn)
         local DelBtn = Instance.new("TextButton", Container); DelBtn.Size = UDim2.new(0.15, 0, 1, 0); DelBtn.Position = UDim2.new(0.85, 0, 0, 0); DelBtn.Text = "X"; DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0); Instance.new("UICorner", DelBtn)
-        G
+        GoBtn.MouseButton1Click:Connect(function() Player.Character.HumanoidRootPart.CFrame = pos end)
+        DelBtn.MouseButton1Click:Connect(function() getgenv().AihamSavedPositions[name] = nil; RefreshSaves() end)
+    end
+end
+
+SaveBtn.MouseButton1Click:Connect(function()
+    if SaveInput.Text ~= "" and Player.Character:FindFirstChild("HumanoidRootPart") then
+        getgenv().AihamSavedPositions[SaveInput.Text] = Player.Character.HumanoidRootPart.CFrame
+        RefreshSaves()
+        SaveInput.Text = ""
+    end
+end)
+
+-- ==================== تبويب التأثيرات ====================
+local EffectsPage = AllPages["التأثيرات"]
+local SpamInput = Instance.new("TextBox", EffectsPage); SpamInput.Size = UDim2.new(0.9, 0, 0, 40); SpamInput.Position = UDim2.new(0.05, 0, 0, 10); SpamInput.PlaceholderText = "اكتب النص هنا"; SpamInput.TextColor3 = Color3.new(1,1,1); SpamInput.BackgroundColor3 = Color3.fromRGB(40,40,40); Instance.new("UICorner", SpamInput)
+local OnBtn = Instance.new("TextButton", EffectsPage); OnBtn.Size = UDim2.new(0.43, 0, 0, 40); OnBtn.Position = UDim2.new(0.05, 0, 0, 60); OnBtn.Text = "تفعيل الإسبام"; OnBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 0); Instance.new("UICorner", OnBtn)
+local OffBtn = Instance.new("TextButton", EffectsPage); OffBtn.Size = UDim2.new(0.43, 0, 0, 40)
