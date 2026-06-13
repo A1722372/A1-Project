@@ -471,3 +471,26 @@ CreateSkinButton(BoysContainer, "سكن ولد 7", "BoyName7")
 CreateSkinButton(BoysContainer, "سكن ولد 8", "BoyName8")
 CreateSkinButton(BoysContainer, "سكن ولد 9", "BoyName9")
 CreateSkinButton(BoysContainer, "10 سكن ولد","BoyName10")
+-- --- [ خانة سكنات بنات ] ---
+SectionTitle("سكنات بنات")
+
+local GirlsContainer = Instance.new("Frame", MilitaryPage)
+GirlsContainer.Size = UDim2.new(0.95, 0, 0, 210)
+GirlsContainer.BackgroundTransparency = 1
+
+local GirlsGrid = Instance.new("UIGridLayout", GirlsContainer)
+GirlsGrid.CellSize = UDim2.new(0.47, 0, 0, 35)
+GirlsGrid.CellPadding = UDim2.new(0.04, 0, 0, 6)
+GirlsGrid.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- مخصص للاعب الذي ذكرته، وباقي الـ 9 أزرار محجوزة بأسماء مؤقتة لتعدلها لاحقاً
+CreateSkinButton(GirlsContainer, "سكن بنت 1", "GirlName1")
+CreateSkinButton(GirlsContainer, "سكن بنت 2", "GirlName2")
+CreateSkinButton(GirlsContainer, "سكن بنت 3", "GirlName3")
+CreateSkinButton(GirlsContainer, "سكن بنت 4", "GirlName4")
+CreateSkinButton(GirlsContainer, "سكن بنت 5", "GirlName5")
+CreateSkinButton(GirlsContainer, "سكن بنت 6", "GirlName6")
+CreateSkinButton(GirlsContainer, "سكن بنت 7", "GirlName7")
+CreateSkinButton(GirlsContainer, "سكن بنت 8", "GirlName8")
+CreateSkinButton(GirlsContainer, "سكن بنت 9", "GirlName9")
+CreateSkinButton(GirlsContainer, "سكن بنت 10", "GirlName10")
