@@ -195,7 +195,6 @@ DiscordBtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg
 local PlayerPage = AllPages["اللاعب"]
 PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 460)
 
--- تعديل مدخلات السرعة لتكون على سطر واحد منسق
 local SpeedContainer = Instance.new("Frame", PlayerPage)
 SpeedContainer.Size = UDim2.new(0.95, 0, 0, 40)
 SpeedContainer.BackgroundTransparency = 1
@@ -229,7 +228,6 @@ RunService.Heartbeat:Connect(function()
     end 
 end)
 
--- قفز لا نهائي واختراق الجدران والطيران
 local InfJumpBtn = Instance.new("TextButton", PlayerPage)
 InfJumpBtn.Size = UDim2.new(0.95, 0, 0, 40)
 InfJumpBtn.Text = "قفز لا نهائي"
@@ -406,5 +404,70 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- تفقد وحمل القوائم المسجلة قديماً تلقائياً
 RefreshSaves()
+
+-- ==================== تبويب العسكرية المطور بالكامل 🎖️ ====================
+local MilitaryPage = AllPages["العسكرية 🎖️"]
+MilitaryPage.CanvasSize = UDim2.new(0, 0, 0, 560) -- تمرير آمن وسلس للموبايل
+
+-- دالة إرسال الأمر للشات تدعم الأنظمة القديمة والجديدة تلقائياً
+local function ChangeSkin(username)
+    local chatEvents = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
+    if chatEvents and chatEvents:FindFirstChild("SayMessageRequest") then
+        chatEvents.SayMessageRequest:FireServer("/char me " .. username, "All")
+    else
+        local textChatService = game:GetService("TextChatService")
+        if textChatService and textChatService.ChatInputBarConfiguration and textChatService.ChatInputBarConfiguration.TargetTextChannel then
+            textChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync("/char me " .. username)
+        end
+    end
+end
+
+local function CreateSectionTitle(text)
+    local Title = Instance.new("TextLabel", MilitaryPage)
+    Title.Size = UDim2.new(0.95, 0, 0, 30)
+    Title.Text = "—— " .. text .. " ——"
+    Title.Font = Enum.Font.SourceSansBold
+    Title.TextSize = 15
+    Title.TextColor3 = Color3.fromRGB(255, 215, 0)
+    Title.BackgroundTransparency = 1
+end
+
+local function CreateSkinButton(parent, buttonText, targetUsername)
+    local Btn = Instance.new("TextButton", parent)
+    Btn.Size = UDim2.new(0.46, 0, 0, 35)
+    Btn.Text = buttonText
+    Btn.Font = Enum.Font.SourceSansBold
+    Btn.TextSize = 13
+    Btn.BackgroundColor3 = Color3.fromRGB(45, 55, 45)
+    Btn.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 5)
+
+    Btn.MouseButton1Click:Connect(function()
+        ChangeSkin(targetUsername)
+    end)
+end
+
+-- --- [ 1. خانة سكنات أولاد ] ---
+CreateSectionTitle("سكنات أولاد")
+
+local BoysContainer = Instance.new("Frame", MilitaryPage)
+BoysContainer.Size = UDim2.new(0.95, 0, 0, 210)
+BoysContainer.BackgroundTransparency = 1
+
+local BoysGrid = Instance.new("UIGridLayout", BoysContainer)
+BoysGrid.CellSize = UDim2.new(0.47, 0, 0, 35)
+BoysGrid.CellPadding = UDim2.new(0.04, 0, 0, 6)
+BoysGrid.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- الزر الأول مخصص للاعب الذي ذكرته، وباقي الـ 9 أزرار محجوزة بأسماء مؤقتة لتعدلها براحتك
+CreateSkinButton(BoysContainer, "سكن سوما الاساسي", "Soooma203040")
+CreateSkinButton(BoysContainer, "سكن ولد 2", "BoyName2")
+CreateSkinButton(BoysContainer, "سكن ولد 3", "BoyName3")
+CreateSkinButton(BoysContainer, "سكن ولد 4", "BoyName4")
+CreateSkinButton(BoysContainer, "سكن ولد 5", "BoyName5")
+CreateSkinButton(BoysContainer, "سكن ولد 6", "BoyName6")
+CreateSkinButton(BoysContainer, "سكن ولد 7", "BoyName7")
+CreateSkinButton(BoysContainer, "سكن ولد 8", "BoyName8")
+CreateSkinButton(BoysContainer, "سكن ولد 9", "BoyName9")
+CreateSkinButton(BoysContainer, "10 سكن ولد","BoyName10")
