@@ -1,6 +1,4 @@
--- [[ سكريبت Anxam الأسطوري الخارق - الحزب الأول V61.0 ]]
--- الحفاظ الكامل على الهيكل الأساسي والمحفوظات والسكنات الأصلية
-
+-- [[ سكريبت Anxam الأسطوري الخارق - الحزب الأول V62.0 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -15,7 +13,6 @@ ScreenGui.Name = "AihamScript_Main"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 2147483647 
 
--- === زر الإخفاء والظهار الدائري للموبايل والأجهزة ===
 local ToggleBtn = Instance.new("TextButton", ScreenGui)
 ToggleBtn.Name = "ToggleBtn"
 ToggleBtn.Size = UDim2.new(0, 45, 0, 45)
@@ -29,7 +26,6 @@ ToggleBtn.Draggable = true
 ToggleBtn.ZIndex = 100
 Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
 
--- === اللوحة الرئيسية المحدثة ===
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 530, 0, 340)
@@ -39,7 +35,6 @@ MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
--- نظام فتح وإغلاق سلس للقائمة
 ToggleBtn.MouseButton1Click:Connect(function()
     if MainFrame.Visible then
         MainFrame.Visible = false
@@ -52,7 +47,6 @@ ToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === القائمة الجانبية الكبرى ===
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 145, 1, -20)
 SideMenu.Position = UDim2.new(0, 10, 0, 10)
@@ -66,7 +60,6 @@ local SideLayout = Instance.new("UIListLayout", SideMenu)
 SideLayout.Padding = UDim.new(0, 6)
 SideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- === منطقة المحتوى والتبويبات ===
 local ContentArea = Instance.new("Frame", MainFrame)
 ContentArea.Size = UDim2.new(1, -175, 1, -20)
 ContentArea.Position = UDim2.new(0, 165, 0, 10)
@@ -90,7 +83,7 @@ for i, name in ipairs(MenuConfig) do
     page.BackgroundTransparency = 1
     page.BorderSizePixel = 0
     page.ScrollBarThickness = 4
-    page.Visible = (i == 2) -- فتح قائمة اللاعب كالعادة
+    page.Visible = (i == 2)
     
     local PageLayout = Instance.new("UIListLayout", page)
     PageLayout.Padding = UDim.new(0, 6)
@@ -108,7 +101,6 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- ==================== تبويب الماب الأساسي ====================
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 350)
 
@@ -140,7 +132,7 @@ CreateMapButton("إزالة الضباب والغيوم", function()
     if atmosphere then atmosphere:Destroy() end
 end)
 
--- [تم إصلاح هذا السطر ليعمل على دلتا وباقي المحاكيات بدون كراش]
+-- [تم إصلاح القوس وعلامات التنصيص هنا بالملي]
 CreateMapButton("تسريع رندر الماب (إزالة اللق)", function()
     for _, obj in pairs(workspace:GetDescendants()) do
         if obj:IsA("BasePart") and not obj:IsA("MeshPart") then
@@ -269,7 +261,6 @@ local function CreateSuperButton(text)
     return btn
 end
 
--- 1. ميزة المشي على الجدران (Spider Mode)
 local SpiderBtn = CreateSuperButton("المشي على الجدران: مطفأ")
 local SpiderEnabled = false
 SpiderBtn.MouseButton1Click:Connect(function()
@@ -288,7 +279,6 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- 2. ميزة المشي على الهواء (Air Walk)
 local AirBtn = CreateSuperButton("المشي على الهواء: مطفأ")
 local AirEnabled = false
 local AirPlatform = nil
@@ -316,7 +306,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- 3. ميزة الإخفاء التام (Invisible)
 local InvBtn = CreateSuperButton("إخفاء الشخصية (Invisible)")
 InvBtn.BackgroundColor3 = Color3.fromRGB(90, 0, 120)
 InvBtn.MouseButton1Click:Connect(function()
@@ -332,7 +321,6 @@ InvBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- 4. ميزة مضاد الطرد والوقوع (Anti-Ragdoll / Anti-Sit)
 local AntiSitBtn = CreateSuperButton("مضاد السقوط والجلوس: شغال")
 AntiSitBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
 local AntiSitEnabled = true
