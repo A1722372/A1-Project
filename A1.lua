@@ -1,4 +1,4 @@
--- [[ سكريبت Anxam الأسطوري الخارق - الحزب الأول V60.0 ]]
+-- [[ سكريبت Anxam الأسطوري الخارق - الحزب الأول V61.0 ]]
 -- الحفاظ الكامل على الهيكل الأساسي والمحفوظات والسكنات الأصلية
 
 local Player = game.Players.LocalPlayer
@@ -52,7 +52,7 @@ ToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === القائمة الجانبية الكبرى لتسع كل الأقسام ===
+-- === القائمة الجانبية الكبرى ===
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Size = UDim2.new(0, 145, 1, -20)
 SideMenu.Position = UDim2.new(0, 10, 0, 10)
@@ -72,7 +72,6 @@ ContentArea.Size = UDim2.new(1, -175, 1, -20)
 ContentArea.Position = UDim2.new(0, 165, 0, 10)
 ContentArea.BackgroundTransparency = 1
 
--- الهيكل الموسع بالترتيب مع إدراج التبويب الخارق الجديد
 local MenuConfig = {"اعدادات الماب", "اللاعب", "ميزات خارقة 🔥", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
 local AllPages = {}
 
@@ -141,9 +140,10 @@ CreateMapButton("إزالة الضباب والغيوم", function()
     if atmosphere then atmosphere:Destroy() end
 end)
 
+-- [تم إصلاح هذا السطر ليعمل على دلتا وباقي المحاكيات بدون كراش]
 CreateMapButton("تسريع رندر الماب (إزالة اللق)", function()
     for _, obj in pairs(workspace:GetDescendants()) do
-        if obj:IsA("BasePart") and not obj:IsA meshPart then
+        if obj:IsA("BasePart") and not obj:IsA("MeshPart") then
             obj.Material = Enum.Material.SmoothPlastic
         end
     end
@@ -254,7 +254,7 @@ CreatePlayerButton("أداة الانتقال بالضغط (Click TP)", function
     end
 end).BackgroundColor3 = Color3.fromRGB(0, 120, 120)
 
--- ==================== تبويب ميزات خارقة 🔥 (الجديد كلياً) ====================
+-- ==================== تبويب ميزات خارقة 🔥 ====================
 local SuperPage = AllPages["ميزات خارقة 🔥"]
 SuperPage.CanvasSize = UDim2.new(0, 0, 0, 450)
 
