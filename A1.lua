@@ -1,4 +1,4 @@
--- [[ سكريبت Anxam الأسطوري الكامل - الجزء الأول V45.0 ]]
+-- [[ سكريبت Anxam الأسطوري الكامل - الجزء الأول V45.1 المعدل ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -152,7 +152,7 @@ DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 
 -- ==================== تبويب اللاعب ====================
 local PlayerPage = AllPages["اللاعب"]
-PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 550) -- تم تكبير المساحة لتستوعب الزر الجديد براحة
+PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 550)
 
 local function CreatePlayerButton(text, onClick)
     local btn = Instance.new("TextButton", PlayerPage)
@@ -198,25 +198,26 @@ RunService.Heartbeat:Connect(function()
     end 
 end)
 
--- [إضافة الزر الجديد الخاص بأداة الانتقال بالضغط هنا]
+-- [برمجة الأداة الجديدة المتوافقة والمضمونة لتعمل على كل الأجهزة والـ Executors]
 CreatePlayerButton("إعطاء أداة الانتقال بالضغط (Click TP)", function()
     local Backpack = Player:FindFirstChildOfClass("Backpack")
     if Backpack then
-        local Tool = Instance.new("HopperBin")
-        Tool.BinType = Enum.HopperBinType.Script
+        -- إنشاء الأداة التقليدية لضمان ظهورها بالحقيبة فوراً
+        local Tool = Instance.new("Tool")
         Tool.Name = "انتقال بالضغط"
+        Tool.RequiresHandle = false
         Tool.Parent = Backpack
         
-        Tool.Selected:Connect(function(Mouse)
-            Mouse.Button1Down:Connect(function()
-                if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and Mouse.Target then
-                    Player.Character.HumanoidRootPart.CFrame = CFrame.new(Mouse.Hit.X, Mouse.Hit.Y + 3, Mouse.Hit.Z)
-                end
-            end)
+        -- تفعيل الانتقال عند الضغط بالشاشة والماوس
+        Tool.Activated:Connect(function()
+            local mouse = Player:GetMouse()
+            if mouse and mouse.Hit and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                Player.Character.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.X, mouse.Hit.Y + 3, mouse.Hit.Z)
+            end
         end)
     end
 end).BackgroundColor3 = Color3.fromRGB(0, 120, 120)
--- [[ نهاية الجزء الأول ]]
+-- [[ نهاية الجزء الأول المعدل ]]
 local InfJumpBtn = CreatePlayerButton("قفز لا نهائي: مطفأ", function() end)
 local JumpEnabled = false
 InfJumpBtn.MouseButton1Click:Connect(function() 
@@ -258,7 +259,7 @@ TargetPage.CanvasSize = UDim2.new(0, 0, 0, 400)
 
 local TInput = Instance.new("TextBox", TargetPage)
 TInput.Size = UDim2.new(0.95, 0, 0, 40)
-TInput.PlaceholderText = "اسم اللاعب (أول 1 حروف)"
+TInput.PlaceholderText = "اسم اللاعب (أول 3 حروف)"
 TInput.TextColor3 = Color3.new(1,1,1)
 TInput.BackgroundColor3 = Color3.fromRGB(40,40,40)
 Instance.new("UICorner", TInput)
