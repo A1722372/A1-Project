@@ -1,4 +1,4 @@
--- [[ سكريبت Anxam المطور الإبداعي الخارق - الحزب الأول V64.0 ]]
+-- [[ سكريبت Anxam المطور لفك قفل حماية رايفن - الحزب الأول V65.0 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -145,9 +145,13 @@ local DiscordBtn = CreateMapButton("نسخ سيرفر الديسكورد", funct
 end)
 DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 -- [[ نهاية الحزب الأول ]]
--- ==================== تبويب اللاعب المطور (خانات السرعة والنط) ====================
+-- ==================== تبويب اللاعب (تخطي حماية رايفن) ====================
 local PlayerPage = AllPages["اللاعب"]
-PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 500)
+PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 550)
+
+-- متغير عالمي للتحكم بوضع التخطي عبر السكريبت
+getgenv().RavenBypassActive = false
+local FakeBypassSeat = nil
 
 local function CreatePlayerButton(text, onClick)
     local btn = Instance.new("TextButton", PlayerPage)
@@ -161,14 +165,39 @@ local function CreatePlayerButton(text, onClick)
     return btn
 end
 
--- خانة التحكم بالسرعة (Speed)
+-- 🔥 زر الابتكار المخصص لفك قفل سرعة وحماية ماب رايفن العسكرية 🔥
+local BypassBtn = CreatePlayerButton("🔓 فك قفل السرعة والحماية (Raven Bypass)", function() end)
+BypassBtn.BackgroundColor3 = Color3.fromRGB(180, 80, 0)
+
+BypassBtn.MouseButton1Click:Connect(function()
+    getgenv().RavenBypassActive = not getgenv().RavenBypassActive
+    BypassBtn.Text = getgenv().RavenBypassActive and "🔓 فك القفل: شـغـال (مخفي عن الحماية)" or "🔓 فك قفل السرعة والحماية (Raven Bypass)"
+    BypassBtn.BackgroundColor3 = getgenv().RavenBypassActive and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(180, 80, 0)
+    
+    if getgenv().RavenBypassActive and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        -- عزل الجسد محلياً لمنع الحماية من تتبع السرعة الزائدة
+        FakeBypassSeat = Instance.new("Seat", workspace)
+        FakeBypassSeat.Size = Vector3.new(2, 0.5, 2)
+        FakeBypassSeat.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0, -30, 0)
+        FakeBypassSeat.Transparency = 1
+        FakeBypassSeat.Anchored = true
+        FakeBypassSeat:Sit(Player.Character.Humanoid)
+    else
+        if FakeBypassSeat then FakeBypassSeat:Destroy() FakeBypassSeat = nil end
+        if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+            Player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        end
+    end
+end)
+
+-- خانة التحكم بالسرعة
 local SpeedContainer = Instance.new("Frame", PlayerPage)
 SpeedContainer.Size = UDim2.new(0.95, 0, 0, 40)
 SpeedContainer.BackgroundTransparency = 1
 
 local SpeedInput = Instance.new("TextBox", SpeedContainer)
 SpeedInput.Size = UDim2.new(0.6, -5, 1, 0)
-SpeedInput.PlaceholderText = "قيمة السرعة (مثال: 60)"
+SpeedInput.PlaceholderText = "قيمة السرعة (مثال: 200)"
 SpeedInput.TextColor3 = Color3.new(1,1,1)
 SpeedInput.BackgroundColor3 = Color3.fromRGB(40,40,40)
 Instance.new("UICorner", SpeedInput)
@@ -191,11 +220,12 @@ end)
 
 RunService.Heartbeat:Connect(function() 
     if SpeedEnabled and Player.Character and Player.Character:FindFirstChild("Humanoid") then 
+        -- إذا حماية رايفن شغالة، يتم كسر الحد الأقصى يدوياً أثناء التخطي
         Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 16 
     end 
 end)
 
--- خانة التحكم بالنط والقفز (Jump Power)
+-- خانة التحكم بالنط
 local JumpContainer = Instance.new("Frame", PlayerPage)
 JumpContainer.Size = UDim2.new(0.95, 0, 0, 40)
 JumpContainer.BackgroundTransparency = 1
@@ -248,22 +278,6 @@ NoclipBtn.MouseButton1Click:Connect(function()
 end)
 RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
 
-CreatePlayerButton("أداة الانتقال بالضغط (Click TP)", function()
-    local Backpack = Player:FindFirstChildOfClass("Backpack")
-    if Backpack then
-        local Tool = Instance.new("Tool")
-        Tool.Name = "انتقال بالضغط 📍"
-        Tool.RequiresHandle = false
-        Tool.Parent = Backpack
-        Tool.Activated:Connect(function()
-            local mouse = Player:GetMouse()
-            if mouse and mouse.Hit and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-                Player.Character.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.X, mouse.Hit.Y + 3, mouse.Hit.Z)
-            end
-        end)
-    end
-end).BackgroundColor3 = Color3.fromRGB(0, 120, 120)
-
 -- ==================== تبويب ميزات خارقة 🔥 ====================
 local SuperPage = AllPages["ميزات خارقة 🔥"]
 SuperPage.CanvasSize = UDim2.new(0, 0, 0, 450)
@@ -313,34 +327,6 @@ FlyBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-local InvisibleBtn = CreateSuperButton("إخفاء السيرفر الحقيقي: مطفأ")
-local RealInvisible = false
-local FakeSeat = nil
-InvisibleBtn.MouseButton1Click:Connect(function()
-    RealInvisible = not RealInvisible
-    InvisibleBtn.Text = RealInvisible and "إخفاء السيرفر الحقيقي: شغال" or "إخفاء السيرفر الحقيقي: مطفأ"
-    InvisibleBtn.BackgroundColor3 = RealInvisible and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
-    if RealInvisible and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        FakeSeat = Instance.new("Seat", workspace)
-        FakeSeat.Size = Vector3.new(2, 0.5, 2)
-        FakeSeat.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0, -25, 0)
-        FakeSeat.Transparency = 1
-        FakeSeat.Anchored = true
-        FakeSeat:Sit(Player.Character.Humanoid)
-        for _, p in pairs(Player.Character:GetDescendants()) do
-            if p:IsA("BasePart") or p:IsA("Decal") then p.Transparency = 0.8 end
-        end
-    else
-        if FakeSeat then FakeSeat:Destroy() FakeSeat = nil end
-        if Player.Character then
-            Player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-            for _, p in pairs(Player.Character:GetDescendants()) do
-                if p:IsA("BasePart") or p:IsA("Decal") then p.Transparency = p.Name == "HumanoidRootPart" and 1 or 0 end
-            end
-        end
-    end
-end)
-
 local AntiSitBtn = CreateSuperButton("مضاد السقوط والجلوس: شغال")
 AntiSitBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
 local AntiSitEnabled = true
@@ -349,9 +335,9 @@ AntiSitBtn.MouseButton1Click:Connect(function()
     AntiSitBtn.Text = AntiSitEnabled and "مضاد السقوط والجلوس: شغال" or "مضاد السقوط والجلوس: مطفأ"
     AntiSitBtn.BackgroundColor3 = AntiSitEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
 end)
-RunService.Heartbeat:Connect(function() if AntiSitEnabled and Player.Character and Player.Character:FindFirstChild("Humanoid") and not RealInvisible then Player.Character.Humanoid.Sit = false end end)
+RunService.Heartbeat:Connect(function() if AntiSitEnabled and Player.Character and Player.Character:FindFirstChild("Humanoid") and not getgenv().RavenBypassActive then Player.Character.Humanoid.Sit = false end end)
 -- [[ نهاية الحزب الثاني ]]
--- ==================== تبويب الاستهداف الإبداعي الخارق ====================
+-- ==================== تبويب الاستهداف المطور بتخطي الحماية ====================
 local TargetPage = AllPages["الاستهداف"]
 TargetPage.CanvasSize = UDim2.new(0, 0, 0, 580)
 
@@ -411,6 +397,28 @@ game.Players.PlayerAdded:Connect(UpdatePlayersDropdown)
 game.Players.PlayerRemoving:Connect(UpdatePlayersDropdown)
 UpdatePlayersDropdown()
 
+-- دالة محلية مبتكرة للانتقال الآمن والخاطف وتخطي حماية رايفن العسكرية
+local function SafeTeleport(targetCFrame)
+    if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = Player.Character.HumanoidRootPart
+        local hum = Player.Character.Humanoid
+        
+        -- تفعيل وضع التخطي الخاطف لأجزاء من الثانية لكسر مراقبة السيرفر
+        local tempSeat = Instance.new("Seat", workspace)
+        tempSeat.Size = Vector3.new(1, 0.5, 1)
+        tempSeat.CFrame = targetCFrame
+        tempSeat.Transparency = 1
+        tempSeat.Anchored = true
+        
+        hrp.CFrame = targetCFrame
+        task.wait(0.05)
+        tempSeat:Sit(hum)
+        task.wait(0.1)
+        tempSeat:Destroy()
+        hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
+end
+
 local function CreateTargetButton(bName)
     local b = Instance.new("TextButton", TargetPage)
     b.Size = UDim2.new(0.95, 0, 0, 36)
@@ -422,11 +430,11 @@ local function CreateTargetButton(bName)
     return b
 end
 
--- 1. انتقال
-local TeleportBtn = CreateTargetButton("📍 انتقال فوراً إلى اللاعب")
+-- 1. انتقال آمن بتخطي رايفن
+local TeleportBtn = CreateTargetButton("📍 انتقال ذكي (تخطي حماية رايفن)")
 TeleportBtn.MouseButton1Click:Connect(function()
     if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
+        SafeTeleport(TargetPlayer.Character.HumanoidRootPart.CFrame)
     end
 end)
 
@@ -468,7 +476,7 @@ BangBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- 4. بانق عكسي (مبتكر)
+-- 4. بانق عكسي
 local RevBangBtn = CreateTargetButton("🔄 حركة بانق عكسي (سحب اللاعب إليك)")
 local revBangState = false
 local revBangConnection = nil
@@ -499,10 +507,8 @@ FlingBtn.MouseButton1Click:Connect(function()
     flingState = not flingState
     FlingBtn.BackgroundColor3 = flingState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
     if flingState then
-        local oldVelocity = Player.Character.HumanoidRootPart.Velocity
         flingConnection = RunService.Heartbeat:Connect(function()
             if flingState and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-                -- الدوران والالتصاق بسرعة خارقة لتدمير فيزكس اللاعب الآخر وتطييره
                 Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(tick()*1500)%360, 0) * CFrame.new(0, 0, 0.2)
                 Player.Character.HumanoidRootPart.Velocity = Vector3.new(500, 500, 500)
             else
@@ -609,23 +615,7 @@ TrailBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-local ParticleBtn = CreateEffectButton("تأثير الهالة (Particles): مطفأ", function() end)
-local ParticleEnabled = false
-local currentParticles = nil
-ParticleBtn.MouseButton1Click:Connect(function()
-    ParticleEnabled = not ParticleEnabled
-    ParticleBtn.Text = ParticleEnabled and "تأثير الهالة: شغال" or "تأثير الهالة: مطفأ"
-    ParticleBtn.BackgroundColor3 = ParticleEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
-    if ParticleEnabled and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        currentParticles = Instance.new("ParticleEmitter", Player.Character.HumanoidRootPart)
-        currentParticles.Rate = 20
-        currentParticles.Speed = NumberRange.new(5)
-    elseif not ParticleEnabled and currentParticles then
-        currentParticles:Destroy()
-    end
-end)
-
--- ==================== تبويب المحفوظات ====================
+-- ==================== تبويب المحفوظات المطور بالتخطي ====================
 local SavePage = AllPages["المحفوظات"]
 SavePage.CanvasSize = UDim2.new(0, 0, 0, 300)
 
@@ -665,7 +655,7 @@ local function RefreshSaves()
         
         local GoBtn = Instance.new("TextButton", Container)
         GoBtn.Size = UDim2.new(0.8, -5, 1, 0)
-        GoBtn.Text = "انتقال إلى: " .. name
+        GoBtn.Text = "انتقال آمن إلى: " .. name
         GoBtn.Font = Enum.Font.SourceSansBold
         GoBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
         GoBtn.TextColor3 = Color3.new(1,1,1)
@@ -681,9 +671,7 @@ local function RefreshSaves()
         Instance.new("UICorner", DelBtn)
         
         GoBtn.MouseButton1Click:Connect(function() 
-            if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then 
-                Player.Character.HumanoidRootPart.CFrame = pos 
-            end 
+            SafeTeleport(pos) -- استخدام دالة التخطي عند الانتقال للشيك بوينت المحفوظة
         end)
         
         DelBtn.MouseButton1Click:Connect(function() 
@@ -765,13 +753,10 @@ local function BuildSkinSection(titleText, skinsTable)
         Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
         Btn.TextColor3 = Color3.new(1, 1, 1)
         Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
-        
-        Btn.MouseButton1Click:Connect(function()
-            ChangeSkin(skin[2])
-        end)
+        Btn.MouseButton1Click:Connect(function() ChangeSkin(skin[2]) end)
     end
 end
 
 BuildSkinSection("سكنات أولاد", BoysSkins)
 BuildSkinSection("سكنات بنات", GirlsSkins)
--- [[ نهاية السكريبت المتكامل والمطور بنجاح ]]
+-- [[ نهاية السكريبت المتكامل بنجاح ]]
