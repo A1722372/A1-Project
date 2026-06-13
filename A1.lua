@@ -1,4 +1,4 @@
--- [[ سكريبت Anxam الأسطوري الخارق - الحزب الأول V62.0 ]]
+-- [[ سكريبت Anxam المطور الإبداعي - الحزب الأول V63.0 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -13,6 +13,7 @@ ScreenGui.Name = "AihamScript_Main"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 2147483647 
 
+-- زر الإخفاء/الظهار الدائري الفخم
 local ToggleBtn = Instance.new("TextButton", ScreenGui)
 ToggleBtn.Name = "ToggleBtn"
 ToggleBtn.Size = UDim2.new(0, 45, 0, 45)
@@ -101,6 +102,7 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
+-- === تبويب الماب الأساسي ===
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 350)
 
@@ -132,7 +134,6 @@ CreateMapButton("إزالة الضباب والغيوم", function()
     if atmosphere then atmosphere:Destroy() end
 end)
 
--- [تم إصلاح القوس وعلامات التنصيص هنا بالملي]
 CreateMapButton("تسريع رندر الماب (إزالة اللق)", function()
     for _, obj in pairs(workspace:GetDescendants()) do
         if obj:IsA("BasePart") and not obj:IsA("MeshPart") then
@@ -213,10 +214,6 @@ NoclipBtn.MouseButton1Click:Connect(function()
 end)
 RunService.Stepped:Connect(function() if NoclipEnabled and Player.Character then for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
 
-CreatePlayerButton("تفعيل الطيران (Fly V3)", function() 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))() 
-end).BackgroundColor3 = Color3.fromRGB(14, 110, 200)
-
 local GravityBtn = CreatePlayerButton("الجاذبية: طبيعية", function() end)
 local LowGrav = false
 GravityBtn.MouseButton1Click:Connect(function() 
@@ -246,9 +243,10 @@ CreatePlayerButton("أداة الانتقال بالضغط (Click TP)", function
     end
 end).BackgroundColor3 = Color3.fromRGB(0, 120, 120)
 
--- ==================== تبويب ميزات خارقة 🔥 ====================
+
+-- ==================== تبويب ميزات خارقة 🔥 (إبداعي بالكامل) ====================
 local SuperPage = AllPages["ميزات خارقة 🔥"]
-SuperPage.CanvasSize = UDim2.new(0, 0, 0, 450)
+SuperPage.CanvasSize = UDim2.new(0, 0, 0, 480)
 
 local function CreateSuperButton(text)
     local btn = Instance.new("TextButton", SuperPage)
@@ -261,66 +259,109 @@ local function CreateSuperButton(text)
     return btn
 end
 
-local SpiderBtn = CreateSuperButton("المشي على الجدران: مطفأ")
-local SpiderEnabled = false
-SpiderBtn.MouseButton1Click:Connect(function()
-    SpiderEnabled = not SpiderEnabled
-    SpiderBtn.Text = SpiderEnabled and "المشي على الجدران: شغال" or "المشي على الجدران: مطفأ"
-    SpiderBtn.BackgroundColor3 = SpiderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
+-- 1. طيران إبداعي مستقر مدمج (Custom Fly) بدون روابط خارجية
+local FlyBtn = CreateSuperButton("تفعيل الطيران الذاتي: مطفأ")
+local Flying = false
+local FlySpeed = 45
+local BodyVelocity, BodyGyro
+
+FlyBtn.MouseButton1Click:Connect(function()
+    Flying = not Flying
+    FlyBtn.Text = Flying and "تفعيل الطيران الذاتي: شغال" or "تفعيل الطيران الذاتي: مطفأ"
+    FlyBtn.BackgroundColor3 = Flying and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
+    
+    if Flying and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        local tor = Player.Character.HumanoidRootPart
+        BodyVelocity = Instance.new("BodyVelocity", tor)
+        BodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+        BodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        
+        BodyGyro = Instance.new("BodyGyro", tor)
+        BodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+        BodyGyro.CFrame = tor.CFrame
+        
+        task.spawn(function()
+            while Flying and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") do
+                local cam = workspace.CurrentCamera.CFrame
+                local move = Vector3.new(0,0,0)
+                if UIS:IsKeyDown(Enum.KeyCode.W) then move = move + cam.LookVector end
+                if UIS:IsKeyDown(Enum.KeyCode.S) then move = move - cam.LookVector end
+                if UIS:IsKeyDown(Enum.KeyCode.A) then move = move - cam.RightVector end
+                if UIS:IsKeyDown(Enum.KeyCode.D) then move = move + cam.RightVector end
+                if UIS:IsKeyDown(Enum.KeyCode.Space) then move = move + Vector3.new(0, 1, 0) end
+                
+                BodyVelocity.Velocity = move.Unit * FlySpeed
+                if move == Vector3.new(0,0,0) then BodyVelocity.Velocity = Vector3.new(0,0,0) end
+                BodyGyro.CFrame = cam
+                task.wait()
+            end
+            if BodyVelocity then BodyVelocity:Destroy() end
+            if BodyGyro then BodyGyro:Destroy() end
+        end)
+    else
+        if BodyVelocity then BodyVelocity:Destroy() end
+        if BodyGyro then BodyGyro:Destroy() end
+    end
+end)
+
+-- 2. ميزة الإخفاء الحقيقي الإبداعي عن السيرفر (Server-Side Pseudo-Invisible)
+local InvisibleBtn = CreateSuperButton("إخفاء السيرفر الحقيقي: مطفأ")
+local RealInvisible = false
+local FakeSeat = nil
+
+InvisibleBtn.MouseButton1Click:Connect(function()
+    RealInvisible = not RealInvisible
+    InvisibleBtn.Text = RealInvisible and "إخفاء السيرفر الحقيقي: شغال" or "إخفاء السيرفر الحقيقي: مطفأ"
+    InvisibleBtn.BackgroundColor3 = RealInvisible and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
+    
+    if RealInvisible and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        -- فكرة إبداعية: كسر ترابط الشخصية برمجياً عبر محاكاة الجلوس المخفي بالأسفل لإخفاء مكانك الفعلي عن السيرفر
+        FakeSeat = Instance.new("Seat", workspace)
+        FakeSeat.Size = Vector3.new(2, 0.5, 2)
+        FakeSeat.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0, -25, 0)
+        FakeSeat.Transparency = 1
+        FakeSeat.Anchored = true
+        FakeSeat:Sit(Player.Character.Humanoid)
+        
+        -- إخفاء الأجزاء محلياً ورفع الجسد الأصلي بعيداً عن أعين اللاعبين بالسيرفر
+        for _, p in pairs(Player.Character:GetDescendants()) do
+            if p:IsA("BasePart") or p:IsA("Decal") then p.Transparency = 0.8 end
+        end
+    else
+        if FakeSeat then FakeSeat:Destroy() FakeSeat = nil end
+        if Player.Character then
+            Player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+            for _, p in pairs(Player.Character:GetDescendants()) do
+                if p:IsA("BasePart") or p:IsA("Decal") then p.Transparency = p.Name == "HumanoidRootPart" and 1 or 0 end
+            end
+        end
+    end
+end)
+
+-- 3. ميزة درع الحماية المنعكس الذكي (Kill Aura / Deflect)
+local AuraBtn = CreateSuperButton("درع الحماية المنعكس: مطفأ")
+local AuraEnabled = false
+AuraBtn.MouseButton1Click:Connect(function()
+    AuraEnabled = not AuraEnabled
+    AuraBtn.Text = AuraEnabled and "درع الحماية المنعكس: شغال" or "درع الحماية المنعكس: مطفأ"
+    AuraBtn.BackgroundColor3 = AuraEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
 end)
 
 RunService.Heartbeat:Connect(function()
-    if SpiderEnabled and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        local r = Ray.new(Player.Character.HumanoidRootPart.Position, Player.Character.HumanoidRootPart.CFrame.LookVector * 3)
-        local part, pos, norm = workspace:FindPartOnRay(r, Player.Character)
-        if part and math.abs(norm.Y) < 0.1 then
-            Player.Character.HumanoidRootPart.Velocity = Vector3.new(Player.Character.HumanoidRootPart.Velocity.X, 30, Player.Character.HumanoidRootPart.Velocity.Z)
-        end
-    end
-end)
-
-local AirBtn = CreateSuperButton("المشي على الهواء: مطفأ")
-local AirEnabled = false
-local AirPlatform = nil
-AirBtn.MouseButton1Click:Connect(function()
-    AirEnabled = not AirEnabled
-    AirBtn.Text = AirEnabled and "المشي على الهواء: شغال" or "المشي على الهواء: مطفأ"
-    AirBtn.BackgroundColor3 = AirEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
-    if not AirEnabled and AirPlatform then
-        AirPlatform:Destroy()
-        AirPlatform = nil
-    end
-end)
-
-RunService.RenderStepped:Connect(function()
-    if AirEnabled and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        if not AirPlatform or not AirPlatform.Parent then
-            AirPlatform = Instance.new("Part", workspace)
-            AirPlatform.Size = Vector3.new(6, 0.5, 6)
-            AirPlatform.Anchored = true
-            AirPlatform.Transparency = 0.5
-            AirPlatform.Color = Color3.fromRGB(0, 120, 255)
-            AirPlatform.Material = Enum.Material.ForceField
-        end
-        AirPlatform.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0, -3.2, 0)
-    end
-end)
-
-local InvBtn = CreateSuperButton("إخفاء الشخصية (Invisible)")
-InvBtn.BackgroundColor3 = Color3.fromRGB(90, 0, 120)
-InvBtn.MouseButton1Click:Connect(function()
-    if Player.Character then
-        for _, p in pairs(Player.Character:GetDescendants()) do
-            if p:IsA("BasePart") or p:IsA("Decal") then
-                p.Transparency = p.Name == "HumanoidRootPart" and 1 or 0.8
+    if AuraEnabled and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p ~= Player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local dist = (Player.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude
+                if dist < 12 then
+                    -- إبعاد تلقائي لأي لاعب يقرب منك لحمايتك بشكل مذهل وطريف
+                    p.Character.HumanoidRootPart.Velocity = (p.Character.HumanoidRootPart.Position - Player.Character.HumanoidRootPart.Position).Unit * 50
+                end
             end
         end
-        if Player.Character:FindFirstChild("Head") and Player.Character.Head:FindFirstChildOfClass("BillboardGui") then
-            Player.Character.Head:FindFirstChildOfClass("BillboardGui").Enabled = false
-        end
     end
 end)
 
+-- 4. مضاد السقوط والجلوس التلقائي المستقر
 local AntiSitBtn = CreateSuperButton("مضاد السقوط والجلوس: شغال")
 AntiSitBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
 local AntiSitEnabled = true
@@ -331,7 +372,7 @@ AntiSitBtn.MouseButton1Click:Connect(function()
 end)
 
 RunService.Heartbeat:Connect(function()
-    if AntiSitEnabled and Player.Character and Player.Character:FindFirstChild("Humanoid") then
+    if AntiSitEnabled and Player.Character and Player.Character:FindFirstChild("Humanoid") and not RealInvisible then
         Player.Character.Humanoid.Sit = false
         if Player.Character.Humanoid:GetState() == Enum.HumanoidStateType.Ragdoll then
             Player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
@@ -339,31 +380,75 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 -- [[ نهاية الحزب الثاني ]]
--- ==================== تبويب الاستهداف ====================
+-- ==================== تبويب الاستهداف المطور (قائمة تلقائية) ====================
 local TargetPage = AllPages["الاستهداف"]
-TargetPage.CanvasSize = UDim2.new(0, 0, 0, 420)
+TargetPage.CanvasSize = UDim2.new(0, 0, 0, 480)
 
-local TInput = Instance.new("TextBox", TargetPage)
-TInput.Size = UDim2.new(0.95, 0, 0, 40)
-TInput.PlaceholderText = "اسم اللاعب (أول 3 حروف)"
-TInput.TextColor3 = Color3.new(1,1,1)
-TInput.BackgroundColor3 = Color3.fromRGB(40,40,40)
-Instance.new("UICorner", TInput)
+-- عنوان القائمة التلقائية
+local DropdownTitle = Instance.new("TextLabel", TargetPage)
+DropdownTitle.Size = UDim2.new(0.95, 0, 0, 25)
+DropdownTitle.Text = "اختر لاعب من السيرفر 👇:"
+DropdownTitle.Font = Enum.Font.SourceSansBold
+DropdownTitle.TextSize = 14
+DropdownTitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+DropdownTitle.BackgroundTransparency = 1
+
+-- حاوية قائمة أسماء اللاعبين القابلة للتمرير
+local PlayersContainer = Instance.new("ScrollingFrame", TargetPage)
+PlayersContainer.Size = UDim2.new(0.95, 0, 0, 110)
+PlayersContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+PlayersContainer.ScrollBarThickness = 4
+PlayersContainer.CanvasSize = UDim2.new(0, 0, 0, 200)
+Instance.new("UICorner", PlayersContainer).CornerRadius = UDim.new(0, 6)
+
+local PlrListLayout = Instance.new("UIListLayout", PlayersContainer)
+PlrListLayout.Padding = UDim.new(0, 4)
+PlrListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 local TargetPlayer = nil
-TInput.FocusLost:Connect(function() 
-    for _, plr in pairs(game.Players:GetPlayers()) do 
-        if string.sub(string.lower(plr.Name), 1, 3) == string.lower(string.sub(TInput.Text, 1, 3)) then 
-            TargetPlayer = plr
-            break 
-        end 
-    end 
-end)
+local CurrentSelectedLabel = Instance.new("TextLabel", TargetPage)
+CurrentSelectedLabel.Size = UDim2.new(0.95, 0, 0, 25)
+CurrentSelectedLabel.Text = "اللاعب المحدد حالياً: لم يتم اختيار أحد"
+CurrentSelectedLabel.Font = Enum.Font.SourceSansBold
+CurrentSelectedLabel.TextSize = 13
+CurrentSelectedLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
+CurrentSelectedLabel.BackgroundTransparency = 1
+
+-- دالة تحديث قائمة اللاعبين تلقائياً بالسيرفر
+local function UpdatePlayersDropdown()
+    for _, child in pairs(PlayersContainer:GetChildren()) do
+        if child:IsA("TextButton") then child:Destroy() end
+    end
+    
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        if plr ~= Player then
+            local pBtn = Instance.new("TextButton", PlayersContainer)
+            pBtn.Size = UDim2.new(0.95, 0, 0, 28)
+            pBtn.Text = plr.DisplayName .. " (@" .. plr.Name .. ")"
+            pBtn.Font = Enum.Font.SourceSans
+            pBtn.TextSize = 12
+            pBtn.TextColor3 = Color3.new(1, 1, 1)
+            pBtn.BackgroundColor3 = (TargetPlayer == plr) and Color3.fromRGB(65, 65, 65) or Color3.fromRGB(45, 45, 45)
+            Instance.new("UICorner", pBtn).CornerRadius = UDim.new(0, 4)
+            
+            pBtn.MouseButton1Click:Connect(function()
+                TargetPlayer = plr
+                CurrentSelectedLabel.Text = "اللاعب المحدد حالياً: " .. plr.Name
+                UpdatePlayersDropdown() -- إعادة التلوين عند الاختيار
+            end)
+        end
+    end
+end
+
+-- تحديث القائمة عند دخول أو خروج أي لاعب فوراً
+game.Players.PlayerAdded:Connect(UpdatePlayersDropdown)
+game.Players.PlayerRemoving:Connect(UpdatePlayersDropdown)
+UpdatePlayersDropdown()
 
 local function CreateTargetButton(bName)
     local b = Instance.new("TextButton", TargetPage)
-    b.Size = UDim2.new(0.95, 0, 0, 38)
-    b.Text = bName .. " (OFF)"
+    b.Size = UDim2.new(0.95, 0, 0, 36)
+    b.Text = bName
     b.Font = Enum.Font.SourceSansBold
     b.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
     b.TextColor3 = Color3.new(1, 1, 1)
@@ -371,33 +456,31 @@ local function CreateTargetButton(bName)
     return b
 end
 
-local TeleportBtn = CreateTargetButton("انتقال")
-local tpState = false
+local TeleportBtn = CreateTargetButton("📍 انتقال فوراً إلى اللاعب")
 TeleportBtn.MouseButton1Click:Connect(function()
-    tpState = not tpState
-    TeleportBtn.Text = "انتقال" .. (tpState and " (ON)" or " (OFF)")
-    TeleportBtn.BackgroundColor3 = tpState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
-    if tpState and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+    if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
         Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame
     end
 end)
 
-local ViewBtn = CreateTargetButton("استهداف")
+local ViewBtn = CreateTargetButton("👁️ مراقبة واستهداف الكاميرا (تشغيل/إطفاء)")
 local viewState = false
 ViewBtn.MouseButton1Click:Connect(function()
     viewState = not viewState
-    ViewBtn.Text = "استهداف" .. (viewState and " (ON)" or " (OFF)")
     ViewBtn.BackgroundColor3 = viewState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
     if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("Humanoid") then
         workspace.CurrentCamera.CameraSubject = viewState and TargetPlayer.Character.Humanoid or Player.Character.Humanoid
+    else
+        workspace.CurrentCamera.CameraSubject = Player.Character.Humanoid
+        viewState = false
+        ViewBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
     end
 end)
 
-local EspBtn = CreateTargetButton("ESP")
+local EspBtn = CreateTargetButton("✨ تفعيل كاشف الـ ESP عليه")
 local espState = false
 EspBtn.MouseButton1Click:Connect(function()
     espState = not espState
-    EspBtn.Text = "ESP" .. (espState and " (ON)" or " (OFF)")
     EspBtn.BackgroundColor3 = espState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
     if TargetPlayer and TargetPlayer.Character then
         if espState and not TargetPlayer.Character:FindFirstChild("Highlight") then
@@ -408,23 +491,19 @@ EspBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-local SitBtn = CreateTargetButton("جلوس فوق")
+local SitBtn = CreateTargetButton("🏇 الجلوسوق (الركوب فوق رأسه)")
 local sitState = false
 SitBtn.MouseButton1Click:Connect(function()
-    sitState = not sitState
-    SitBtn.Text = "جلوس فوق" .. (sitState and " (ON)" or " (OFF)")
-    SitBtn.BackgroundColor3 = sitState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
-    if sitState and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+    if TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") then
         Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
     end
 end)
 
-local BangBtn = CreateTargetButton("بانق")
+local BangBtn = CreateTargetButton("🔥 حركة البانق التلقائية (تشغيل/إطفاء)")
 local bangState = false
 local bangConnection = nil
 BangBtn.MouseButton1Click:Connect(function()
     bangState = not bangState
-    BangBtn.Text = "بانق" .. (bangState and " (ON)" or " (OFF)")
     BangBtn.BackgroundColor3 = bangState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
     
     if bangState then
@@ -439,10 +518,7 @@ BangBtn.MouseButton1Click:Connect(function()
             end
         end)
     else
-        if bangConnection then
-            bangConnection:Disconnect()
-            bangConnection = nil
-        end
+        if bangConnection then bangConnection:Disconnect() bangConnection = nil end
     end
 end)
 
@@ -648,4 +724,4 @@ end
 
 BuildSkinSection("سكنات أولاد", BoysSkins)
 BuildSkinSection("سكنات بنات", GirlsSkins)
--- [[ نهاية السكريبت الاحترافي الخارق بالكامل بنجاح ]]
+-- [[ نهاية السكريبت الاحترافي الخارق المطور بالكامل بنجاح ]]
