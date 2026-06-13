@@ -197,8 +197,8 @@ RunService.Heartbeat:Connect(function()
         Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 16 
     end 
 end)
--- [[ نهاية الجزء الأول - الصق الجزء الثاني تحته مباشرة دون أي تعديل ]]
-Local InfJumpBtn = CreatePlayerButton("قفز لا نهائي: مطفأ", function() end)
+-- [[ نهاية الجزء الأول ]]
+local InfJumpBtn = CreatePlayerButton("قفز لا نهائي: مطفأ", function() end)
 local JumpEnabled = false
 InfJumpBtn.MouseButton1Click:Connect(function() 
     JumpEnabled = not JumpEnabled 
@@ -233,7 +233,7 @@ CreatePlayerButton("إعادة رسوَن فوري (Instant Reset)", function()
     if Player.Character then Player.Character:BreakJoints() end 
 end).BackgroundColor3 = Color3.fromRGB(150, 30, 30)
 
--- ==================== تبويب الاستهداف (كامل الأصلي) ====================
+-- ==================== تبويب الاستهداف (كامل الأصلي + ميزة بانق) ====================
 local TargetPage = AllPages["الاستهداف"]
 TargetPage.CanvasSize = UDim2.new(0, 0, 0, 400) -- تم زيادة الحجم لتناسب الزر الجديد
 
@@ -326,7 +326,6 @@ BangBtn.MouseButton1Click:Connect(function()
         bangConnection = RunService.Heartbeat:Connect(function()
             if bangState and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
                 bangCounter = bangCounter + 1
-                -- حركة اهتزازية للأمام والخلف بسرعة مستمرة بالتوافق مع التارجت
                 local offset = (bangCounter % 2 == 0) and CFrame.new(0, 0, 0.7) or CFrame.new(0, 0, -0.7)
                 Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1) * offset
             else
@@ -393,10 +392,7 @@ ParticleBtn.MouseButton1Click:Connect(function()
         currentParticles:Destroy()
     end
 end)
--- [[ نهاية الجزء الثاني - الصق الجزء الثالث تحته مباشرة دون أي تعديل ]]
-
-
--- [[ نهاية الجزء الثاني - الصق الجزء الثالث تحته مباشرة دون أي تعديل ]]
+-- [[ نهاية الجزء الثاني ]]
 -- ==================== تبويب المحفوظات (كامل الأصلي) ====================
 local SavePage = AllPages["المحفوظات"]
 SavePage.CanvasSize = UDim2.new(0, 0, 0, 300)
@@ -507,45 +503,37 @@ local BoysSkins = {
 -- بيانات سكنات البنات (الاسم المعروض، اسم الحساب)
 local GirlsSkins = {
     {"سكن بنت 1", "just_ayla14"},
-    {"سكن بنت 2", "iren_19363"},
-    {"سكن بنت 3", "Einasgumaa"},
-    {"سكن بنت 4", "enyv"},
-    {"سكن بنت 5", "Timebob40"},
-    {"سكن بنت 6", "OnlyinThursday"},
-    {"سكن بنت 7", "cccvry"},
-    {"سكن بنت 8", "FarForahi"},
-    {"سكن بنت 9", "GirlName9"},
-    {"10 سكن بنت", "GirlName10"}
+    {"سكن بنت 2", "iren_0o"}
 }
 
 local function BuildSkinSection(titleText, skinsTable)
     local Title = Instance.new("TextLabel", MilitaryPage)
     Title.Size = UDim2.new(0.95, 0, 0, 30)
-    Title.Text = "—— " .. titleText .. " ——"
+    Title.Text = titleText
     Title.Font = Enum.Font.SourceSansBold
-    Title.TextSize = 14
-    Title.TextColor3 = Color3.fromRGB(255, 215, 0)
+    Title.TextSize = 16
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.BackgroundTransparency = 1
-
+    
     local Container = Instance.new("Frame", MilitaryPage)
-    Container.Size = UDim2.new(0.95, 0, 0, 210)
+    Container.Size = UDim2.new(0.95, 0, 0, 220)
     Container.BackgroundTransparency = 1
-
+    
     local Grid = Instance.new("UIGridLayout", Container)
     Grid.CellSize = UDim2.new(0.47, 0, 0, 35)
-    Grid.CellPadding = UDim2.new(0.04, 0, 0, 6)
+    Grid.CellPadding = UDim2.new(0.04, 0, 0, 8)
     Grid.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
+    
     for _, skin in ipairs(skinsTable) do
         local Btn = Instance.new("TextButton", Container)
         Btn.Size = UDim2.new(0.46, 0, 0, 35)
         Btn.Text = skin[1]
         Btn.Font = Enum.Font.SourceSansBold
         Btn.TextSize = 13
-        Btn.BackgroundColor3 = Color3.fromRGB(45, 55, 45)
+        Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
         Btn.TextColor3 = Color3.new(1, 1, 1)
-        Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 5)
-
+        Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
+        
         Btn.MouseButton1Click:Connect(function()
             ChangeSkin(skin[2])
         end)
@@ -555,3 +543,4 @@ end
 -- بناء الأقسام كاملة ومضمونة داخل التبويب
 BuildSkinSection("سكنات أولاد", BoysSkins)
 BuildSkinSection("سكنات بنات", GirlsSkins)
+-- [[ نهاية السكريبت بالكامل وبنجاح ]]
