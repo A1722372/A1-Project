@@ -479,10 +479,10 @@ local GirlsSkins = {
     {"سكن بنت 2", "iren_19363"},
     {"سكن بنت 3", "Einasgumaa"},
     {"سكن بنت 4", "enyv"},
-    {"سكن بنت 5", "GirlName5"},
-    {"سكن بنت 6", "GirlName6"},
-    {"سكن بنت 7", "GirlName7"},
-    {"سكن بنت 8", "GirlName8"},
+    {"سكن بنت 5", "Timebob40"},
+    {"سكن بنت 6", "OnlyinThursday"},
+    {"سكن بنت 7", "cccvry"},
+    {"سكن بنت 8", "FarForahi"},
     {"سكن بنت 9", "GirlName9"},
     {"10 سكن بنت", "GirlName10"}
 }
