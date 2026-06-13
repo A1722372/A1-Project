@@ -1,4 +1,4 @@
--- [[ سكريبت Anxam الأسطوري الكامل - الجزء الأول V45.1 المعدل ]]
+-- [[ سكريبت Anxam الأسطوري الكامل والمحدث - الجزء الأول V44.0 ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -105,7 +105,7 @@ for i, name in ipairs(MenuConfig) do
     end)
 end
 
--- ==================== تبويب الماب ====================
+-- ==================== تبويب الماب (كامل الأصلي) ====================
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 350)
 
@@ -150,9 +150,9 @@ local DiscordBtn = CreateMapButton("نسخ سيرفر الديسكورد", funct
 end)
 DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 
--- ==================== تبويب اللاعب ====================
+-- ==================== تبويب اللاعب (بداية التبويب الكامل الأصلي) ====================
 local PlayerPage = AllPages["اللاعب"]
-PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 550)
+PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 500)
 
 local function CreatePlayerButton(text, onClick)
     local btn = Instance.new("TextButton", PlayerPage)
@@ -197,27 +197,7 @@ RunService.Heartbeat:Connect(function()
         Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 16 
     end 
 end)
-
--- [برمجة الأداة الجديدة المتوافقة والمضمونة لتعمل على كل الأجهزة والـ Executors]
-CreatePlayerButton("إعطاء أداة الانتقال بالضغط (Click TP)", function()
-    local Backpack = Player:FindFirstChildOfClass("Backpack")
-    if Backpack then
-        -- إنشاء الأداة التقليدية لضمان ظهورها بالحقيبة فوراً
-        local Tool = Instance.new("Tool")
-        Tool.Name = "انتقال بالضغط"
-        Tool.RequiresHandle = false
-        Tool.Parent = Backpack
-        
-        -- تفعيل الانتقال عند الضغط بالشاشة والماوس
-        Tool.Activated:Connect(function()
-            local mouse = Player:GetMouse()
-            if mouse and mouse.Hit and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-                Player.Character.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.X, mouse.Hit.Y + 3, mouse.Hit.Z)
-            end
-        end)
-    end
-end).BackgroundColor3 = Color3.fromRGB(0, 120, 120)
--- [[ نهاية الجزء الأول المعدل ]]
+-- [[ نهاية الجزء الأول - الصق الجزء الثاني تحته مباشرة دون أي تعديل ]]
 local InfJumpBtn = CreatePlayerButton("قفز لا نهائي: مطفأ", function() end)
 local JumpEnabled = false
 InfJumpBtn.MouseButton1Click:Connect(function() 
@@ -253,9 +233,9 @@ CreatePlayerButton("إعادة رسوَن فوري (Instant Reset)", function()
     if Player.Character then Player.Character:BreakJoints() end 
 end).BackgroundColor3 = Color3.fromRGB(150, 30, 30)
 
--- ==================== تبويب الاستهداف ====================
+-- ==================== تبويب الاستهداف (كامل الأصلي) ====================
 local TargetPage = AllPages["الاستهداف"]
-TargetPage.CanvasSize = UDim2.new(0, 0, 0, 400)
+TargetPage.CanvasSize = UDim2.new(0, 0, 0, 350)
 
 local TInput = Instance.new("TextBox", TargetPage)
 TInput.Size = UDim2.new(0.95, 0, 0, 40)
@@ -333,34 +313,7 @@ SitBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-local BangBtn = CreateTargetButton("بانق")
-local bangState = false
-local bangConnection = nil
-BangBtn.MouseButton1Click:Connect(function()
-    bangState = not bangState
-    BangBtn.Text = "بانق" .. (bangState and " (ON)" or " (OFF)")
-    BangBtn.BackgroundColor3 = bangState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
-    
-    if bangState then
-        local bangCounter = 0
-        bangConnection = RunService.Heartbeat:Connect(function()
-            if bangState and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-                bangCounter = bangCounter + 1
-                local offset = (bangCounter % 2 == 0) and CFrame.new(0, 0, 0.7) or CFrame.new(0, 0, -0.7)
-                Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1) * offset
-            else
-                if bangConnection then bangConnection:Disconnect() end
-            end
-        end)
-    else
-        if bangConnection then
-            bangConnection:Disconnect()
-            bangConnection = nil
-        end
-    end
-end)
-
--- ==================== تبويب التأثيرات ====================
+-- ==================== تبويب التأثيرات (كامل الأصلي) ====================
 local EffectsPage = AllPages["التأثيرات"]
 EffectsPage.CanvasSize = UDim2.new(0, 0, 0, 300)
 
@@ -412,8 +365,8 @@ ParticleBtn.MouseButton1Click:Connect(function()
         currentParticles:Destroy()
     end
 end)
--- [[ نهاية الجزء الثاني ]]
--- ==================== تبويب المحفوظات ====================
+-- [[ نهاية الجزء الثاني - الصق الجزء الثالث تحته مباشرة دون أي تعديل ]]
+-- ==================== تبويب المحفوظات (كامل الأصلي) ====================
 local SavePage = AllPages["المحفوظات"]
 SavePage.CanvasSize = UDim2.new(0, 0, 0, 300)
 
@@ -492,7 +445,7 @@ RefreshSaves()
 
 -- ==================== تبويب العسكرية الذكي المخفض 🎖️ ====================
 local MilitaryPage = AllPages["العسكرية 🎖️"]
-MilitaryPage.CanvasSize = UDim2.new(0, 0, 0, 480)
+MilitaryPage.CanvasSize = UDim2.new(0, 0, 0, 560)
 
 local function ChangeSkin(username)
     local chatEvents = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
@@ -506,7 +459,7 @@ local function ChangeSkin(username)
     end
 end
 
--- بيانات سكنات الأولاد (10 سكنات كاملة وأصلية)
+-- بيانات سكنات الأولاد (الاسم المعروض، اسم الحساب)
 local BoysSkins = {
     {"سكن سوما الاساسي", "Soooma203040"},
     {" سكن ولد 2", "Ghost_QQQ2"},
@@ -520,48 +473,7 @@ local BoysSkins = {
     {"10 سكن ولد", "KUNag08"}
 }
 
--- بيانات سكنات البنات (3 سكنات المختصرة الذكية)
+-- بيانات سكنات البنات (الاسم المعروض، اسم الحساب)
 local GirlsSkins = {
     {"سكن بنت 1", "just_ayla14"},
-    {"سكن بنت 2", "iren_0o"},
-    {"سكن بنت 3", "GirlSkin3"}
-}
-
-local function BuildSkinSection(titleText, skinsTable)
-    local Title = Instance.new("TextLabel", MilitaryPage)
-    Title.Size = UDim2.new(0.95, 0, 0, 30)
-    Title.Text = titleText
-    Title.Font = Enum.Font.SourceSansBold
-    Title.TextSize = 16
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.BackgroundTransparency = 1
-    
-    local Container = Instance.new("Frame", MilitaryPage)
-    local rows = math.ceil(#skinsTable / 2)
-    Container.Size = UDim2.new(0.95, 0, 0, rows * 43)
-    Container.BackgroundTransparency = 1
-    
-    local Grid = Instance.new("UIGridLayout", Container)
-    Grid.CellSize = UDim2.new(0.47, 0, 0, 35)
-    Grid.CellPadding = UDim2.new(0.04, 0, 0, 8)
-    Grid.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    
-    for _, skin in ipairs(skinsTable) do
-        local Btn = Instance.new("TextButton", Container)
-        Btn.Size = UDim2.new(0.46, 0, 0, 35)
-        Btn.Text = skin[1]
-        Btn.Font = Enum.Font.SourceSansBold
-        Btn.TextSize = 13
-        Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-        Btn.TextColor3 = Color3.new(1, 1, 1)
-        Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
-        
-        Btn.MouseButton1Click:Connect(function()
-            ChangeSkin(skin[2])
-        end)
-    end
-end
-
-BuildSkinSection("سكنات أولاد", BoysSkins)
-BuildSkinSection("سكنات بنات", GirlsSkins)
--- [[ نهاية السكريبت بالكامل وبنجاح ]]
+    {"سكن بنت 2", "FarForahi"},
