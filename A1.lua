@@ -1,4 +1,6 @@
--- [[ سكريبت Anxam الأسطوري الكامل والمحدث - الجزء الأول V44.0 ]]
+-- [[ سكريبت Anxam الأسطوري الخارق - الحزب الأول V60.0 ]]
+-- الحفاظ الكامل على الهيكل الأساسي والمحفوظات والسكنات الأصلية
+
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -13,7 +15,7 @@ ScreenGui.Name = "AihamScript_Main"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 2147483647 
 
--- === زر الإخفاء والظهار الدائري للموبايل ===
+-- === زر الإخفاء والظهار الدائري للموبايل والأجهزة ===
 local ToggleBtn = Instance.new("TextButton", ScreenGui)
 ToggleBtn.Name = "ToggleBtn"
 ToggleBtn.Size = UDim2.new(0, 45, 0, 45)
@@ -27,16 +29,17 @@ ToggleBtn.Draggable = true
 ToggleBtn.ZIndex = 100
 Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
 
--- === اللوحة الرئيسية ===
+-- === اللوحة الرئيسية المحدثة ===
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 520, 0, 320)
-MainFrame.Position = UDim2.new(0.5, -260, 0.5, -160)
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Size = UDim2.new(0, 530, 0, 340)
+MainFrame.Position = UDim2.new(0.5, -265, 0.5, -170)
+MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
 MainFrame.Active = true 
 MainFrame.Draggable = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
+-- نظام فتح وإغلاق سلس للقائمة
 ToggleBtn.MouseButton1Click:Connect(function()
     if MainFrame.Visible then
         MainFrame.Visible = false
@@ -49,37 +52,38 @@ ToggleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- === القائمة الجانبية ===
+-- === القائمة الجانبية الكبرى لتسع كل الأقسام ===
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
-SideMenu.Size = UDim2.new(0, 140, 1, -20)
+SideMenu.Size = UDim2.new(0, 145, 1, -20)
 SideMenu.Position = UDim2.new(0, 10, 0, 10)
-SideMenu.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+SideMenu.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 SideMenu.BorderSizePixel = 0
 SideMenu.ScrollBarThickness = 3
-SideMenu.CanvasSize = UDim2.new(0, 0, 0, 280)
+SideMenu.CanvasSize = UDim2.new(0, 0, 0, 350)
 Instance.new("UICorner", SideMenu).CornerRadius = UDim.new(0, 8)
 
 local SideLayout = Instance.new("UIListLayout", SideMenu)
-SideLayout.Padding = UDim.new(0, 5)
+SideLayout.Padding = UDim.new(0, 6)
 SideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- === منطقة عرض القوائم ===
+-- === منطقة المحتوى والتبويبات ===
 local ContentArea = Instance.new("Frame", MainFrame)
-ContentArea.Size = UDim2.new(1, -170, 1, -20)
-ContentArea.Position = UDim2.new(0, 160, 0, 10)
+ContentArea.Size = UDim2.new(1, -175, 1, -20)
+ContentArea.Position = UDim2.new(0, 165, 0, 10)
 ContentArea.BackgroundTransparency = 1
 
-local MenuConfig = {"اعدادات الماب", "اللاعب", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
+-- الهيكل الموسع بالترتيب مع إدراج التبويب الخارق الجديد
+local MenuConfig = {"اعدادات الماب", "اللاعب", "ميزات خارقة 🔥", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
 local AllPages = {}
 
 for i, name in ipairs(MenuConfig) do
     local btn = Instance.new("TextButton", SideMenu)
-    btn.Size = UDim2.new(0.95, 0, 0, 38)
+    btn.Size = UDim2.new(0.95, 0, 0, 36)
     btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     btn.TextColor3 = Color3.new(1, 1, 1)
     btn.Font = Enum.Font.SourceSansBold
-    btn.TextSize = 14
+    btn.TextSize = 13
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
     
     local page = Instance.new("ScrollingFrame", ContentArea)
@@ -87,7 +91,7 @@ for i, name in ipairs(MenuConfig) do
     page.BackgroundTransparency = 1
     page.BorderSizePixel = 0
     page.ScrollBarThickness = 4
-    page.Visible = (i == 2)
+    page.Visible = (i == 2) -- فتح قائمة اللاعب كالعادة
     
     local PageLayout = Instance.new("UIListLayout", page)
     PageLayout.Padding = UDim.new(0, 6)
@@ -99,13 +103,13 @@ for i, name in ipairs(MenuConfig) do
         for _, p in pairs(AllPages) do p.Visible = false end
         page.Visible = true
         for _, b in pairs(SideMenu:GetChildren()) do
-            if b:IsA("TextButton") then b.BackgroundColor3 = Color3.fromRGB(45, 45, 45) end
+            if b:IsA("TextButton") then b.BackgroundColor3 = Color3.fromRGB(40, 40, 40) end
         end
-        btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        btn.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
     end)
 end
 
--- ==================== تبويب الماب (كامل الأصلي) ====================
+-- ==================== تبويب الماب الأساسي ====================
 local MapPage = AllPages["اعدادات الماب"]
 MapPage.CanvasSize = UDim2.new(0, 0, 0, 350)
 
@@ -139,7 +143,7 @@ end)
 
 CreateMapButton("تسريع رندر الماب (إزالة اللق)", function()
     for _, obj in pairs(workspace:GetDescendants()) do
-        if obj:IsA("BasePart") and not obj:IsA("MeshPart") then
+        if obj:IsA("BasePart") and not obj:IsA meshPart then
             obj.Material = Enum.Material.SmoothPlastic
         end
     end
@@ -149,8 +153,8 @@ local DiscordBtn = CreateMapButton("نسخ سيرفر الديسكورد", funct
     setclipboard("https://discord.gg/WrxQZDVps")
 end)
 DiscordBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-
--- ==================== تبويب اللاعب (بداية التبويب الكامل الأصلي) ====================
+-- [[ نهاية الحزب الأول ]]
+-- ==================== تبويب اللاعب المطور ====================
 local PlayerPage = AllPages["اللاعب"]
 PlayerPage.CanvasSize = UDim2.new(0, 0, 0, 500)
 
@@ -192,12 +196,13 @@ SpeedBtn.MouseButton1Click:Connect(function()
     SpeedBtn.Text = SpeedEnabled and "السرعة: مفعلة" or "تفعيل السرعة"
     SpeedBtn.BackgroundColor3 = SpeedEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0) 
 end)
+
 RunService.Heartbeat:Connect(function() 
     if SpeedEnabled and Player.Character and Player.Character:FindFirstChild("Humanoid") then 
         Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 16 
     end 
 end)
--- [[ نهاية الجزء الأول - الصق الجزء الثاني تحته مباشرة دون أي تعديل ]]
+
 local InfJumpBtn = CreatePlayerButton("قفز لا نهائي: مطفأ", function() end)
 local JumpEnabled = false
 InfJumpBtn.MouseButton1Click:Connect(function() 
@@ -225,7 +230,7 @@ local LowGrav = false
 GravityBtn.MouseButton1Click:Connect(function() 
     LowGrav = not LowGrav
     workspace.Gravity = LowGrav and 35 or 196.2
-    GravityBtn.Text = LowGrav and "الجاذبية: منخفضة (قمرية)" or "الجاذبية: طبيعية"
+    GravityBtn.Text = LowGrav and "الجاذبية: منخفضة" or "الجاذبية: طبيعية"
     GravityBtn.BackgroundColor3 = LowGrav and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45) 
 end)
 
@@ -233,9 +238,122 @@ CreatePlayerButton("إعادة رسوَن فوري (Instant Reset)", function()
     if Player.Character then Player.Character:BreakJoints() end 
 end).BackgroundColor3 = Color3.fromRGB(150, 30, 30)
 
--- ==================== تبويب الاستهداف (كامل الأصلي) ====================
+CreatePlayerButton("أداة الانتقال بالضغط (Click TP)", function()
+    local Backpack = Player:FindFirstChildOfClass("Backpack")
+    if Backpack then
+        local Tool = Instance.new("Tool")
+        Tool.Name = "انتقال بالضغط 📍"
+        Tool.RequiresHandle = false
+        Tool.Parent = Backpack
+        Tool.Activated:Connect(function()
+            local mouse = Player:GetMouse()
+            if mouse and mouse.Hit and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                Player.Character.HumanoidRootPart.CFrame = CFrame.new(mouse.Hit.X, mouse.Hit.Y + 3, mouse.Hit.Z)
+            end
+        end)
+    end
+end).BackgroundColor3 = Color3.fromRGB(0, 120, 120)
+
+-- ==================== تبويب ميزات خارقة 🔥 (الجديد كلياً) ====================
+local SuperPage = AllPages["ميزات خارقة 🔥"]
+SuperPage.CanvasSize = UDim2.new(0, 0, 0, 450)
+
+local function CreateSuperButton(text)
+    local btn = Instance.new("TextButton", SuperPage)
+    btn.Size = UDim2.new(0.95, 0, 0, 40)
+    btn.Text = text
+    btn.Font = Enum.Font.SourceSansBold
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    return btn
+end
+
+-- 1. ميزة المشي على الجدران (Spider Mode)
+local SpiderBtn = CreateSuperButton("المشي على الجدران: مطفأ")
+local SpiderEnabled = false
+SpiderBtn.MouseButton1Click:Connect(function()
+    SpiderEnabled = not SpiderEnabled
+    SpiderBtn.Text = SpiderEnabled and "المشي على الجدران: شغال" or "المشي على الجدران: مطفأ"
+    SpiderBtn.BackgroundColor3 = SpiderEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
+end)
+
+RunService.Heartbeat:Connect(function()
+    if SpiderEnabled and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        local r = Ray.new(Player.Character.HumanoidRootPart.Position, Player.Character.HumanoidRootPart.CFrame.LookVector * 3)
+        local part, pos, norm = workspace:FindPartOnRay(r, Player.Character)
+        if part and math.abs(norm.Y) < 0.1 then
+            Player.Character.HumanoidRootPart.Velocity = Vector3.new(Player.Character.HumanoidRootPart.Velocity.X, 30, Player.Character.HumanoidRootPart.Velocity.Z)
+        end
+    end
+end)
+
+-- 2. ميزة المشي على الهواء (Air Walk)
+local AirBtn = CreateSuperButton("المشي على الهواء: مطفأ")
+local AirEnabled = false
+local AirPlatform = nil
+AirBtn.MouseButton1Click:Connect(function()
+    AirEnabled = not AirEnabled
+    AirBtn.Text = AirEnabled and "المشي على الهواء: شغال" or "المشي على الهواء: مطفأ"
+    AirBtn.BackgroundColor3 = AirEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
+    if not AirEnabled and AirPlatform then
+        AirPlatform:Destroy()
+        AirPlatform = nil
+    end
+end)
+
+RunService.RenderStepped:Connect(function()
+    if AirEnabled and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        if not AirPlatform or not AirPlatform.Parent then
+            AirPlatform = Instance.new("Part", workspace)
+            AirPlatform.Size = Vector3.new(6, 0.5, 6)
+            AirPlatform.Anchored = true
+            AirPlatform.Transparency = 0.5
+            AirPlatform.Color = Color3.fromRGB(0, 120, 255)
+            AirPlatform.Material = Enum.Material.ForceField
+        end
+        AirPlatform.CFrame = Player.Character.HumanoidRootPart.CFrame * CFrame.new(0, -3.2, 0)
+    end
+end)
+
+-- 3. ميزة الإخفاء التام (Invisible)
+local InvBtn = CreateSuperButton("إخفاء الشخصية (Invisible)")
+InvBtn.BackgroundColor3 = Color3.fromRGB(90, 0, 120)
+InvBtn.MouseButton1Click:Connect(function()
+    if Player.Character then
+        for _, p in pairs(Player.Character:GetDescendants()) do
+            if p:IsA("BasePart") or p:IsA("Decal") then
+                p.Transparency = p.Name == "HumanoidRootPart" and 1 or 0.8
+            end
+        end
+        if Player.Character:FindFirstChild("Head") and Player.Character.Head:FindFirstChildOfClass("BillboardGui") then
+            Player.Character.Head:FindFirstChildOfClass("BillboardGui").Enabled = false
+        end
+    end
+end)
+
+-- 4. ميزة مضاد الطرد والوقوع (Anti-Ragdoll / Anti-Sit)
+local AntiSitBtn = CreateSuperButton("مضاد السقوط والجلوس: شغال")
+AntiSitBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+local AntiSitEnabled = true
+AntiSitBtn.MouseButton1Click:Connect(function()
+    AntiSitEnabled = not AntiSitEnabled
+    AntiSitBtn.Text = AntiSitEnabled and "مضاد السقوط والجلوس: شغال" or "مضاد السقوط والجلوس: مطفأ"
+    AntiSitBtn.BackgroundColor3 = AntiSitEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(45, 45, 45)
+end)
+
+RunService.Heartbeat:Connect(function()
+    if AntiSitEnabled and Player.Character and Player.Character:FindFirstChild("Humanoid") then
+        Player.Character.Humanoid.Sit = false
+        if Player.Character.Humanoid:GetState() == Enum.HumanoidStateType.Ragdoll then
+            Player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        end
+    end
+end)
+-- [[ نهاية الحزب الثاني ]]
+-- ==================== تبويب الاستهداف ====================
 local TargetPage = AllPages["الاستهداف"]
-TargetPage.CanvasSize = UDim2.new(0, 0, 0, 350)
+TargetPage.CanvasSize = UDim2.new(0, 0, 0, 420)
 
 local TInput = Instance.new("TextBox", TargetPage)
 TInput.Size = UDim2.new(0.95, 0, 0, 40)
@@ -313,7 +431,34 @@ SitBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- ==================== تبويب التأثيرات (كامل الأصلي) ====================
+local BangBtn = CreateTargetButton("بانق")
+local bangState = false
+local bangConnection = nil
+BangBtn.MouseButton1Click:Connect(function()
+    bangState = not bangState
+    BangBtn.Text = "بانق" .. (bangState and " (ON)" or " (OFF)")
+    BangBtn.BackgroundColor3 = bangState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+    
+    if bangState then
+        local bangCounter = 0
+        bangConnection = RunService.Heartbeat:Connect(function()
+            if bangState and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                bangCounter = bangCounter + 1
+                local offset = (bangCounter % 2 == 0) and CFrame.new(0, 0, 0.7) or CFrame.new(0, 0, -0.7)
+                Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1) * offset
+            else
+                if bangConnection then bangConnection:Disconnect() end
+            end
+        end)
+    else
+        if bangConnection then
+            bangConnection:Disconnect()
+            bangConnection = nil
+        end
+    end
+end)
+
+-- ==================== تبويب التأثيرات ====================
 local EffectsPage = AllPages["التأثيرات"]
 EffectsPage.CanvasSize = UDim2.new(0, 0, 0, 300)
 
@@ -365,8 +510,8 @@ ParticleBtn.MouseButton1Click:Connect(function()
         currentParticles:Destroy()
     end
 end)
--- [[ نهاية الجزء الثاني - الصق الجزء الثالث تحته مباشرة دون أي تعديل ]]
--- ==================== تبويب المحفوظات (كامل الأصلي) ====================
+
+-- ==================== تبويب المحفوظات ====================
 local SavePage = AllPages["المحفوظات"]
 SavePage.CanvasSize = UDim2.new(0, 0, 0, 300)
 
@@ -443,9 +588,9 @@ SaveBtn.MouseButton1Click:Connect(function()
 end)
 RefreshSaves()
 
--- ==================== تبويب العسكرية الذكي المخفض 🎖️ ====================
+-- ==================== تبويب العسكرية الكبرى 🎖️ ====================
 local MilitaryPage = AllPages["العسكرية 🎖️"]
-MilitaryPage.CanvasSize = UDim2.new(0, 0, 0, 560)
+MilitaryPage.CanvasSize = UDim2.new(0, 0, 0, 520)
 
 local function ChangeSkin(username)
     local chatEvents = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
@@ -459,7 +604,6 @@ local function ChangeSkin(username)
     end
 end
 
--- بيانات سكنات الأولاد (الاسم المعروض، اسم الحساب)
 local BoysSkins = {
     {"سكن سوما الاساسي", "Soooma203040"},
     {" سكن ولد 2", "Ghost_QQQ2"},
@@ -473,7 +617,47 @@ local BoysSkins = {
     {"10 سكن ولد", "KUNag08"}
 }
 
--- بيانات سكنات البنات (الاسم المعروض، اسم الحساب)
 local GirlsSkins = {
     {"سكن بنت 1", "just_ayla14"},
-    {"سكن بنت 2", "FarForahi"},
+    {"سكن بنت 2", "iren_0o"},
+    {"سكن بنت 3", "GirlSkin3"}
+}
+
+local function BuildSkinSection(titleText, skinsTable)
+    local Title = Instance.new("TextLabel", MilitaryPage)
+    Title.Size = UDim2.new(0.95, 0, 0, 30)
+    Title.Text = titleText
+    Title.Font = Enum.Font.SourceSansBold
+    Title.TextSize = 15
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.BackgroundTransparency = 1
+    
+    local Container = Instance.new("Frame", MilitaryPage)
+    local rows = math.ceil(#skinsTable / 2)
+    Container.Size = UDim2.new(0.95, 0, 0, rows * 44)
+    Container.BackgroundTransparency = 1
+    
+    local Grid = Instance.new("UIGridLayout", Container)
+    Grid.CellSize = UDim2.new(0.47, 0, 0, 36)
+    Grid.CellPadding = UDim2.new(0.04, 0, 0, 8)
+    Grid.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    
+    for _, skin in ipairs(skinsTable) do
+        local Btn = Instance.new("TextButton", Container)
+        Btn.Size = UDim2.new(0.46, 0, 0, 36)
+        Btn.Text = skin[1]
+        Btn.Font = Enum.Font.SourceSansBold
+        Btn.TextSize = 13
+        Btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        Btn.TextColor3 = Color3.new(1, 1, 1)
+        Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
+        
+        Btn.MouseButton1Click:Connect(function()
+            ChangeSkin(skin[2])
+        end)
+    end
+end
+
+BuildSkinSection("سكنات أولاد", BoysSkins)
+BuildSkinSection("سكنات بنات", GirlsSkins)
+-- [[ نهاية السكريبت الاحترافي الخارق بالكامل بنجاح ]]
