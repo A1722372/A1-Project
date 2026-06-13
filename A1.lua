@@ -198,7 +198,7 @@ RunService.Heartbeat:Connect(function()
     end 
 end)
 -- [[ نهاية الجزء الأول - الصق الجزء الثاني تحته مباشرة دون أي تعديل ]]
-local InfJumpBtn = CreatePlayerButton("قفز لا نهائي: مطفأ", function() end)
+Local InfJumpBtn = CreatePlayerButton("قفز لا نهائي: مطفأ", function() end)
 local JumpEnabled = false
 InfJumpBtn.MouseButton1Click:Connect(function() 
     JumpEnabled = not JumpEnabled 
@@ -235,7 +235,7 @@ end).BackgroundColor3 = Color3.fromRGB(150, 30, 30)
 
 -- ==================== تبويب الاستهداف (كامل الأصلي) ====================
 local TargetPage = AllPages["الاستهداف"]
-TargetPage.CanvasSize = UDim2.new(0, 0, 0, 350)
+TargetPage.CanvasSize = UDim2.new(0, 0, 0, 400) -- تم زيادة الحجم لتناسب الزر الجديد
 
 local TInput = Instance.new("TextBox", TargetPage)
 TInput.Size = UDim2.new(0.95, 0, 0, 40)
@@ -313,6 +313,34 @@ SitBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+local BangBtn = CreateTargetButton("بانق")
+local bangState = false
+local bangConnection = nil
+BangBtn.MouseButton1Click:Connect(function()
+    bangState = not bangState
+    BangBtn.Text = "بانق" .. (bangState and " (ON)" or " (OFF)")
+    BangBtn.BackgroundColor3 = bangState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+    
+    if bangState then
+        local bangCounter = 0
+        bangConnection = RunService.Heartbeat:Connect(function()
+            if bangState and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                bangCounter = bangCounter + 1
+                -- حركة اهتزازية للأمام والخلف بسرعة مستمرة بالتوافق مع التارجت
+                local offset = (bangCounter % 2 == 0) and CFrame.new(0, 0, 0.7) or CFrame.new(0, 0, -0.7)
+                Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1) * offset
+            else
+                if bangConnection then bangConnection:Disconnect() end
+            end
+        end)
+    else
+        if bangConnection then
+            bangConnection:Disconnect()
+            bangConnection = nil
+        end
+    end
+end)
+
 -- ==================== تبويب التأثيرات (كامل الأصلي) ====================
 local EffectsPage = AllPages["التأثيرات"]
 EffectsPage.CanvasSize = UDim2.new(0, 0, 0, 300)
@@ -365,6 +393,9 @@ ParticleBtn.MouseButton1Click:Connect(function()
         currentParticles:Destroy()
     end
 end)
+-- [[ نهاية الجزء الثاني - الصق الجزء الثالث تحته مباشرة دون أي تعديل ]]
+
+
 -- [[ نهاية الجزء الثاني - الصق الجزء الثالث تحته مباشرة دون أي تعديل ]]
 -- ==================== تبويب المحفوظات (كامل الأصلي) ====================
 local SavePage = AllPages["المحفوظات"]
