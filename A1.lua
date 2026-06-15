@@ -284,8 +284,18 @@ TeleSpawnBtn.MouseButton1Click:Connect(function()
         TeleSpawnBtn.Text = "الانتقال للتشيك بوينت"
     end
 end)
+
+Player.CharacterAdded:Connect(function(newCharacter)
+    if savedSpawnCFrame then
+        local root = newCharacter:WaitForChild("HumanoidRootPart", 5)
+        if root then
+            task.wait(0.3)
+            root.CFrame = savedSpawnCFrame
+        end
+    end
+end)
 -- [[ سكريبت أيهم الأسطوري V15 - الجزء الثالث ]]
--- === [ شريحة 3: الاستهداف المطور + إضافات ESP لأيهم ] ===
+-- === [ شريحة 3: الاستهداف المطور + إضافات ESP و Fling لأيهم ] ===
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
@@ -297,7 +307,9 @@ local TargetPlayer = nil
 local Tracking = false
 local Spectating = false
 local espActive = false
+local flingActive = false
 local currentHighlight = nil
+local flingConnection = nil
 
 local TeleBtn = Instance.new("TextButton", TargetPage)
 TeleBtn.Size = UDim2.new(0.9, 0, 0, 32) TeleBtn.Position = UDim2.new(0.05, 0, 0, 55)
@@ -309,7 +321,6 @@ SpecBtn.Size = UDim2.new(0.9, 0, 0, 32) SpecBtn.Position = UDim2.new(0.05, 0, 0,
 SpecBtn.Text = "مشاهدة اللاعب (Spectate)" SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 table.insert(yellowElements, SpecBtn)
 
--- [[ أزرار ESP والـ F9 الجديدة لأيهم ]]
 local EspBtn = Instance.new("TextButton", TargetPage)
 EspBtn.Size = UDim2.new(0.42, 0, 0, 35) EspBtn.Position = UDim2.new(0.05, 0, 0, 135)
 EspBtn.Text = "تفعيل ESP دائرة زرقاء" EspBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) EspBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -319,6 +330,12 @@ local F9Btn = Instance.new("TextButton", TargetPage)
 F9Btn.Size = UDim2.new(0.42, 0, 0, 35) F9Btn.Position = UDim2.new(0.53, 0, 0, 135)
 F9Btn.Text = "تفعيل كاشف F9 الشامل" F9Btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) F9Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 F9Btn.Font = Enum.Font.SourceSansBold F9Btn.TextSize = 12
+
+-- [[ ميزة الـ Fling الجديدة لـ Delta Executor ]]
+local FlingBtn = Instance.new("TextButton", TargetPage)
+FlingBtn.Size = UDim2.new(0.9, 0, 0, 35) FlingBtn.Position = UDim2.new(0.05, 0, 0, 178)
+FlingBtn.Text = "تفعيل تفجير وتطير اللاعب (Fling)" FlingBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0) FlingBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlingBtn.Font = Enum.Font.SourceSansBold FlingBtn.TextSize = 13
 
 local function findTarget()
     local firstLetter = NameBox.Text:sub(1, 1):lower()
@@ -380,11 +397,9 @@ SpecBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- تشغيل ميزة ESP الدائرة الزرقاء المستهدفة
 EspBtn.MouseButton1Click:Connect(function()
     espActive = not espActive
     EspBtn.BackgroundColor3 = espActive and Color3.fromRGB(0, 100, 255) or Color3.fromRGB(40, 40, 40)
-    
     if espActive then
         local target = findTarget()
         if target and target.Character then
@@ -411,7 +426,6 @@ EspBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- تشغيل الـ F9 الشامل (الكاشف التلقائي لجميع الصناديق والمواقع)
 local f9Active = false
 F9Btn.MouseButton1Click:Connect(function()
     f9Active = not f9Active
@@ -431,6 +445,43 @@ F9Btn.MouseButton1Click:Connect(function()
         for _, p in ipairs(PlayersService:GetPlayers()) do
             if p.Character and p.Character:FindFirstChild("F9_ESP") then p.Character.F9_ESP:Destroy() end
         end
+    end
+end)
+
+-- كود تفعيل الـ Fling المتوافق تماماً مع Delta
+FlingBtn.MouseButton1Click:Connect(function()
+    flingActive = not flingActive
+    if flingActive then
+        local target = findTarget()
+        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            FlingBtn.Text = "جاري تدمير: " .. target.Name
+            FlingBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+            
+            -- كود الدوران الفيزيائي السريع جداً لتطير الخصم فوراً
+            flingConnection = RunService.Heartbeat:Connect(function()
+                if flingActive and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+                    local myRoot = Player.Character.HumanoidRootPart
+                    local tRoot = target.Character.HumanoidRootPart
+                    
+                    myRoot.CFrame = tRoot.CFrame * CFrame.new(0, 0, 0)
+                    myRoot.Velocity = Vector3.new(99999, 99999, 99999)
+                end
+            end)
+        else
+            flingActive = false
+            FlingBtn.Text = "لم يتم العثور على اللاعب!"
+            FlingBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+            task.wait(1.5)
+            FlingBtn.Text = "تفعيل تفجير وتطير اللاعب (Fling)"
+            FlingBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        end
+    else
+        if flingConnection then flingConnection:Disconnect() flingConnection = nil end
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+        end
+        FlingBtn.Text = "تفعيل تفجير وتطير اللاعب (Fling)"
+        FlingBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
     end
 end)
 
@@ -521,13 +572,3 @@ createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
-
-Player.CharacterAdded:Connect(function(newCharacter)
-    if savedSpawnCFrame then
-        local root = newCharacter:WaitForChild("HumanoidRootPart", 5)
-        if root then
-            task.wait(0.3)
-            root.CFrame = savedSpawnCFrame
-        end
-    end
-end)
