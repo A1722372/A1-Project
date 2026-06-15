@@ -164,7 +164,7 @@ JumpInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) JumpInput.TextColor3 = C
 JumpInput.Text = "120" JumpInput.Font = Enum.Font.SourceSansBold JumpInput.TextSize = 14
 table.insert(yellowElements, JumpInput)
 local JumpBtn = Instance.new("TextButton", PlayerPage)
-JumpBtn.Size = UDim2.new(0.35, 0, 0, 30) PlayerPage.Position = UDim2.new(0,0,0,0) -- تثبيت داخلي
+JumpBtn.Size = UDim2.new(0.35, 0, 0, 30) PlayerPage.Position = UDim2.new(0,0,0,0)
 JumpBtn.Position = UDim2.new(0.6, 0, 0, 60)
 JumpBtn.Text = "تفعيل القفز" JumpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) JumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local jumpActive = false
@@ -248,7 +248,6 @@ UserInputService.JumpRequest:Connect(function()
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
 
--- === [[ الأزرار المحدثة: أزرار حفظ التشيك بوينت والتنقل ]] ===
 local savedSpawnCFrame = nil
 
 local SaveSpawnBtn = Instance.new("TextButton", PlayerPage)
@@ -285,18 +284,8 @@ TeleSpawnBtn.MouseButton1Click:Connect(function()
         TeleSpawnBtn.Text = "الانتقال للتشيك بوينت"
     end
 end)
-
-Player.CharacterAdded:Connect(function(newCharacter)
-    if savedSpawnCFrame then
-        local root = newCharacter:WaitForChild("HumanoidRootPart", 5)
-        if root then
-            task.wait(0.3)
-            root.CFrame = savedSpawnCFrame
-        end
-    end
-end)
 -- [[ سكريبت أيهم الأسطوري V15 - الجزء الثالث ]]
--- === [ شريحة 3: الاستهداف المطور (مع ميزة المشاهدة والتتبع) ] ===
+-- === [ شريحة 3: الاستهداف المطور + إضافات ESP لأيهم ] ===
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
@@ -307,6 +296,8 @@ table.insert(yellowElements, NameBox)
 local TargetPlayer = nil
 local Tracking = false
 local Spectating = false
+local espActive = false
+local currentHighlight = nil
 
 local TeleBtn = Instance.new("TextButton", TargetPage)
 TeleBtn.Size = UDim2.new(0.9, 0, 0, 32) TeleBtn.Position = UDim2.new(0.05, 0, 0, 55)
@@ -317,6 +308,17 @@ local SpecBtn = Instance.new("TextButton", TargetPage)
 SpecBtn.Size = UDim2.new(0.9, 0, 0, 32) SpecBtn.Position = UDim2.new(0.05, 0, 0, 95)
 SpecBtn.Text = "مشاهدة اللاعب (Spectate)" SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 table.insert(yellowElements, SpecBtn)
+
+-- [[ أزرار ESP والـ F9 الجديدة لأيهم ]]
+local EspBtn = Instance.new("TextButton", TargetPage)
+EspBtn.Size = UDim2.new(0.42, 0, 0, 35) EspBtn.Position = UDim2.new(0.05, 0, 0, 135)
+EspBtn.Text = "تفعيل ESP دائرة زرقاء" EspBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) EspBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+EspBtn.Font = Enum.Font.SourceSansBold EspBtn.TextSize = 12
+
+local F9Btn = Instance.new("TextButton", TargetPage)
+F9Btn.Size = UDim2.new(0.42, 0, 0, 35) F9Btn.Position = UDim2.new(0.53, 0, 0, 135)
+F9Btn.Text = "تفعيل كاشف F9 الشامل" F9Btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) F9Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+F9Btn.Font = Enum.Font.SourceSansBold F9Btn.TextSize = 12
 
 local function findTarget()
     local firstLetter = NameBox.Text:sub(1, 1):lower()
@@ -355,26 +357,12 @@ end)
 SpecBtn.MouseButton1Click:Connect(function()
     Spectating = not Spectating
     local currentCamera = workspace.CurrentCamera
-    
     if Spectating then
         local target = findTarget()
         if target and target.Character and target.Character:FindFirstChild("Humanoid") then
             currentCamera.CameraSubject = target.Character.Humanoid
             SpecBtn.Text = "إيقاف المشاهدة: " .. target.Name
             SpecBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
-            
-            local leaveConn
-            leaveConn = PlayersService.PlayerRemoving:Connect(function(lp)
-                if lp == target then
-                    Spectating = false
-                    if Player.Character and Player.Character:FindFirstChild("Humanoid") then
-                        currentCamera.CameraSubject = Player.Character.Humanoid
-                    end
-                    SpecBtn.Text = "مشاهدة اللاعب (Spectate)"
-                    SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                    leaveConn:Disconnect()
-                end
-            end)
         else
             Spectating = false
             SpecBtn.Text = "لم يتم العثور على اللاعب"
@@ -389,6 +377,60 @@ SpecBtn.MouseButton1Click:Connect(function()
         end
         SpecBtn.Text = "مشاهدة اللاعب (Spectate)"
         SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    end
+end)
+
+-- تشغيل ميزة ESP الدائرة الزرقاء المستهدفة
+EspBtn.MouseButton1Click:Connect(function()
+    espActive = not espActive
+    EspBtn.BackgroundColor3 = espActive and Color3.fromRGB(0, 100, 255) or Color3.fromRGB(40, 40, 40)
+    
+    if espActive then
+        local target = findTarget()
+        if target and target.Character then
+            if currentHighlight then currentHighlight:Destroy() end
+            currentHighlight = Instance.new("Highlight")
+            currentHighlight.Name = "AihamBlueESP"
+            currentHighlight.FillColor = Color3.fromRGB(0, 150, 255)
+            currentHighlight.FillTransparency = 0.5
+            currentHighlight.OutlineColor = Color3.fromRGB(0, 50, 255)
+            currentHighlight.OutlineTransparency = 0
+            currentHighlight.Parent = target.Character
+            EspBtn.Text = "ESP نشط لـ: " .. target.Name
+        else
+            espActive = false
+            EspBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+            EspBtn.Text = "اكتب الحرف أولاً!"
+            task.wait(1.5)
+            EspBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            EspBtn.Text = "تفعيل ESP دائرة زرقاء"
+        end
+    else
+        if currentHighlight then currentHighlight:Destroy() currentHighlight = nil end
+        EspBtn.Text = "تفعيل ESP دائرة زرقاء"
+    end
+end)
+
+-- تشغيل الـ F9 الشامل (الكاشف التلقائي لجميع الصناديق والمواقع)
+local f9Active = false
+F9Btn.MouseButton1Click:Connect(function()
+    f9Active = not f9Active
+    F9Btn.BackgroundColor3 = f9Active and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
+    if f9Active then
+        F9Btn.Text = "الكاشف F9 مفعل"
+        for _, p in ipairs(PlayersService:GetPlayers()) do
+            if p ~= Player and p.Character and not p.Character:FindFirstChild("F9_ESP") then
+                local box = Instance.new("BoxHandleAdornment")
+                box.Name = "F9_ESP" box.Size = Vector3.new(4, 6, 4) box.Color3 = Color3.fromRGB(0, 255, 255)
+                box.AlwaysOnTop = true box.ZIndex = 10 box.Adornee = p.Character:FindFirstChild("HumanoidRootPart")
+                box.Parent = p.Character
+            end
+        end
+    else
+        F9Btn.Text = "تفعيل كاشف F9 الشامل"
+        for _, p in ipairs(PlayersService:GetPlayers()) do
+            if p.Character and p.Character:FindFirstChild("F9_ESP") then p.Character.F9_ESP:Destroy() end
+        end
     end
 end)
 
@@ -479,3 +521,13 @@ createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
 
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
+
+Player.CharacterAdded:Connect(function(newCharacter)
+    if savedSpawnCFrame then
+        local root = newCharacter:WaitForChild("HumanoidRootPart", 5)
+        if root then
+            task.wait(0.3)
+            root.CFrame = savedSpawnCFrame
+        end
+    end
+end)
