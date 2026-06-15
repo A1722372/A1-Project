@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V15 (الكامل) ]]
+-- [[ سكريبت أيهم الأسطوري V15 - الجزء الأول ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -130,7 +130,7 @@ for idx, mode in ipairs(colors) do
     cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
 end
-
+-- [[ سكريبت أيهم الأسطوري V15 - الجزء الثاني ]]
 -- === [ شريحة 2: اللاعب ] ===
 local PlayerPage = Pages[2]
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
@@ -191,7 +191,6 @@ FlyBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
 end)
 
--- الزر الجديد: القوست مود (Ghost Mode)
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
 GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -213,7 +212,6 @@ GhostBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- الزر المعدل: قفل الكاميرا (Camera Lock)
 local LockCamBtn = Instance.new("TextButton", PlayerPage)
 LockCamBtn.Size = UDim2.new(0.9, 0, 0, 32) LockCamBtn.Position = UDim2.new(0.05, 0, 0, 185)
 LockCamBtn.Text = "قفل الكاميرا" LockCamBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) LockCamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -248,21 +246,116 @@ UserInputService.JumpRequest:Connect(function()
     if infJumpActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid:ChangeState("Jumping") end
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
-
+-- [[ سكريبت أيهم الأسطوري V15 - الجزء الثالث ]]
+-- === [ شريحة 3: الاستهداف المطور (مع ميزة المشاهدة والتتبع) ] ===
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
 NameBox.Size = UDim2.new(0.9, 0, 0, 35) NameBox.Position = UDim2.new(0.05, 0, 0, 10)
-NameBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30) NameBox.TextColor3 = Color3.fromRGB(255, 255, 255) NameBox.PlaceholderText = "اسم اللاعب..."
+NameBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30) NameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+NameBox.PlaceholderText = "اكتب أول حرف من اسم اللاعب..."
+table.insert(yellowElements, NameBox)
+
+local TargetPlayer = nil
+local Tracking = false
+local Spectating = false
+
+-- زر التتبع
 local TeleBtn = Instance.new("TextButton", TargetPage)
 TeleBtn.Size = UDim2.new(0.9, 0, 0, 32) TeleBtn.Position = UDim2.new(0.05, 0, 0, 55)
-TeleBtn.Text = "انتقال فوري للاعب" TeleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) TeleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TeleBtn.Text = "تتبع اللاعب (حرف واحد)" TeleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) TeleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+table.insert(yellowElements, TeleBtn)
+
+-- زر المشاهدة (Spectate)
+local SpecBtn = Instance.new("TextButton", TargetPage)
+SpecBtn.Size = UDim2.new(0.9, 0, 0, 32) SpecBtn.Position = UDim2.new(0.05, 0, 0, 95)
+SpecBtn.Text = "مشاهدة اللاعب (Spectate)" SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+table.insert(yellowElements, SpecBtn)
+
+-- دالة للبحث عن اللاعب بناءً على الحرف الأول
+local function findTarget()
+    local firstLetter = NameBox.Text:sub(1, 1):lower()
+    if firstLetter ~= "" then
+        for _, p in ipairs(PlayersService:GetPlayers()) do
+            if p ~= Player and p.Name:lower():sub(1, 1) == firstLetter then
+                return p
+            end
+        end
+    end
+    return nil
+end
+
+-- تشغيل وإطفاء التتبع
 TeleBtn.MouseButton1Click:Connect(function()
-    local tName = NameBox.Text:lower()
-    for _, p in ipairs(PlayersService:GetPlayers()) do
-        if p.Name:lower():sub(1, #tName) == tName and p.Character then Player.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3) end
+    Tracking = not Tracking
+    if Tracking then
+        TargetPlayer = findTarget()
+        if TargetPlayer then
+            TeleBtn.Text = "تتبع: " .. TargetPlayer.Name
+            TeleBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+        else
+            Tracking = false
+            TeleBtn.Text = "لم يتم العثور على اللاعب"
+            TeleBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+            task.wait(1.5)
+            TeleBtn.Text = "تتبع اللاعب (حرف واحد)"
+            TeleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        end
+    else
+        TargetPlayer = nil
+        TeleBtn.Text = "تتبع اللاعب (حرف واحد)"
+        TeleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     end
 end)
 
+-- تشغيل وإطفاء المشاهدة (Spectate)
+SpecBtn.MouseButton1Click:Connect(function()
+    Spectating = not Spectating
+    local currentCamera = workspace.CurrentCamera
+    
+    if Spectating then
+        local target = findTarget()
+        if target and target.Character and target.Character:FindFirstChild("Humanoid") then
+            currentCamera.CameraSubject = target.Character.Humanoid
+            SpecBtn.Text = "إيقاف المشاهدة: " .. target.Name
+            SpecBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+            
+            local leaveConn
+            leaveConn = PlayersService.PlayerRemoving:Connect(function(lp)
+                if lp == target then
+                    Spectating = false
+                    if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+                        currentCamera.CameraSubject = Player.Character.Humanoid
+                    end
+                    SpecBtn.Text = "مشاهدة اللاعب (Spectate)"
+                    SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                    leaveConn:Disconnect()
+                end
+            end)
+        else
+            Spectating = false
+            SpecBtn.Text = "لم يتم العثور على اللاعب"
+            SpecBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+            task.wait(1.5)
+            SpecBtn.Text = "مشاهدة اللاعب (Spectate)"
+            SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        end
+    else
+        if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+            currentCamera.CameraSubject = Player.Character.Humanoid
+        end
+        SpecBtn.Text = "مشاهدة اللاعب (Spectate)"
+        SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    end
+end)
+
+-- حلقة التتبع المستمرة
+RunService.RenderStepped:Connect(function()
+    if Tracking and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+    end
+end)
+
+-- === [ شريحة 4: نقاط الحفظ ] ===
 local CheckpointPage = Pages[4]
 local CPInput = Instance.new("TextBox", CheckpointPage)
 CPInput.Size = UDim2.new(0.55, 0, 0, 32) CPInput.Position = UDim2.new(0.05, 0, 0, 10)
@@ -300,6 +393,7 @@ SaveBtn.MouseButton1Click:Connect(function()
     end
 end)
 
+-- === [ شريحة 5: التأثيرات ] ===
 local EffectsPage = Pages[5]
 local function clearAllEffects()
     if Player.Character then
@@ -340,4 +434,5 @@ createEffectBtn("تفعيل تأثير الإضاءة المشعة الشامل�
 createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
 createEffectBtn("تفعيل شظايا اللهب المصلحة (Red Particles)", 124, Color3.fromRGB(190, 0, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 0, 0)) end)
 createEffectBtn("إزالة كافة التأثيرات والبارتكلز فوراً", 170, Color3.fromRGB(60, 60, 60), function() clearAllEffects() end)
+
 local CloseBtn = Instance.new("TextButton", MainFrame) CloseBtn.Size = UDim2.new(0, 25, 0, 25) CloseBtn.Position = UDim2.new(1, -28, 0, 4) CloseBtn.Text = "X" CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0) CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255) CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
