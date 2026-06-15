@@ -1,115 +1,4 @@
--- [[ سكريبت Anxam المطور الإبداعي الخارق - الحزب الأول V64.0 ]]
-local Player = game.Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
-local Lighting = game:GetService("Lighting")
-local RunService = game:GetService("RunService")
-local UIS = game:GetService("UserInputService")
-
-if not getgenv().AihamSavedPositions then getgenv().AihamSavedPositions = {} end
-if PlayerGui:FindFirstChild("AihamScript_Main") then PlayerGui.AihamScript_Main:Destroy() end
-
-local ScreenGui = Instance.new("ScreenGui", PlayerGui)
-ScreenGui.Name = "AihamScript_Main"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.DisplayOrder = 2147483647 
-
-local ToggleBtn = Instance.new("TextButton", ScreenGui)
-ToggleBtn.Name = "ToggleBtn"
-ToggleBtn.Size = UDim2.new(0, 45, 0, 45)
-ToggleBtn.Position = UDim2.new(0, 15, 0, 15)
-ToggleBtn.Text = "إخفاء" 
-ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleBtn.BackgroundColor3 = Color3.fromRGB(150, 30, 30)
-ToggleBtn.TextSize = 13
-ToggleBtn.Font = Enum.Font.SourceSansBold
-ToggleBtn.Draggable = true
-ToggleBtn.ZIndex = 100
-Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
-
-local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 530, 0, 340)
-MainFrame.Position = UDim2.new(0.5, -265, 0.5, -170)
-MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
-MainFrame.Active = true 
-MainFrame.Draggable = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
-
-ToggleBtn.MouseButton1Click:Connect(function()
-    if MainFrame.Visible then
-        MainFrame.Visible = false
-        ToggleBtn.Text = "إظهار"
-        ToggleBtn.BackgroundColor3 = Color3.fromRGB(14, 110, 200)
-    else
-        MainFrame.Visible = true
-        ToggleBtn.Text = "إخفاء"
-        ToggleBtn.BackgroundColor3 = Color3.fromRGB(150, 30, 30)
-    end
-end)
-
-local SideMenu = Instance.new("ScrollingFrame", MainFrame)
-SideMenu.Size = UDim2.new(0, 145, 1, -20)
-SideMenu.Position = UDim2.new(0, 10, 0, 10)
-SideMenu.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-SideMenu.BorderSizePixel = 0
-SideMenu.ScrollBarThickness = 3
-SideMenu.CanvasSize = UDim2.new(0, 0, 0, 350)
-Instance.new("UICorner", SideMenu).CornerRadius = UDim.new(0, 8)
-
-local SideLayout = Instance.new("UIListLayout", SideMenu)
-SideLayout.Padding = UDim.new(0, 6)
-SideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
-local ContentArea = Instance.new("Frame", MainFrame)
-ContentArea.Size = UDim2.new(1, -175, 1, -20)
-ContentArea.Position = UDim2.new(0, 165, 0, 10)
-ContentArea.BackgroundTransparency = 1
-
-local MenuConfig = {"اعدادات الماب", "اللاعب", "ميزات خارقة 🔥", "الاستهداف", "التأثيرات", "المحفوظات", "العسكرية 🎖️"}
-local AllPages = {}
-
-for i, name in ipairs(MenuConfig) do
-    local btn = Instance.new("TextButton", SideMenu)
-    btn.Size = UDim2.new(0.95, 0, 0, 36)
-    btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    btn.Font = Enum.Font.SourceSansBold
-    btn.TextSize = 13
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
-    
-    local page = Instance.new("ScrollingFrame", ContentArea)
-    page.Size = UDim2.new(1, 0, 1, 0)
-    page.BackgroundTransparency = 1
-    page.BorderSizePixel = 0
-    page.ScrollBarThickness = 4
-    page.Visible = (i == 2)
-    
-    local PageLayout = Instance.new("UIListLayout", page)
-    PageLayout.Padding = UDim.new(0, 6)
-    PageLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    
-    AllPages[name] = page
-    
-    btn.MouseButton1Click:Connect(function()
-        for _, p in pairs(AllPages) do p.Visible = false end
-        page.Visible = true
-        for _, b in pairs(SideMenu:GetChildren()) do
-            if b:IsA("TextButton") then b.BackgroundColor3 = Color3.fromRGB(40, 40, 40) end
-        end
-        btn.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
-    end)
-end
-
-local MapPage = AllPages["اعدادات الماب"]
-MapPage.CanvasSize = UDim2.new(0, 0, 0, 350)
-
-local function CreateMapButton(text, onClick)
-    local btn = Instance.new("TextButton", MapPage)
-    btn.Size = UDim2.new(0.95, 0, 0, 40)
-    btn.Text = text
-    btn.Font = Enum.Font.SourceSansBold
-    btn.TextColor3 = Color3.new(1, 1, 1)
+-- 
     btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
     btn.MouseButton1Click:Connect(onClick)
@@ -449,9 +338,8 @@ end)
 local BangBtn = CreateTargetButton("🔥 حركة البانق التلقائية (ON/OFF)")
 local bangState = false
 local bangConnection = nil
-BangBtn.MouseButton1Click:Connect(function()
-    bangState = not bangState
-    BangBtn.BackgroundColor3 = bangState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+     bangState = not bangState
+    BangBtn.BackgroundColor3   = bangState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
     if bangState then
         local bangCounter = 0
         bangConnection = RunService.Heartbeat:Connect(function()
