@@ -130,7 +130,7 @@ for idx, mode in ipairs(colors) do
     cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
 end
--- [[ سكريبت أيهم الأسطوري V15 - الجزء الثاني ]]
+-- [[ سكريبت أيهم الأسطوري V15 - الجزء الثاني المطور ]]
 -- === [ شريحة 2: اللاعب ] ===
 local PlayerPage = Pages[2]
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
@@ -164,7 +164,8 @@ JumpInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) JumpInput.TextColor3 = C
 JumpInput.Text = "120" JumpInput.Font = Enum.Font.SourceSansBold JumpInput.TextSize = 14
 table.insert(yellowElements, JumpInput)
 local JumpBtn = Instance.new("TextButton", PlayerPage)
-JumpBtn.Size = UDim2.new(0.35, 0, 0, 30) JumpBtn.Position = UDim2.new(0.6, 0, 0, 60)
+JumpBtn.Size = UDim2.new(0.35, 0, 0, 30) PlayerPage.Position = UDim2.new(0,0,0,0) -- تثبيت داخلي
+JumpBtn.Position = UDim2.new(0.6, 0, 0, 60)
 JumpBtn.Text = "تفعيل القفز" JumpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) JumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local jumpActive = false
 JumpBtn.MouseButton1Click:Connect(function()
@@ -246,6 +247,54 @@ UserInputService.JumpRequest:Connect(function()
     if infJumpActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then Player.Character.Humanoid:ChangeState("Jumping") end
 end)
 InfJumpBtn.MouseButton1Click:Connect(function() infJumpActive = not infJumpActive InfJumpBtn.BackgroundColor3 = infJumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40) end)
+
+-- === [[ الأزرار المحدثة: أزرار حفظ التشيك بوينت والتنقل ]] ===
+local savedSpawnCFrame = nil
+
+local SaveSpawnBtn = Instance.new("TextButton", PlayerPage)
+SaveSpawnBtn.Size = UDim2.new(0.42, 0, 0, 35) SaveSpawnBtn.Position = UDim2.new(0.05, 0, 0, 305)
+SaveSpawnBtn.Text = "حفظ التشيك بوينت" SaveSpawnBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) SaveSpawnBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SaveSpawnBtn.Font = Enum.Font.SourceSansBold SaveSpawnBtn.TextSize = 12
+
+local TeleSpawnBtn = Instance.new("TextButton", PlayerPage)
+TeleSpawnBtn.Size = UDim2.new(0.42, 0, 0, 35) TeleSpawnBtn.Position = UDim2.new(0.53, 0, 0, 305)
+TeleSpawnBtn.Text = "الانتقال للتشيك بوينت" TeleSpawnBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) TeleSpawnBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TeleSpawnBtn.Font = Enum.Font.SourceSansBold TeleSpawnBtn.TextSize = 12
+
+SaveSpawnBtn.MouseButton1Click:Connect(function()
+    if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+        savedSpawnCFrame = Player.Character.HumanoidRootPart.CFrame
+        SaveSpawnBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+        SaveSpawnBtn.Text = "تم الحفظ بنجاح ✓"
+        task.wait(1.5)
+        SaveSpawnBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        SaveSpawnBtn.Text = "حفظ التشيك بوينت"
+    end
+end)
+
+TeleSpawnBtn.MouseButton1Click:Connect(function()
+    if savedSpawnCFrame then
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.CFrame = savedSpawnCFrame
+        end
+    else
+        TeleSpawnBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        TeleSpawnBtn.Text = "احفظ مكان أولاً!"
+        task.wait(1.5)
+        TeleSpawnBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        TeleSpawnBtn.Text = "الانتقال للتشيك بوينت"
+    end
+end)
+
+Player.CharacterAdded:Connect(function(newCharacter)
+    if savedSpawnCFrame then
+        local root = newCharacter:WaitForChild("HumanoidRootPart", 5)
+        if root then
+            task.wait(0.3)
+            root.CFrame = savedSpawnCFrame
+        end
+    end
+end)
 -- [[ سكريبت أيهم الأسطوري V15 - الجزء الثالث ]]
 -- === [ شريحة 3: الاستهداف المطور (مع ميزة المشاهدة والتتبع) ] ===
 local TargetPage = Pages[3]
@@ -259,19 +308,16 @@ local TargetPlayer = nil
 local Tracking = false
 local Spectating = false
 
--- زر التتبع
 local TeleBtn = Instance.new("TextButton", TargetPage)
 TeleBtn.Size = UDim2.new(0.9, 0, 0, 32) TeleBtn.Position = UDim2.new(0.05, 0, 0, 55)
 TeleBtn.Text = "تتبع اللاعب (حرف واحد)" TeleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) TeleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 table.insert(yellowElements, TeleBtn)
 
--- زر المشاهدة (Spectate)
 local SpecBtn = Instance.new("TextButton", TargetPage)
 SpecBtn.Size = UDim2.new(0.9, 0, 0, 32) SpecBtn.Position = UDim2.new(0.05, 0, 0, 95)
 SpecBtn.Text = "مشاهدة اللاعب (Spectate)" SpecBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 table.insert(yellowElements, SpecBtn)
 
--- دالة للبحث عن اللاعب بناءً على الحرف الأول
 local function findTarget()
     local firstLetter = NameBox.Text:sub(1, 1):lower()
     if firstLetter ~= "" then
@@ -284,7 +330,6 @@ local function findTarget()
     return nil
 end
 
--- تشغيل وإطفاء التتبع
 TeleBtn.MouseButton1Click:Connect(function()
     Tracking = not Tracking
     if Tracking then
@@ -307,7 +352,6 @@ TeleBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- تشغيل وإطفاء المشاهدة (Spectate)
 SpecBtn.MouseButton1Click:Connect(function()
     Spectating = not Spectating
     local currentCamera = workspace.CurrentCamera
@@ -348,7 +392,6 @@ SpecBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- حلقة التتبع المستمرة
 RunService.RenderStepped:Connect(function()
     if Tracking and TargetPlayer and TargetPlayer.Character and TargetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
         Player.Character.HumanoidRootPart.CFrame = TargetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
