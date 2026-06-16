@@ -126,7 +126,7 @@ ToggleButton.Active = true
 ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-print("تم تشغيل الجزء الأول بنجاح! بانتظار طلبك للجزء الثاني...")
+print("الجزء الأول تم بنجاح! جاهز؟ اطلب الجزء الثاني.")
 -- [[ سكريبت أيهم الأسطوري - الجزء الثاني: تصميم عناصر صفحة اللاعب ]]
 if not _G.AihamMenuLoaded then print("يرجى تشغيل الجزء الأول أولاً!") return end
 
@@ -191,13 +191,14 @@ _G.InfJumpBtn = createNormalBtn("قفز لانهائى", 0.03, 280)
 _G.TPToolBtn = createNormalBtn("اداة الانتقال", 0.52, 280)
 
 _G.SelectTab(3)
-print("تم تشغيل الجزء الثاني بنجاح! اكتب 3 أو اطلب الجزء الثالث عشان أرسل لك الأكواد والوظائف فوراً.")
+print("تم تشغيل الجزء الثاني بنجاح! ارسلي 3 عشان أعطيك السكريبت البرمجي الأخير مع تحديث الكاميرا.")
 -- [[ سكريبت أيهم الأسطوري - الجزء الثالث: تشغيل وبرمجة ميزات اللاعب كاملة ]]
 if not _G.WSBtn then print("يرجى تشغيل الجزء الثاني أولاً!") return end
 
 local Player = game.Players.LocalPlayer
 local RunService = game:GetService("RunService")
 local Mouse = Player:GetMouse()
+local Camera = workspace.CurrentCamera
 
 -- متغيرات تتبع الحالة
 local noclip = false
@@ -291,7 +292,7 @@ game:GetService("UserInputService").JumpRequest:Connect(function()
     end
 end)
 
--- 7. ميزة الاختفاء الاحترافية والشغالة (تظهر شفاف عندك ومخفي عند السيرفر تماماً)
+-- 7. ميزة الاختفاء الاحترافية (تثبيت وتتبع الكاميرا على الجسد الوهمي الشفاف)
 local cloneChar = nil
 _G.InvisBtn.MouseButton1Click:Connect(function()
     invisible = not invisible
@@ -299,7 +300,7 @@ _G.InvisBtn.MouseButton1Click:Connect(function()
     
     local char = getChar()
     if invisible then
-        -- إنشاء نسخة محلية لرؤية نفسك بوضوح شفاف
+        -- إنشاء النسخة الشفافة محلياً
         char.Archivable = true
         cloneChar = char:Clone()
         cloneChar.Parent = workspace
@@ -311,20 +312,29 @@ _G.InvisBtn.MouseButton1Click:Connect(function()
             end
         end
         
-        -- إخفاء الكاركتر الحقيقي في السيرفر عن طريق إبعاده بالعمق السفلي محلياً
+        -- تحويل هدف الكاميرا ليتبع الهيومنايد الخاص بالجسد الوهمي فوراً
+        if cloneChar:FindFirstChild("Humanoid") then
+            Camera.CameraSubject = cloneChar.Humanoid
+        end
+        
+        -- إخفاء الكاركتر الحقيقي في السيرفر ومزامنة حركة الجسد الشفاف معه
         task.spawn(function()
             while invisible and char and char:FindFirstChild("HumanoidRootPart") do
                 char.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame * CFrame.new(0, -9999, 0)
-                if cloneChar and cloneChar:FindFirstChild("HumanoidRootPart") and workspace.CurrentCamera then
-                    -- ربط حركة الكاميرا والتحكم باللاعب الشفاف
+                if cloneChar and cloneChar:FindFirstChild("HumanoidRootPart") then
                     cloneChar.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame * CFrame.new(0, 9999, 0)
                 end
                 task.wait()
             end
         end)
     else
-        -- إلغاء الاختفاء وإرجاع الكاركتر الأصلي لوضعه الطبيعي
+        -- إلغاء الاختفاء وإرجاع هدف الكاميرا للاعب الطبيعي الأصلي
+        if char and char:FindFirstChild("Humanoid") then
+            Camera.CameraSubject = char.Humanoid
+        end
+        
         if cloneChar then cloneChar:Destroy() cloneChar = nil end
+        
         local root = char:FindFirstChild("HumanoidRootPart")
         if root then
             root.CFrame = root.CFrame * CFrame.new(0, 9999, 0)
@@ -377,4 +387,4 @@ _G.TPToolBtn.MouseButton1Click:Connect(function()
     tool.Parent = Player.Backpack
 end)
 
-print("--- تم تحميل السكريبت بالكامل وبنجاح! الأزرار والاختفاء كلها شغالة ومية بالمية ---")
+print("--- تم تشغيل السكريبت كاملاً بنجاح مع إصلاح الكاميرا بنسبة 100%! ---")
