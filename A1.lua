@@ -3,7 +3,6 @@ _G.AihamMenuLoaded = true
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
--- تنظيف النسخ القديمة
 if PlayerGui:FindFirstChild("AihamLegendaryMenu") then 
     PlayerGui.AihamLegendaryMenu:Destroy() 
 end
@@ -23,7 +22,6 @@ MainFrame.BorderColor3 = Color3.fromRGB(230, 200, 50)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
--- شريط العنوان
 local TitleBar = Instance.new("Frame", MainFrame)
 TitleBar.Size = UDim2.new(1, 0, 0, 35)
 TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -49,7 +47,6 @@ CloseBtn.Font = Enum.Font.SourceSansBold
 CloseBtn.TextSize = 14
 CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
 
--- القائمة الجانبية
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Name = "SideMenu"
 SideMenu.Size = UDim2.new(0, 140, 1, -35)
@@ -115,7 +112,6 @@ for i, tab in ipairs(tabs) do
     btn.MouseButton1Click:Connect(function() _G.SelectTab(i) end)
 end
 
--- زر الفتح والإغلاق العائم VR7 المربع على اليسار
 local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 45, 0, 45)
 ToggleButton.Position = UDim2.new(0, 15, 0.5, -22)
@@ -130,11 +126,10 @@ ToggleButton.Active = true
 ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-print("الجزء الأول تم بنجاح!")
--- [[ سكريبت أيهم الأسطوري - الجزء الثاني: قائمة التخريب وخانات الأوامر ]]
+print("الجزء الأول تم تحميله!")
+-- [[ سكريبت أيهم الأسطوري - الجزء الثاني: تصميم قائمة التخريب ]]
 if not _G.AihamMenuLoaded then print("يرجى تشغيل الجزء الأول أولاً!") return end
 
--- إضافة خانة الأوامر [Cmdbar] العلوية في كل الصفحات
 for _, page in ipairs(_G.Pages) do
     local CmdContainer = Instance.new("Frame", page)
     CmdContainer.Size = UDim2.new(0.95, 0, 0, 40)
@@ -164,7 +159,6 @@ for _, page in ipairs(_G.Pages) do
     HelpBtn.TextSize = 14
 end
 
--- تصميم صفحة التخريب (Game Page)
 local GamePage = _G.Pages[2]
 
 local SpamTextBox = Instance.new("TextBox", GamePage)
@@ -203,23 +197,32 @@ local function makeGreyBtn(text, pos)
 end
 
 _G.SpamToggleBtn = makeGreyBtn("تفعيل سبام", UDim2.new(0.05, 0, 0, 120))
-_G.FreezeChatBtn = makeGreyBtn("تعليق الشات", UDim2.new(0.53, 0, 0, 120))
+_G.FreezeChatBtn = makeGreyBtn("تعليق الشات", UDim2.new(0.53, 0, 0, 120)) -- سيقوم بتعليق الشات وكتابة A1
 _G.SpyChatBtn = makeGreyBtn("تجسس الرسائل", UDim2.new(0.05, 0, 0, 170))
-_G.TrollAnimBtn = makeGreyBtn("العادة السرية", UDim2.new(0.53, 0, 0, 170))
+_G.TrollAnimBtn = makeGreyBtn("العادة السرية", UDim2.new(0.53, 0, 0, 170)) -- أداة Jerk Off R15
 
-_G.SelectTab(2) -- تحويل تلقائي لصفحة التخريب للمعاينة
-print("الجزء الثاني تم بنجاح!")
--- [[ سكريبت أيهم الأسطوري - الجزء الثالث: تشغيل وربط ميزات التخريب ]]
+_G.SelectTab(2)
+print("الجزء الثاني تم تحميله!")
+-- [[ سكريبت أيهم الأسطوري - الجزء الثالث: تشغيل وربط ميزات التخريب المعدلة ]]
 if not _G.SpamToggleBtn then print("يرجى تشغيل الجزء الثاني أولاً!") return end
 
 local Player = game.Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
-local RunService = game:GetService("RunService")
 local GamePage = _G.Pages[2]
 local SpamTextBox = GamePage:FindFirstChild("SpamTextBox")
 local SpamSpeedBox = GamePage:FindFirstChild("SpamSpeedBox")
 
--- 1. تفعيل السبام
+-- دالة عامة لإرسال الرسائل في الشات تدعم النظامين القديم والجديد
+local function sendToChat(msg)
+    if game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService then
+        local channel = game:GetService("TextChatService").TextChannels:FindFirstChild("RBXGeneral")
+        if channel then channel:SendAsync(msg) end
+    else
+        local remote = game:GetService("ReplicatedStorage"):FindFirstChild("SayMessageRequest", true)
+        if remote and remote:IsA("RemoteEvent") then remote:FireServer(msg, "All") end
+    end
+end
+
+-- 1. زر تفعيل سبام (العادي للكلام المكتوب في الخانة)
 local spamming = false
 _G.SpamToggleBtn.MouseButton1Click:Connect(function()
     spamming = not spamming
@@ -227,53 +230,71 @@ _G.SpamToggleBtn.MouseButton1Click:Connect(function()
     task.spawn(function()
         while spamming do
             local delayTime = tonumber(SpamSpeedBox.Text) or 0.5
-            local currentText = SpamTextBox.Text
-            if game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService then
-                local channel = game:GetService("TextChatService").TextChannels:FindFirstChild("RBXGeneral")
-                if channel then channel:SendAsync(currentText) end
-            else
-                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("SayMessageRequest", true)
-                if remote and remote:IsA("RemoteEvent") then remote:FireServer(currentText, "All") end
-            end
+            sendToChat(SpamTextBox.Text)
             task.wait(delayTime)
         end
     end)
 end)
 
--- 2. تعليق الشات (إخفاء شاشتك لمنع التشتيت)
-local chatHidden = false
+-- 2. زر تعليق الشات (المعدل: يخلي الشات يعلق ويضل يكتب A1 بدون توقف)
+local a1Spamming = false
 _G.FreezeChatBtn.MouseButton1Click:Connect(function()
-    chatHidden = not chatHidden
-    _G.FreezeChatBtn.BackgroundColor3 = chatHidden and Color3.fromRGB(150, 150, 150) or Color3.fromRGB(100, 100, 100)
-    local textChatGui = PlayerGui:FindFirstChild("TextChatGui")
-    if textChatGui then textChatGui.Enabled = not chatHidden end
+    a1Spamming = not a1Spamming
+    _G.FreezeChatBtn.BackgroundColor3 = a1Spamming and Color3.fromRGB(150, 150, 150) or Color3.fromRGB(100, 100, 100)
+    task.spawn(function()
+        while a1Spamming do
+            sendToChat("A1")
+            task.wait(0.2) -- سرعة عالية لتعليق الشات بالرسالة A1
+        end
+    end)
 end)
 
--- 3. تجسس الرسائل في كونسول F9
+-- 3. زر تجسس الرسائل
 local spyActive = false
 _G.SpyChatBtn.MouseButton1Click:Connect(function()
     spyActive = not spyActive
     _G.SpyChatBtn.BackgroundColor3 = spyActive and Color3.fromRGB(150, 150, 150) or Color3.fromRGB(100, 100, 100)
-    if spyActive then
-        print("--- [نظام التجسس]: رصد محادثات السيرفر مفعل في الـ Console ---")
-    end
+    if spyActive then print("[نظام التجسس]: مفعل ومراقب للسيرفر") end
 end)
 
--- 4. حركة تخريبية عشوائية (قفز متكرر ممتع)
-local trollActive = false
-local trollConnection
+-- 4. زر العادة السرية (المعدل: يعطي أداة Jerk Off R15 ويشغلها فوراً)
+local jerkTool = nil
 _G.TrollAnimBtn.MouseButton1Click:Connect(function()
-    trollActive = not trollActive
-    _G.TrollAnimBtn.BackgroundColor3 = trollActive and Color3.fromRGB(150, 150, 150) or Color3.fromRGB(100, 100, 100)
-    if trollActive then
-        trollConnection = RunService.RenderStepped:Connect(function()
-            if Player.Character and Player.Character:FindFirstChild("Humanoid") then
-                Player.Character.Humanoid.Jump = true
-            end
+    local Character = Player.Character
+    if not Character or not Character:FindFirstChild("Humanoid") then return end
+    
+    if not jerkTool then
+        -- إنشاء أداة الـ Jerk Off R15 البرمجية
+        jerkTool = Instance.new("Tool")
+        jerkTool.Name = "Jerk Off R15"
+        jerkTool.RequiresHandle = false
+        
+        local anim = Instance.new("Animation")
+        -- استخدام آي دي أنميشن متوافق مع حركة الـ Jerk التخريبية المشهورة
+        anim.AnimationId = "rbxassetid://315243144" 
+        
+        local track = nil
+        jerkTool.Equipped:Connect(function()
+            track = Character.Humanoid:LoadAnimation(anim)
+            track.Looped = true
+            track:Play()
         end)
+        
+        jerkTool.Unequipped:Connect(function()
+            if track then track:Stop() track:Destroy() end
+        end)
+        
+        jerkTool.Parent = Player.Backpack
+        Character.Humanoid:EquipTool(jerkTool) -- تجهيز الأداة في يد اللاعب تلقائياً
+        _G.TrollAnimBtn.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
     else
-        if trollConnection then trollConnection:Disconnect() trollConnection = nil end
+        -- إذا كانت الأداة موجودة وضغط الزر مرة ثانية يقوم بحذفها لإيقاف الحركة
+        if jerkTool.Parent == Character or jerkTool.Parent == Player.Backpack then
+            jerkTool:Destroy()
+        end
+        jerkTool = nil
+        _G.TrollAnimBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     end
 end)
 
-print("--- تم تحميل وتفعيل سكريبت أيهم الأسطوري بالكامل ومستعد للجلد! ---")
+print("--- تم تفعيل وتعديل سكريبت أيهم بالكامل! الأزرار جاهزة للجلد ---")
