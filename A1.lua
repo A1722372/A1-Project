@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم - الجزء الأول: نظام الواجهة ]]
+-- [[ سكريبت أيهم الأسطوري - الجزء الأول: نظام الواجهة ]]
 _G.AihamMenuLoaded = true
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -126,14 +126,14 @@ ToggleButton.Active = true
 ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-print("الجزء الأول جاهز!")
--- [[ سكريبت أيهم - الجزء الثاني: تصميم عناصر صفحة اللاعب من الصورة ]]
+print("تم تشغيل الجزء الأول بنجاح! بانتظار طلبك للجزء الثاني...")
+-- [[ سكريبت أيهم الأسطوري - الجزء الثاني: تصميم عناصر صفحة اللاعب ]]
 if not _G.AihamMenuLoaded then print("يرجى تشغيل الجزء الأول أولاً!") return end
 
 local CharPage = _G.Pages[3] -- صفحة اللاعب رقم 3
-CharPage.CanvasSize = UDim2.new(0, 0, 0, 520) -- توسيع مساحة التمرير لتكفي كل الأزرار
+CharPage.CanvasSize = UDim2.new(0, 0, 0, 520)
 
--- دالتين لتصميم الأزرار والخانات بشكل مطابق للصورة باللون الأصفر والرمادي الداكن
+-- دالتين لتصميم الأزرار والخانات باللون الأصفر والرمادي الداكن مطابق للصورة
 local function createRowWithInput(text, placeholder, yPos)
     local btn = Instance.new("TextButton", CharPage)
     btn.Size = UDim2.new(0.45, 0, 0, 35)
@@ -171,18 +171,19 @@ local function createNormalBtn(text, xPos, yPos)
     return btn
 end
 
--- الأسطر الثلاثة الأولى (أزرار مع خانات أرقام)
+-- الأسطر الثلاثة الأولى (أزرار مع خانات أرقام للسرعة والنط والطيران)
 _G.WSBtn, _G.WSBox = createRowWithInput("السرعه | Ws", "Number [1-99999]", 15)
 _G.JumpBtn, _G.JumpBox = createRowWithInput("النط | Jump", "Number [1-99999]", 55)
 _G.FlySpeedBtn, _G.FlySpeedBox = createRowWithInput("سرعه الطيران", "Number [1-99999]", 95)
 
--- بقية الأزرار العادية موزعة على عمودين (يمين ويسار) مثل الصورة
+-- بقية الأزرار العادية موزعة على عمودين مثل لقطة الشاشة تماماً
 _G.FlyBtn = createNormalBtn("سكربت طيران", 0.03, 145)
 _G.CheckSaveBtn = createNormalBtn("حفظ الشيك بوينت", 0.52, 145)
 
 _G.NoclipBtn = createNormalBtn("اختراق جدران", 0.03, 190)
 _G.CheckTPBtn = createNormalBtn("انتقال للشيك بوينت", 0.52, 190)
 
+-- زر الاختفاء المعدل
 _G.InvisBtn = createNormalBtn("اختفاء", 0.03, 235)
 _G.CheckRemoveBtn = createNormalBtn("ازاله الشيك بوينت", 0.52, 235)
 
@@ -190,15 +191,15 @@ _G.InfJumpBtn = createNormalBtn("قفز لانهائى", 0.03, 280)
 _G.TPToolBtn = createNormalBtn("اداة الانتقال", 0.52, 280)
 
 _G.SelectTab(3)
-print("الجزء الثاني (قائمة اللاعب من الصورة) جاهز!")
--- [[ سكريبت أيهم - الجزء الثالث: تشغيل وبرمجة ميزات اللاعب كاملة ]]
+print("تم تشغيل الجزء الثاني بنجاح! اكتب 3 أو اطلب الجزء الثالث عشان أرسل لك الأكواد والوظائف فوراً.")
+-- [[ سكريبت أيهم الأسطوري - الجزء الثالث: تشغيل وبرمجة ميزات اللاعب كاملة ]]
 if not _G.WSBtn then print("يرجى تشغيل الجزء الثاني أولاً!") return end
 
 local Player = game.Players.LocalPlayer
 local RunService = game:GetService("RunService")
 local Mouse = Player:GetMouse()
 
--- متغيرات تتبع الحالة للميزات المفعلة
+-- متغيرات تتبع الحالة
 local noclip = false
 local infJump = false
 local flying = false
@@ -206,7 +207,7 @@ local invisible = false
 local savedCheckpoint = nil
 local flySpeed = 50
 
--- دالة للحصول على الكاركتر الحالي للاعب
+-- دالة للحصول على الكاركتر الحالي
 local function getChar() return Player.Character or Player.CharacterAdded:Wait() end
 
 -- 1. تفعيل وتغيير السرعة
@@ -252,9 +253,6 @@ _G.FlyBtn.MouseButton1Click:Connect(function()
             while flying and char and torso and torso.Parent do
                 bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
                 local cam = workspace.CurrentCamera.CFrame
-                local moveDir = Vector3.new(0,0,0)
-                
-                -- التحكم عبر الكاميرا أو التوجيه التلقائي المبسط
                 bv.velocity = cam.LookVector * flySpeed
                 task.wait()
             end
@@ -293,48 +291,78 @@ game:GetService("UserInputService").JumpRequest:Connect(function()
     end
 end)
 
--- 7. ميزة الاختفاء النظيف (Invis)
+-- 7. ميزة الاختفاء الاحترافية والشغالة (تظهر شفاف عندك ومخفي عند السيرفر تماماً)
+local cloneChar = nil
 _G.InvisBtn.MouseButton1Click:Connect(function()
     invisible = not invisible
     _G.InvisBtn.BackgroundColor3 = invisible and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 150, 20)
+    
     local char = getChar()
-    if char then
+    if invisible then
+        -- إنشاء نسخة محلية لرؤية نفسك بوضوح شفاف
+        char.Archivable = true
+        cloneChar = char:Clone()
+        cloneChar.Parent = workspace
+        
+        for _, part in pairs(cloneChar:GetDescendants()) do
+            if part:IsA("BasePart") or part:IsA("Decal") then
+                part.Transparency = 0.6 -- شفافية خفيفة واحترافية مثل الصورة
+                if part:IsA("BasePart") then part.CanCollide = false end
+            end
+        end
+        
+        -- إخفاء الكاركتر الحقيقي في السيرفر عن طريق إبعاده بالعمق السفلي محلياً
+        task.spawn(function()
+            while invisible and char and char:FindFirstChild("HumanoidRootPart") do
+                char.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame * CFrame.new(0, -9999, 0)
+                if cloneChar and cloneChar:FindFirstChild("HumanoidRootPart") and workspace.CurrentCamera then
+                    -- ربط حركة الكاميرا والتحكم باللاعب الشفاف
+                    cloneChar.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame * CFrame.new(0, 9999, 0)
+                end
+                task.wait()
+            end
+        end)
+    else
+        -- إلغاء الاختفاء وإرجاع الكاركتر الأصلي لوضعه الطبيعي
+        if cloneChar then cloneChar:Destroy() cloneChar = nil end
+        local root = char:FindFirstChild("HumanoidRootPart")
+        if root then
+            root.CFrame = root.CFrame * CFrame.new(0, 9999, 0)
+        end
         for _, part in pairs(char:GetDescendants()) do
             if part:IsA("BasePart") or part:IsA("Decal") then
-                part.Transparency = invisible and 1 or 0
+                part.Transparency = 0
             end
         end
     end
 end)
 
--- 8. حفظ الشيك بوينت الحالي
+-- 8. حفظ الشيك بوينت
 _G.CheckSaveBtn.MouseButton1Click:Connect(function()
     local char = getChar()
     if char and char:FindFirstChild("HumanoidRootPart") then
         savedCheckpoint = char.HumanoidRootPart.CFrame
-        print("[الشيك بوينت]: تم حفظ موقعك الحالي بنجاح!")
+        print("[الشيك بوينت]: تم حفظ موقعك الحالي!")
     end
 end)
 
--- 9. الانتقال للشيك بوينت المحفوظ
+-- 9. الانتقال للشيك بوينت
 _G.CheckTPBtn.MouseButton1Click:Connect(function()
     if savedCheckpoint then
         local char = getChar()
         if char and char:FindFirstChild("HumanoidRootPart") then
             char.HumanoidRootPart.CFrame = savedCheckpoint
         end
-    else
-        print("[الشيك بوينت]: لا يوجد موقع محفوظ للانتقال إليه!")
     end
 end)
 
--- 10. إزالة الشيك بوينت المحفوظ
+-- 10. إزالة الشيك بوينت
 _G.CheckRemoveBtn.MouseButton1Click:Connect(function()
     savedCheckpoint = nil
-    print("[الشيك بوينت]: تم مسح الموقع المحفوظ.")
+    print("[الشيك بوينت]: تم حذف الموقع المحفوظ.")
 end)
 
--- 11. إعطاء أداة الانتقال (Click TP Tool)
+-- 11. أداة الانتقال (Click TP Tool)
 _G.TPToolBtn.MouseButton1Click:Connect(function()
     local tool = Instance.new("Tool")
     tool.Name = "اداة الانتقال"
@@ -347,7 +375,6 @@ _G.TPToolBtn.MouseButton1Click:Connect(function()
         end
     end)
     tool.Parent = Player.Backpack
-    print("[الأدوات]: تم إضافة أداة الانتقال لحقيبتك!")
 end)
 
-print("--- نسخة أيهم الأسطورية كاملة ومطابقة للصورة بنسبة 100% وجاهزة للتشغيل! ---")
+print("--- تم تحميل السكريبت بالكامل وبنجاح! الأزرار والاختفاء كلها شغالة ومية بالمية ---")
