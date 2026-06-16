@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري - الجزء الأول: نظام الواجهة ]]
+-- [[ سكريبت أيهم - الجزء الأول: نظام الواجهة ]]
 _G.AihamMenuLoaded = true
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -126,69 +126,44 @@ ToggleButton.Active = true
 ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-print("الجزء الأول تم تحميله!")
--- [[ سكريبت أيهم الأسطوري - الجزء الثاني: تصميم أزرار التخريب ]]
+print("الجزء الأول جاهز!")
+-- [[ سكريبت أيهم - الجزء الثاني: تصميم عناصر صفحة اللاعب من الصورة ]]
 if not _G.AihamMenuLoaded then print("يرجى تشغيل الجزء الأول أولاً!") return end
 
-for _, page in ipairs(_G.Pages) do
-    local CmdContainer = Instance.new("Frame", page)
-    CmdContainer.Size = UDim2.new(0.95, 0, 0, 40)
-    CmdContainer.Position = UDim2.new(0.025, 0, 0, 10)
-    CmdContainer.BackgroundTransparency = 1
-    
-    local CmdInput = Instance.new("TextBox", CmdContainer)
-    CmdInput.Size = UDim2.new(1, -45, 0, 35)
-    CmdInput.Position = UDim2.new(0, 0, 0, 0)
-    CmdInput.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-    CmdInput.BorderColor3 = Color3.fromRGB(100, 100, 100)
-    CmdInput.Text = ""
-    CmdInput.PlaceholderText = "[Cmdbar] خانة الاوامر "
-    CmdInput.PlaceholderColor3 = Color3.fromRGB(180, 180, 180)
-    CmdInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-    CmdInput.Font = Enum.Font.SourceSansBold
-    CmdInput.TextSize = 14
+local CharPage = _G.Pages[3] -- صفحة اللاعب رقم 3
+CharPage.CanvasSize = UDim2.new(0, 0, 0, 520) -- توسيع مساحة التمرير لتكفي كل الأزرار
 
-    local HelpBtn = Instance.new("TextButton", CmdContainer)
-    HelpBtn.Size = UDim2.new(0, 35, 0, 35)
-    HelpBtn.Position = UDim2.new(1, -35, 0, 0)
-    HelpBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-    HelpBtn.BorderColor3 = Color3.fromRGB(100, 100, 100)
-    HelpBtn.Text = "?"
-    HelpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    HelpBtn.Font = Enum.Font.SourceSansBold
-    HelpBtn.TextSize = 14
+-- دالتين لتصميم الأزرار والخانات بشكل مطابق للصورة باللون الأصفر والرمادي الداكن
+local function createRowWithInput(text, placeholder, yPos)
+    local btn = Instance.new("TextButton", CharPage)
+    btn.Size = UDim2.new(0.45, 0, 0, 35)
+    btn.Position = UDim2.new(0.03, 0, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(180, 150, 20)
+    btn.BorderSizePixel = 1
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(0, 0, 0)
+    btn.Font = Enum.Font.SourceSansBold
+    btn.TextSize = 15
+
+    local box = Instance.new("TextBox", CharPage)
+    box.Size = UDim2.new(0.45, 0, 0, 35)
+    box.Position = UDim2.new(0.52, 0, 0, yPos)
+    box.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    box.TextColor3 = Color3.fromRGB(255, 255, 255)
+    box.PlaceholderText = placeholder
+    box.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+    box.Text = ""
+    box.Font = Enum.Font.SourceSans
+    box.TextSize = 14
+    return btn, box
 end
 
-local GamePage = _G.Pages[2]
-
-local SpamTextBox = Instance.new("TextBox", GamePage)
-SpamTextBox.Name = "SpamTextBox"
-SpamTextBox.Size = UDim2.new(0.65, 0, 0, 45)
-SpamTextBox.Position = UDim2.new(0.05, 0, 0, 60)
-SpamTextBox.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-SpamTextBox.BorderColor3 = Color3.fromRGB(100, 100, 100)
-SpamTextBox.Text = "كلام"
-SpamTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-SpamTextBox.Font = Enum.Font.SourceSansBold
-SpamTextBox.TextSize = 14
-
-local SpamSpeedBox = Instance.new("TextBox", GamePage)
-SpamSpeedBox.Name = "SpamSpeedBox"
-SpamSpeedBox.Size = UDim2.new(0.22, 0, 0, 45)
-SpamSpeedBox.Position = UDim2.new(0.73, 0, 0, 60)
-SpamSpeedBox.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-SpamSpeedBox.BorderColor3 = Color3.fromRGB(100, 100, 100)
-SpamSpeedBox.Text = "0.5"
-SpamSpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-SpamSpeedBox.Font = Enum.Font.SourceSansBold
-SpamSpeedBox.TextSize = 12
-
-local function makeGreyBtn(text, pos, size)
-    local btn = Instance.new("TextButton", GamePage)
-    btn.Size = size or UDim2.new(0.42, 0, 0, 35)
-    btn.Position = pos
-    btn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    btn.BorderColor3 = Color3.fromRGB(60, 60, 60)
+local function createNormalBtn(text, xPos, yPos)
+    local btn = Instance.new("TextButton", CharPage)
+    btn.Size = UDim2.new(0.45, 0, 0, 35)
+    btn.Position = UDim2.new(xPos, 0, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(180, 150, 20)
+    btn.BorderSizePixel = 1
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold
@@ -196,64 +171,183 @@ local function makeGreyBtn(text, pos, size)
     return btn
 end
 
--- ترتيب الأزرار بشكل متناسق بعد حذف الزر الرابع نهائياً
-_G.SpamToggleBtn = makeGreyBtn("تفعيل سبام", UDim2.new(0.05, 0, 0, 120))
-_G.FreezeChatBtn = makeGreyBtn("تعليق الشات", UDim2.new(0.53, 0, 0, 120))
-_G.SpyChatBtn = makeGreyBtn("تجسس الرسائل", UDim2.new(0.05, 0, 0, 170), UDim2.new(0.9, 0, 0, 35))
+-- الأسطر الثلاثة الأولى (أزرار مع خانات أرقام)
+_G.WSBtn, _G.WSBox = createRowWithInput("السرعه | Ws", "Number [1-99999]", 15)
+_G.JumpBtn, _G.JumpBox = createRowWithInput("النط | Jump", "Number [1-99999]", 55)
+_G.FlySpeedBtn, _G.FlySpeedBox = createRowWithInput("سرعه الطيران", "Number [1-99999]", 95)
 
-_G.SelectTab(2)
-print("الجزء الثاني تم تحميله!")
--- [[ سكريبت أيهم الأسطوري - الجزء الثالث: تشغيل الميزات النظيفة ]]
-if not _G.SpamToggleBtn then print("يرجى تشغيل الجزء الثاني أولاً!") return end
+-- بقية الأزرار العادية موزعة على عمودين (يمين ويسار) مثل الصورة
+_G.FlyBtn = createNormalBtn("سكربت طيران", 0.03, 145)
+_G.CheckSaveBtn = createNormalBtn("حفظ الشيك بوينت", 0.52, 145)
+
+_G.NoclipBtn = createNormalBtn("اختراق جدران", 0.03, 190)
+_G.CheckTPBtn = createNormalBtn("انتقال للشيك بوينت", 0.52, 190)
+
+_G.InvisBtn = createNormalBtn("اختفاء", 0.03, 235)
+_G.CheckRemoveBtn = createNormalBtn("ازاله الشيك بوينت", 0.52, 235)
+
+_G.InfJumpBtn = createNormalBtn("قفز لانهائى", 0.03, 280)
+_G.TPToolBtn = createNormalBtn("اداة الانتقال", 0.52, 280)
+
+_G.SelectTab(3)
+print("الجزء الثاني (قائمة اللاعب من الصورة) جاهز!")
+-- [[ سكريبت أيهم - الجزء الثالث: تشغيل وبرمجة ميزات اللاعب كاملة ]]
+if not _G.WSBtn then print("يرجى تشغيل الجزء الثاني أولاً!") return end
 
 local Player = game.Players.LocalPlayer
-local GamePage = _G.Pages[2]
-local SpamTextBox = GamePage:FindFirstChild("SpamTextBox")
-local SpamSpeedBox = GamePage:FindFirstChild("SpamSpeedBox")
+local RunService = game:GetService("RunService")
+local Mouse = Player:GetMouse()
 
-local function sendToChat(msg)
-    if game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService then
-        local channel = game:GetService("TextChatService").TextChannels:FindFirstChild("RBXGeneral")
-        if channel then channel:SendAsync(msg) end
-    else
-        local remote = game:GetService("ReplicatedStorage"):FindFirstChild("SayMessageRequest", true)
-        if remote and remote:IsA("RemoteEvent") then remote:FireServer(msg, "All") end
+-- متغيرات تتبع الحالة للميزات المفعلة
+local noclip = false
+local infJump = false
+local flying = false
+local invisible = false
+local savedCheckpoint = nil
+local flySpeed = 50
+
+-- دالة للحصول على الكاركتر الحالي للاعب
+local function getChar() return Player.Character or Player.CharacterAdded:Wait() end
+
+-- 1. تفعيل وتغيير السرعة
+_G.WSBtn.MouseButton1Click:Connect(function()
+    local num = tonumber(_G.WSBox.Text) or 16
+    local char = getChar()
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.WalkSpeed = num
     end
-end
+end)
 
--- 1. زر تفعيل سبام الكلام العادي
-local spamming = false
-_G.SpamToggleBtn.MouseButton1Click:Connect(function()
-    spamming = not spamming
-    _G.SpamToggleBtn.BackgroundColor3 = spamming and Color3.fromRGB(150, 150, 150) or Color3.fromRGB(100, 100, 100)
-    task.spawn(function()
-        while spamming do
-            local delayTime = tonumber(SpamSpeedBox.Text) or 0.5
-            sendToChat(SpamTextBox.Text)
-            task.wait(delayTime)
+-- 2. تفعيل وتغيير قوة القفز
+_G.JumpBtn.MouseButton1Click:Connect(function()
+    local num = tonumber(_G.JumpBox.Text) or 50
+    local char = getChar()
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.JumpPower = num
+        char.Humanoid.UseJumpPower = true
+    end
+end)
+
+-- 3. ضبط سرعة الطيران من الخانة
+_G.FlySpeedBtn.MouseButton1Click:Connect(function()
+    flySpeed = tonumber(_G.FlySpeedBox.Text) or 50
+end)
+
+-- 4. سكربت الطيران (Fly)
+_G.FlyBtn.MouseButton1Click:Connect(function()
+    flying = not flying
+    _G.FlyBtn.BackgroundColor3 = flying and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 150, 20)
+    
+    local char = getChar()
+    local torso = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso")
+    if not torso then return end
+    
+    if flying then
+        local bv = Instance.new("BodyVelocity", torso)
+        bv.Name = "AihamFlyForce"
+        bv.maxForce = Vector3.new(0,0,0)
+        bv.velocity = Vector3.new(0,0,0)
+        
+        task.spawn(function()
+            while flying and char and torso and torso.Parent do
+                bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+                local cam = workspace.CurrentCamera.CFrame
+                local moveDir = Vector3.new(0,0,0)
+                
+                -- التحكم عبر الكاميرا أو التوجيه التلقائي المبسط
+                bv.velocity = cam.LookVector * flySpeed
+                task.wait()
+            end
+            if bv then bv:Destroy() end
+        end)
+    end
+end)
+
+-- 5. اختراق الجدران (Noclip)
+_G.NoclipBtn.MouseButton1Click:Connect(function()
+    noclip = not noclip
+    _G.NoclipBtn.BackgroundColor3 = noclip and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 150, 20)
+end)
+RunService.Stepped:Connect(function()
+    if noclip then
+        local char = Player.Character
+        if char then
+            for _, child in pairs(char:GetDescendants()) do
+                if child:IsA("BasePart") then child.CanCollide = false end
+            end
+        end
+    end
+end)
+
+-- 6. القفز اللانهائي (Inf Jump)
+_G.InfJumpBtn.MouseButton1Click:Connect(function()
+    infJump = not infJump
+    _G.InfJumpBtn.BackgroundColor3 = infJump and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 150, 20)
+end)
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if infJump then
+        local char = Player.Character
+        if char and char:FindFirstChildOfClass("Humanoid") then
+            char:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+        end
+    end
+end)
+
+-- 7. ميزة الاختفاء النظيف (Invis)
+_G.InvisBtn.MouseButton1Click:Connect(function()
+    invisible = not invisible
+    _G.InvisBtn.BackgroundColor3 = invisible and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 150, 20)
+    local char = getChar()
+    if char then
+        for _, part in pairs(char:GetDescendants()) do
+            if part:IsA("BasePart") or part:IsA("Decal") then
+                part.Transparency = invisible and 1 or 0
+            end
+        end
+    end
+end)
+
+-- 8. حفظ الشيك بوينت الحالي
+_G.CheckSaveBtn.MouseButton1Click:Connect(function()
+    local char = getChar()
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        savedCheckpoint = char.HumanoidRootPart.CFrame
+        print("[الشيك بوينت]: تم حفظ موقعك الحالي بنجاح!")
+    end
+end)
+
+-- 9. الانتقال للشيك بوينت المحفوظ
+_G.CheckTPBtn.MouseButton1Click:Connect(function()
+    if savedCheckpoint then
+        local char = getChar()
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            char.HumanoidRootPart.CFrame = savedCheckpoint
+        end
+    else
+        print("[الشيك بوينت]: لا يوجد موقع محفوظ للانتقال إليه!")
+    end
+end)
+
+-- 10. إزالة الشيك بوينت المحفوظ
+_G.CheckRemoveBtn.MouseButton1Click:Connect(function()
+    savedCheckpoint = nil
+    print("[الشيك بوينت]: تم مسح الموقع المحفوظ.")
+end)
+
+-- 11. إعطاء أداة الانتقال (Click TP Tool)
+_G.TPToolBtn.MouseButton1Click:Connect(function()
+    local tool = Instance.new("Tool")
+    tool.Name = "اداة الانتقال"
+    tool.RequiresHandle = false
+    tool.Activated:Connect(function()
+        local pos = Mouse.Hit
+        local char = Player.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            char.HumanoidRootPart.CFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z)
         end
     end)
+    tool.Parent = Player.Backpack
+    print("[الأدوات]: تم إضافة أداة الانتقال لحقيبتك!")
 end)
 
--- 2. زر تعليق الشات (يضل يكتب A1 بسرعة عالية)
-local a1Spamming = false
-_G.FreezeChatBtn.MouseButton1Click:Connect(function()
-    a1Spamming = not a1Spamming
-    _G.FreezeChatBtn.BackgroundColor3 = a1Spamming and Color3.fromRGB(150, 150, 150) or Color3.fromRGB(100, 100, 100)
-    task.spawn(function()
-        while a1Spamming do
-            sendToChat("A1")
-            task.wait(0.15)
-        end
-    end)
-end)
-
--- 3. زر تجسس الرسائل
-local spyActive = false
-_G.SpyChatBtn.MouseButton1Click:Connect(function()
-    spyActive = not spyActive
-    _G.SpyChatBtn.BackgroundColor3 = spyActive and Color3.fromRGB(150, 150, 150) or Color3.fromRGB(100, 100, 100)
-    if spyActive then print("[نظام الرصد]: مراقبة الشات مفعلة") end
-end)
-
-print("--- تم تحميل سكريبت أيهم النظيف والخالي تماماً من أي زر زائد! ---")
+print("--- نسخة أيهم الأسطورية كاملة ومطابقة للصورة بنسبة 100% وجاهزة للتشغيل! ---")
