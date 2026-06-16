@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري V15 المطور - الجزء الأول ]]
+-- [[ سكريبت أيهم الأسطوري V15 - الجزء الأول ]]
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local Backpack = Player:WaitForChild("Backpack")
@@ -116,8 +116,14 @@ local originalAmbient = Lighting.Ambient
 BrightBtn.MouseButton1Click:Connect(function()
     brightActive = not brightActive
     BrightBtn.BackgroundColor3 = brightActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
-    if brightActive then Lighting.Brightness = 4 Lighting.Ambient = Color3.fromRGB(255, 255, 255) Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
-    else Lighting.Brightness = originalBrightness Lighting.Ambient = originalAmbient end
+    if brightActive then 
+        Lighting.Brightness = 4 
+        Lighting.Ambient = Color3.fromRGB(255, 255, 255) 
+        Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+    else 
+        Lighting.Brightness = originalBrightness 
+        Lighting.Ambient = originalAmbient 
+    end
 end)
 
 local colors = {"Rainbow", "Red", "Yellow", "Blue"}
@@ -130,44 +136,55 @@ for idx, mode in ipairs(colors) do
     cBtn.Text = colorNames[mode] cBtn.Font = Enum.Font.SourceSansBold cBtn.TextSize = 12
     cBtn.MouseButton1Click:Connect(function() setBorderColor(mode) end)
 end
--- [[ سكريبت أيهم الأسطوري V15 المطور - الجزء الثاني ]]
+-- [[ سكريبت أيهم الأسطوري V15 - الجزء الثاني ]]
 -- === [ شريحة 2: اللاعب ] ===
 local PlayerPage = Pages[2]
 local SpeedLabel = Instance.new("TextLabel", PlayerPage)
 SpeedLabel.Size = UDim2.new(0.3, 0, 0, 30) SpeedLabel.Position = UDim2.new(0.05, 0, 0, 15)
 SpeedLabel.Text = "السرعة:" SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255) SpeedLabel.BackgroundTransparency = 1
+
 local SpeedInput = Instance.new("TextBox", PlayerPage)
 SpeedInput.Size = UDim2.new(0.2, 0, 0, 30) SpeedInput.Position = UDim2.new(0.35, 0, 0, 15)
 SpeedInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) SpeedInput.TextColor3 = Color3.fromRGB(255, 200, 0)
 SpeedInput.Text = "65" SpeedInput.Font = Enum.Font.SourceSansBold SpeedInput.TextSize = 14
 table.insert(yellowElements, SpeedInput)
+
 local SpeedBtn = Instance.new("TextButton", PlayerPage)
 SpeedBtn.Size = UDim2.new(0.35, 0, 0, 30) SpeedBtn.Position = UDim2.new(0.6, 0, 0, 15)
 SpeedBtn.Text = "تفعيل السرعة" SpeedBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) SpeedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local speedActive = false
+
 SpeedInput:GetPropertyChangedSignal("Text"):Connect(function()
     if speedActive and Player.Character and Player.Character:FindFirstChild("Humanoid") then
         Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65
     end
 end)
+
 SpeedBtn.MouseButton1Click:Connect(function()
     speedActive = not speedActive
     SpeedBtn.BackgroundColor3 = speedActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
-    if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
+    if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+        if speedActive then Player.Character.Humanoid.WalkSpeed = tonumber(SpeedInput.Text) or 65 else Player.Character.Humanoid.WalkSpeed = 16 end
+    end
 end)
+
 local JumpLabel = Instance.new("TextLabel", PlayerPage)
 JumpLabel.Size = UDim2.new(0.3, 0, 0, 30) JumpLabel.Position = UDim2.new(0.05, 0, 0, 60)
 JumpLabel.Text = "القفز:" JumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255) JumpLabel.BackgroundTransparency = 1
+
 local JumpInput = Instance.new("TextBox", PlayerPage)
 JumpInput.Size = UDim2.new(0.2, 0, 0, 30) JumpInput.Position = UDim2.new(0.35, 0, 0, 60)
 JumpInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40) JumpInput.TextColor3 = Color3.fromRGB(255, 200, 0)
 JumpInput.Text = "120" JumpInput.Font = Enum.Font.SourceSansBold JumpInput.TextSize = 14
 table.insert(yellowElements, JumpInput)
+
 local JumpBtn = Instance.new("TextButton", PlayerPage)
-JumpBtn.Size = UDim2.new(0.35, 0, 0, 30) PlayerPage.Position = UDim2.new(0,0,0,0)
+JumpBtn.Size = UDim2.new(0.35, 0, 0, 30)
 JumpBtn.Position = UDim2.new(0.6, 0, 0, 60)
 JumpBtn.Text = "تفعيل القفز" JumpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) JumpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local jumpActive = false
+
+激Btn = JumpBtn
 JumpBtn.MouseButton1Click:Connect(function()
     jumpActive = not jumpActive
     JumpBtn.BackgroundColor3 = jumpActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(50, 50, 50)
@@ -189,27 +206,40 @@ FlyBtn.Size = UDim2.new(0.9, 0, 0, 32) FlyBtn.Position = UDim2.new(0.05, 0, 0, 1
 FlyBtn.Text = "تفعيل الطيران (FlyGuiV3)" FlyBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 120) FlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 FlyBtn.Font = Enum.Font.SourceSansBold FlyBtn.TextSize = 13
 FlyBtn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+    end)
 end)
 
 local GhostBtn = Instance.new("TextButton", PlayerPage)
 GhostBtn.Size = UDim2.new(0.9, 0, 0, 32) GhostBtn.Position = UDim2.new(0.05, 0, 0, 145)
 GhostBtn.Text = "القوست مود (Ghost Mode)" GhostBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) GhostBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 local ghostActive = false local ghostChar
+
 GhostBtn.MouseButton1Click:Connect(function()
     ghostActive = not ghostActive
     GhostBtn.BackgroundColor3 = ghostActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
     local char = Player.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    
     if ghostActive then
+        char.Archivable = true
         ghostChar = char:Clone() ghostChar.Parent = workspace
         ghostChar.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame
         workspace.CurrentCamera.CameraSubject = ghostChar.Humanoid
         char.HumanoidRootPart.CFrame = CFrame.new(0, -5000, 0)
-        RunService.RenderStepped:Connect(function() if ghostActive and ghostChar then ghostChar.Humanoid:Move(char.Humanoid.MoveDirection, true) end end)
+        
+        RunService.RenderStepped:Connect(function() 
+            if ghostActive and ghostChar and char:FindFirstChild("Humanoid") then 
+                ghostChar.Humanoid:Move(char.Humanoid.MoveDirection, true) 
+            end 
+        end)
     else
-        workspace.CurrentCamera.CameraSubject = char.Humanoid
-        char.HumanoidRootPart.CFrame = ghostChar.HumanoidRootPart.CFrame
-        ghostChar:Destroy()
+        if ghostChar then
+            workspace.CurrentCamera.CameraSubject = char.Humanoid
+            char.HumanoidRootPart.CFrame = ghostChar.HumanoidRootPart.CFrame
+            ghostChar:Destroy()
+        end
     end
 end)
 
@@ -232,7 +262,11 @@ NoclipBtn.MouseButton1Click:Connect(function()
     NoclipBtn.BackgroundColor3 = noclipActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(40, 40, 40)
     if noclipActive then
         noclipConnection = RunService.Stepped:Connect(function()
-            if Player.Character then for _, part in ipairs(Player.Character:GetChildren()) do if part:IsA("BasePart") then part.CanCollide = false end end end
+            if noclipActive and Player.Character then 
+                for _, part in ipairs(Player.Character:GetChildren()) do 
+                    if part:IsA("BasePart") then part.CanCollide = false end 
+                end 
+            end
         end)
     else
         if noclipConnection then noclipConnection:Disconnect() noclipConnection = nil end
@@ -294,7 +328,7 @@ Player.CharacterAdded:Connect(function(newCharacter)
         end
     end
 end)
--- [[ سكريبت أيهم الأسطوري V15 المطور - الجزء الثالث ]]
+-- [[ سكريبت أيهم الأسطوري V15 - الجزء الثالث ]]
 -- === [ شريحة 3: الاستهداف المطور + إضافات ESP و Fling لأيهم ] ===
 local TargetPage = Pages[3]
 local NameBox = Instance.new("TextBox", TargetPage)
@@ -396,7 +430,7 @@ SpecBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-`EspBtn.MouseButton1Click:Connect(function()`
+`EspBtn.MouseButton1Click:Connect(function()
     espActive = not espActive
     EspBtn.BackgroundColor3 = espActive and Color3.fromRGB(0, 100, 255) or Color3.fromRGB(40, 40, 40)
     if espActive then
@@ -433,10 +467,13 @@ F9Btn.MouseButton1Click:Connect(function()
         F9Btn.Text = "الكاشف F9 مفعل"
         for _, p in ipairs(PlayersService:GetPlayers()) do
             if p ~= Player and p.Character and not p.Character:FindFirstChild("F9_ESP") then
-                local box = Instance.new("BoxHandleAdornment")
-                box.Name = "F9_ESP" box.Size = Vector3.new(4, 6, 4) box.Color3 = Color3.fromRGB(0, 255, 255)
-                box.AlwaysOnTop = true box.ZIndex = 10 box.Adornee = p.Character:FindFirstChild("HumanoidRootPart")
-                box.Parent = p.Character
+                local root = p.Character:FindFirstChild("HumanoidRootPart")
+                if root then
+                    local box = Instance.new("BoxHandleAdornment")
+                    box.Name = "F9_ESP" box.Size = Vector3.new(4, 6, 4) box.Color3 = Color3.fromRGB(0, 255, 255)
+                    box.AlwaysOnTop = true box.ZIndex = 10 box.Adornee = root
+                    box.Parent = p.Character
+                end
             end
         end
     else
@@ -447,36 +484,21 @@ F9Btn.MouseButton1Click:Connect(function()
     end
 end)
 
--- [[ كود الـ Fling الفيزيائي المطور والحديث 100% لـ Delta ]]
 FlingBtn.MouseButton1Click:Connect(function()
     flingActive = not flingActive
     if flingActive then
         local target = findTarget()
         if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            FlingBtn.Text = "تدمير وطرد: " .. target.Name
+            FlingBtn.Text = "جاري تدمير: " .. target.Name
             FlingBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
             
-            local myRoot = Player.Character.HumanoidRootPart
-            local myHumanoid = Player.Character:FindFirstChildOfClass("Humanoid")
-            
-            -- صنع قوة دوران فيزيائية خارقة تخترق حمايات المابات الكبيرة
-            local bam = Instance.new("AngularVelocity")
-            bam.Name = "AihamFlingForce"
-            bam.MaxTorque = 999999
-            bam.AngularVelocity = Vector3.new(999999, 999999, 999999)
-            bam.Attachment0 = myRoot:FindFirstChildOfClass("Attachment") or Instance.new("Attachment", myRoot)
-            bam.Parent = myRoot
-            
             flingConnection = RunService.Heartbeat:Connect(function()
-                if flingActive and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and myRoot then
+                if flingActive and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+                    local myRoot = Player.Character.HumanoidRootPart
                     local tRoot = target.Character.HumanoidRootPart
                     
-                    -- إلغاء وضع الوقوف الطبيعي حتى لا يتم سحبك للخلف
-                    if myHumanoid then myHumanoid.PlatformStand = true end
-                    
-                    -- الربط الفيزيائي بمركز جسم الخصم مع زحزحة عشوائية خفيفة لضمان الانفجار والطرد
-                    myRoot.CFrame = tRoot.CFrame * CFrame.new(math.random(-1,1)/10, 0, math.random(-1,1)/10)
-                    myRoot.Velocity = Vector3.new(9999, 9999, 9999)
+                    myRoot.CFrame = tRoot.CFrame * CFrame.new(0, 0, 0)
+                    myRoot.Velocity = Vector3.new(99999, 99999, 99999)
                 end
             end)
         else
@@ -487,19 +509,9 @@ FlingBtn.MouseButton1Click:Connect(function()
             FlingBtn.Text = "تفعيل تفجير وتطير اللاعب (Fling)"
         end
     else
-        flingActive = false
         if flingConnection then flingConnection:Disconnect() flingConnection = nil end
-        
-        -- تنظيف القوى وإرجاع الوزن والحركة لوضعها الطبيعي فور الإيقاف
-        if Player.Character then
-            local myRoot = Player.Character:FindFirstChild("HumanoidRootPart")
-            local myHumanoid = Player.Character:FindFirstChildOfClass("Humanoid")
-            if myRoot then
-                if myRoot:FindFirstChild("AihamFlingForce") then myRoot.AihamFlingForce:Destroy() end
-                myRoot.Velocity = Vector3.new(0, 0, 0)
-                myRoot.RotVelocity = Vector3.new(0, 0, 0)
-            end
-            if myHumanoid then myHumanoid.PlatformStand = false end
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            Player.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
         end
         FlingBtn.Text = "تفعيل تفجير وتطير اللاعب (Fling)"
         FlingBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
@@ -517,10 +529,12 @@ local CheckpointPage = Pages[4]
 local CPInput = Instance.new("TextBox", CheckpointPage)
 CPInput.Size = UDim2.new(0.55, 0, 0, 32) CPInput.Position = UDim2.new(0.05, 0, 0, 10)
 CPInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30) CPInput.TextColor3 = Color3.fromRGB(255, 255, 255) CPInput.PlaceholderText = "اسم الموقع..."
+
 local ListContainer = Instance.new("ScrollingFrame", CheckpointPage)
 ListContainer.Size = UDim2.new(0.9, 0, 0, 160) ListContainer.Position = UDim2.new(0.05, 0, 0, 50)
 ListContainer.BackgroundTransparency = 0.9 ListContainer.CanvasSize = UDim2.new(0, 0, 0, 600) ListContainer.ScrollBarThickness = 4
 local savedLocations = {}
+
 local function updateCPList()
     ListContainer:ClearAllChildren()
     local count = 0
@@ -528,10 +542,16 @@ local function updateCPList()
         local ItemFrame = Instance.new("Frame", ListContainer)
         ItemFrame.Size = UDim2.new(0.95, 0, 0, 30) ItemFrame.Position = UDim2.new(0, 0, 0, count * 34)
         ItemFrame.BackgroundTransparency = 1
+        
         local GoBtn = Instance.new("TextButton", ItemFrame)
         GoBtn.Size = UDim2.new(0.8, 0, 1, 0) GoBtn.Text = name
         GoBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45) GoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        GoBtn.MouseButton1Click:Connect(function() if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then Player.Character.HumanoidRootPart.CFrame = cframe end end)
+        GoBtn.MouseButton1Click:Connect(function() 
+            if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then 
+                Player.Character.HumanoidRootPart.CFrame = cframe 
+            end 
+        end)
+        
         local DelBtn = Instance.new("TextButton", ItemFrame)
         DelBtn.Size = UDim2.new(0.18, 0, 1, 0) DelBtn.Position = UDim2.new(0.82, 0, 0, 0)
         DelBtn.Text = "X" DelBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0) DelBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -539,6 +559,7 @@ local function updateCPList()
         count = count + 1
     end
 end
+
 local SaveBtn = Instance.new("TextButton", CheckpointPage)
 SaveBtn.Size = UDim2.new(0.3, 0, 0, 32) SaveBtn.Position = UDim2.new(0.65, 0, 0, 10)
 SaveBtn.Text = "حفظ" SaveBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0) SaveBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -565,6 +586,7 @@ local function clearAllEffects()
         end
     end
 end
+
 local function giveDirectEffect(effectType, customColor)
     clearAllEffects()
     local root = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
@@ -583,9 +605,11 @@ local function giveDirectEffect(effectType, customColor)
         f.Name = "PlayerParticles" f.Size = 10 f.Heat = 15 f.Parent = root
     end
 end
+
 local function createEffectBtn(text, yPos, color, callback)
     local btn = Instance.new("TextButton", EffectsPage) btn.Size = UDim2.new(0.9, 0, 0, 32) btn.Position = UDim2.new(0.05, 0, 0, yPos) btn.BackgroundColor3 = color btn.TextColor3 = Color3.fromRGB(255, 255, 255) btn.Text = text btn.Font = Enum.Font.SourceSansBold btn.TextSize = 13 btn.MouseButton1Click:Connect(callback)
 end
+
 createEffectBtn("تفعيل تأثير النار على الجسم فوراً", 10, Color3.fromRGB(210, 90, 0), function() giveDirectEffect("Fire") end)
 createEffectBtn("تفعيل تأثير الإضاءة المشعة الشاملة (Highlight)", 48, Color3.fromRGB(0, 160, 160), function() giveDirectEffect("Highlight", Color3.fromRGB(0, 255, 255)) end)
 createEffectBtn("تفعيل شظايا الذهب المصلحة (Yellow Particles)", 86, Color3.fromRGB(190, 190, 0), function() giveDirectEffect("Particles", Color3.fromRGB(255, 215, 0)) end)
