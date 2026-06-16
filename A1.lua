@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري النظيف - الجزء الأول: نظام الواجهة ]]
+-- [[ سكريبت أيهم الأسطوري - الجزء الأول: نظام الواجهة ]]
 _G.AihamMenuLoaded = true
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -31,7 +31,7 @@ local TitleText = Instance.new("TextLabel", TitleBar)
 TitleText.Size = UDim2.new(1, -40, 1, 0)
 TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "VR7 TEAM: The Mercy Script (Clean Edition)"
+TitleText.Text = "VR7 TEAM: The Mercy Script"
 TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleText.TextSize = 16
 TitleText.Font = Enum.Font.SourceSansBold
@@ -126,8 +126,8 @@ ToggleButton.Active = true
 ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-print("الجزء الأول النظيف جاهز!")
--- [[ سكريبت أيهم الأسطوري - الجزء الثاني: تصميم الأزرار النظيفة ]]
+print("الجزء الأول تم تحميله!")
+-- [[ سكريبت أيهم الأسطوري - الجزء الثاني: تصميم أزرار التخريب ]]
 if not _G.AihamMenuLoaded then print("يرجى تشغيل الجزء الأول أولاً!") return end
 
 for _, page in ipairs(_G.Pages) do
@@ -183,9 +183,9 @@ SpamSpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 SpamSpeedBox.Font = Enum.Font.SourceSansBold
 SpamSpeedBox.TextSize = 12
 
-local function makeGreyBtn(text, pos)
+local function makeGreyBtn(text, pos, size)
     local btn = Instance.new("TextButton", GamePage)
-    btn.Size = UDim2.new(0.42, 0, 0, 35)
+    btn.Size = size or UDim2.new(0.42, 0, 0, 35)
     btn.Position = pos
     btn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     btn.BorderColor3 = Color3.fromRGB(60, 60, 60)
@@ -196,14 +196,14 @@ local function makeGreyBtn(text, pos)
     return btn
 end
 
+-- ترتيب الأزرار بشكل متناسق بعد حذف الزر الرابع نهائياً
 _G.SpamToggleBtn = makeGreyBtn("تفعيل سبام", UDim2.new(0.05, 0, 0, 120))
-_G.FreezeChatBtn = makeGreyBtn("تعليق الشات", UDim2.new(0.53, 0, 0, 120)) -- سبام A1 لتعليق الشات
-_G.SpyChatBtn = makeGreyBtn("تجسس الرسائل", UDim2.new(0.05, 0, 0, 170))
-_G.TrollAnimBtn = makeGreyBtn("تعليق السيرفر", UDim2.new(0.53, 0, 0, 170)) -- البديل الإسلامي القوي
+_G.FreezeChatBtn = makeGreyBtn("تعليق الشات", UDim2.new(0.53, 0, 0, 120))
+_G.SpyChatBtn = makeGreyBtn("تجسس الرسائل", UDim2.new(0.05, 0, 0, 170), UDim2.new(0.9, 0, 0, 35))
 
 _G.SelectTab(2)
-print("الجزء الثاني النظيف جاهز!")
--- [[ سكريبت أيهم الأسطوري - الجزء الثالث: تشغيل ميزات التخريب النظيفة ]]
+print("الجزء الثاني تم تحميله!")
+-- [[ سكريبت أيهم الأسطوري - الجزء الثالث: تشغيل الميزات النظيفة ]]
 if not _G.SpamToggleBtn then print("يرجى تشغيل الجزء الثاني أولاً!") return end
 
 local Player = game.Players.LocalPlayer
@@ -221,7 +221,7 @@ local function sendToChat(msg)
     end
 end
 
--- 1. تفعيل سبام الكلام العادي
+-- 1. زر تفعيل سبام الكلام العادي
 local spamming = false
 _G.SpamToggleBtn.MouseButton1Click:Connect(function()
     spamming = not spamming
@@ -235,7 +235,7 @@ _G.SpamToggleBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
--- 2. تعليق الشات (سبام سريع جداً بكلمة A1 لملء الشات وتعليقه)
+-- 2. زر تعليق الشات (يضل يكتب A1 بسرعة عالية)
 local a1Spamming = false
 _G.FreezeChatBtn.MouseButton1Click:Connect(function()
     a1Spamming = not a1Spamming
@@ -243,12 +243,12 @@ _G.FreezeChatBtn.MouseButton1Click:Connect(function()
     task.spawn(function()
         while a1Spamming do
             sendToChat("A1")
-            task.wait(0.15) -- سرعة خارقة لتجميد الشات بالـ A1
+            task.wait(0.15)
         end
     end)
 end)
 
--- 3. تجسس الرسائل
+-- 3. زر تجسس الرسائل
 local spyActive = false
 _G.SpyChatBtn.MouseButton1Click:Connect(function()
     spyActive = not spyActive
@@ -256,22 +256,4 @@ _G.SpyChatBtn.MouseButton1Click:Connect(function()
     if spyActive then print("[نظام الرصد]: مراقبة الشات مفعلة") end
 end)
 
--- 4. البديل الإسلامي: تعليق السيرفر (سبام تحديث الخصائص للاعب لإحداث ثقل بالفريمات)
-local serverLag = false
-_G.TrollAnimBtn.MouseButton1Click:Connect(function()
-    serverLag = not serverLag
-    _G.TrollAnimBtn.BackgroundColor3 = serverLag and Color3.fromRGB(150, 150, 150) or Color3.fromRGB(100, 100, 100)
-    task.spawn(function()
-        while serverLag do
-            if Player.Character and Player.Character:FindFirstChild("Humanoid") then
-                -- عملية رندرة سريعة وآمنة ديناميكياً لعمل ثقل للمحيطين بك
-                Player.Character.Humanoid.PlatformStand = true
-                task.wait(0.01)
-                Player.Character.Humanoid.PlatformStand = false
-            end
-            task.wait(0.02)
-        end
-    end)
-end)
-
-print("--- تم تشغيل نسخة أيهم الإسلامية والنظيفة بنجاح كامل! ---")
+print("--- تم تحميل سكريبت أيهم النظيف والخالي تماماً من أي زر زائد! ---")
