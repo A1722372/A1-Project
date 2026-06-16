@@ -1,4 +1,4 @@
--- [[ سكريبت أيهم الأسطوري العملاق - الجزء الأول: الواجهة الكاملة وهيكل القوائم الأساسي ]]
+-- [[ سكريبت أيهم الأسطوري العملاق - الجزء الأول: الواجهة الكاملة وهيكل القوائم الأساسي المصلح ]]
 _G.AihamMenuLoaded = true
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -14,11 +14,11 @@ ScreenGui.Name = "AihamUltimateMenu"
 ScreenGui.ResetOnSpawn = false
 _G.MainScreenGui = ScreenGui
 
--- إطار اللوحة الرئيسي
+-- إطار اللوحة الرئيسي (تم ضبط الأبعاد بدقة لتناسب جميع الشاشات)
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 550, 0, 380)
-MainFrame.Position = UDim2.new(0.5, -275, 0.5, -190)
+MainFrame.Size = UDim2.new(0, 560, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -280, 0.5, -200)
 MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 MainFrame.BorderSizePixel = 2
 MainFrame.BorderColor3 = Color3.fromRGB(230, 200, 50)
@@ -38,7 +38,7 @@ TitleText.BackgroundTransparency = 1
 TitleText.Text = "VR7 TEAM: The Mercy Script v4.0 [Official Edition]"
 TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleText.Font = Enum.Font.SourceSansBold
-TitleText.TextSize = 18
+TitleText.TextSize = 16
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 
 -- زر الإغلاق (X)
@@ -60,10 +60,10 @@ SideMenu.Position = UDim2.new(0, 0, 0, 40)
 SideMenu.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 SideMenu.BorderSizePixel = 1
 SideMenu.BorderColor3 = Color3.fromRGB(40, 40, 40)
-SideMenu.CanvasSize = UDim2.new(0, 0, 0, 420)
+SideMenu.CanvasSize = UDim2.new(0, 0, 0, 450)
 SideMenu.ScrollBarThickness = 4
 
--- مساحة عرض المحتوى والخيارات
+-- مساحة عرض المحتوى والخيارات (تمت إزاحتها للأسفل بمقدار يمنع التداخل)
 local ContentArea = Instance.new("Frame", MainFrame)
 ContentArea.Name = "ContentArea"
 ContentArea.Size = UDim2.new(1, -150, 1, -40)
@@ -118,7 +118,7 @@ for i, tab in ipairs(tabs) do
     page.Name = tab.eng .. "Page"
     page.Size = UDim2.new(1, 0, 1, 0)
     page.BackgroundTransparency = 1
-    page.CanvasSize = UDim2.new(0, 0, 0, 550)
+    page.CanvasSize = UDim2.new(0, 0, 0, 600)
     page.ScrollBarThickness = 4
     page.Visible = false
     _G.Pages[i] = page
@@ -126,7 +126,7 @@ for i, tab in ipairs(tabs) do
     btn.MouseButton1Click:Connect(function() _G.SelectTab(i) end)
 end
 
--- زر التثبيت العائم الصغير الخارجي (الاختصار لفتح وإغلاق القائمة)
+-- زر التثبيت العائم الصغير الخارجي
 local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 50, 0, 50)
 ToggleButton.Position = UDim2.new(0, 20, 0.5, -25)
@@ -142,8 +142,8 @@ ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
 _G.SelectTab(1)
-print("[VR7 Core]: تم تحميل الجزء الأول بنجاح تام!")
--- [[ سكريبت أيهم الأسطوري - الجزء الثاني المعدل بناءً على الصورة 1000001255.jpg ]]
+print("[VR7 Core]: تم تحميل وتعديل الجزء الأول بنجاح تام!")
+-- [[ سكريبت أيهم الأسطوري - الجزء الثاني المصلح للأبعاد بناءً على الصورة 1000001260.jpg ]]
 if not _G.AihamMenuLoaded then print("تنبيه: يرجى تشغيل الجزء الأول أولاً!") return end
 
 local HomePage = _G.Pages[1]
@@ -192,7 +192,7 @@ local function createNormalBtn(parent, text, xPos, yPos, width)
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold
-    btn.TextSize = 15
+    btn.TextSize = 14
     return btn
 end
 
@@ -200,7 +200,7 @@ end
 local function createCustomBox(parent, placeholder, x, y, width, height)
     local box = Instance.new("TextBox", parent)
     box.Size = UDim2.new(width, 0, 0, height)
-    box.Position = UDim2.new(x, y)
+    box.Position = UDim2.new(x, 0, 0, y) -- استخدام الإزاحة المطلقة بـ بكسل للتحكم الدقيق
     box.BackgroundColor3 = Color3.fromRGB(110, 110, 110)
     box.TextColor3 = Color3.fromRGB(0, 0, 0)
     box.PlaceholderText = placeholder
@@ -212,27 +212,30 @@ local function createCustomBox(parent, placeholder, x, y, width, height)
 end
 
 -------------------------------------------------------------------------------
--- 1. تصميم واجهة التخريب الإسلامية المطابقة للصورة 1000001255.jpg تماماً
+-- 1. تصميم واجهة التخريب الإسلامية المصلحة (تم دفع الإحداثيات لمنع التداخل مع العنوان)
 -------------------------------------------------------------------------------
+-- السطر الأول: تم إنزاله إلى الإحداثي Y = 15 بكسل ليظهر كاملاً تحت الشريط
 _G.CmdBarBox = createCustomBox(GamePage, "خانة الاوامر [Cmdbar]", 0.05, 15, 0.75, 40)
 _G.HelpQuestionBtn = createNormalBtn(GamePage, "?", 0.83, 15, 0.12)
 _G.HelpQuestionBtn.Size = UDim2.new(0.12, 0, 0, 40)
 
-_G.ChatSpamBox = createCustomBox(GamePage, "كلام", 0.05, 65, 0.65, 50)
-_G.SpamSpeedBox = createCustomBox(GamePage, "سرعة\nسبام", 0.73, 65, 0.22, 50)
+-- السطر الثاني: تم إنزاله إلى الإحداثي Y = 70 بكسل ليعطي مساحة كافية ومريحة للعين
+_G.ChatSpamBox = createCustomBox(GamePage, "كلام", 0.05, 70, 0.65, 50)
+_G.SpamSpeedBox = createCustomBox(GamePage, "سرعة\nسبام", 0.73, 70, 0.22, 50)
 _G.SpamSpeedBox.MultiLine = true
 
-_G.ToggleSpamBtn = createNormalBtn(GamePage, "تفعيل سبام", 0.05, 130, 0.42)
-_G.FreezeChatBtn = createNormalBtn(GamePage, "تعليق الشات", 0.53, 130, 0.42)
-_G.SpyChatBtn = createNormalBtn(GamePage, "تجسس الرسائل", 0.05, 185, 0.42)
-_G.FlingAllBtn = createNormalBtn(GamePage, "تطير الجميع (Fling All)", 0.53, 185, 0.42)
+-- صفوف الأزرار: تم إعادة توزيعها عمودياً لتبدأ بعد الخانات بمسافات ممتازة وموزعة بشكل منسق
+_G.ToggleSpamBtn = createNormalBtn(GamePage, "تفعيل سبام", 0.05, 140, 0.42)
+_G.FreezeChatBtn = createNormalBtn(GamePage, "تعليق الشات", 0.53, 140, 0.42)
 
--- أزرار إضافية اختيارية للاق والكراش بالأسفل لزيادة التحكم والتجربة
-_G.CrashServerBtn = createNormalBtn(GamePage, "كراش السيرفر", 0.05, 240, 0.42)
-_G.LagServerBtn = createNormalBtn(GamePage, "لاق السيرفر", 0.53, 240, 0.42)
+_G.SpyChatBtn = createNormalBtn(GamePage, "تجسس الرسائل", 0.05, 195, 0.42)
+_G.FlingAllBtn = createNormalBtn(GamePage, "تطير الجميع (Fling All)", 0.53, 195, 0.42)
+
+_G.CrashServerBtn = createNormalBtn(GamePage, "كراش السيرفر", 0.05, 250, 0.42)
+_G.LagServerBtn = createNormalBtn(GamePage, "لاق السيرفر", 0.53, 250, 0.42)
 
 -------------------------------------------------------------------------------
--- 2. تصميم بقية القوائم بالتفصيل المنسق والموزع على عمودين
+-- 2. تصميم بقية القوائم بالتفصيل الممل بدون أي تعديل أو حذف
 -------------------------------------------------------------------------------
 local label = Instance.new("TextLabel", HomePage)
 label.Size = UDim2.new(0.94, 0, 0, 30)
@@ -279,8 +282,8 @@ _G.EspBtn = createNormalBtn(MiscPage, "تفعيل كاشف أماكن اللاع
 _G.FpsBoosterBtn = createNormalBtn(MiscPage, "تسريع اللعبة وتقليل اللاق (FPS Booster)", 0.03, 60, 0.9)
 _G.HttpSpyBtn = createNormalBtn(MiscPage, "تفعيل متجسد السكربتات (Http Spy)", 0.03, 105, 0.9)
 
-_G.SelectTab(2) -- يفتح تلقائياً على صفحة التخريب للتأكد من المظهر
-print("[VR7 UI]: تم بناء وتعديل عناصر الواجهة الإسلامية بالكامل بنجاح!")
+_G.SelectTab(2) -- يفتح تلقائياً على صفحة التخريب للتأكد من تعديل المظهر والحدود المصلحة
+print("[VR7 UI]: تم إصلاح توزيع عناصر الواجهة بالمليمتر بنجاح!")
 -- [[ سكريبت أيهم الأسطوري العملاق - الجزء الثالث: تشغيل ميزات اللاعب والـ Ghost Mode الثابت ]]
 if not _G.WSBtn then print("تنبيه: يرجى تشغيل الجزء الثاني أولاً!") return end
 
@@ -361,7 +364,7 @@ UserInputService.JumpRequest:Connect(function()
     if infJump and hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
 end)
 
--- نظام الـ Ghost Mode الاحترافي: حل مشكلة الطيران وتثبيت الشبح على الأرض بسلاسة
+-- نظام الـ Ghost Mode الاحترافي والموزون: حل مشكلة الطيران وتثبيت الشبح على الأرض بسلاسة
 _G.InvisBtn.MouseButton1Click:Connect(function()
     ghostMode = not ghostMode
     _G.InvisBtn.BackgroundColor3 = ghostMode and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(110, 110, 110)
@@ -445,7 +448,7 @@ local function findTarget(name)
 end
 
 -------------------------------------------------------------------------------
--- 1. برمجة ميزات تخريب الشات والأوامر بناءً على الخانات الجديدة بالصورة
+-- 1. برمجة ميزات تخريب الشات والأوامر بناءً على الخانات والأزرار المصلحة
 -------------------------------------------------------------------------------
 
 -- زر تفعيل وإلغاء السبام (Spam) بناءً على الكلام والسرعة المحددة بالخانات
@@ -704,5 +707,5 @@ end)
 _G.HttpSpyBtn.MouseButton1Click:Connect(function() print("[VR7 Spy]: جدار المراقبة نشط!") end)
 
 print("==================================================")
-print("--- [مبروك يا أيهم! تم اكتمال السكريبت الإسلامي والكامل بنسبة 100%] ---")
+print("--- [مبروك يا أيهم! تم اكتمال السكريبت الإسلامي بالكامل والمصلح بنسبة 100%] ---")
 print("==================================================")
