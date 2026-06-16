@@ -126,7 +126,7 @@ ToggleButton.Active = true
 ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
-print("الجزء الأول تم بنجاح! جاهز؟ اطلب الجزء الثاني.")
+print("الجزء الأول تم! بانتظار طلبك للجزء الثاني.")
 -- [[ سكريبت أيهم الأسطوري - الجزء الثاني: تصميم عناصر صفحة اللاعب ]]
 if not _G.AihamMenuLoaded then print("يرجى تشغيل الجزء الأول أولاً!") return end
 
@@ -191,7 +191,7 @@ _G.InfJumpBtn = createNormalBtn("قفز لانهائى", 0.03, 280)
 _G.TPToolBtn = createNormalBtn("اداة الانتقال", 0.52, 280)
 
 _G.SelectTab(3)
-print("تم تشغيل الجزء الثاني بنجاح! ارسلي 3 عشان أعطيك السكريبت البرمجي الأخير مع تحديث الكاميرا.")
+print("تم تشغيل الجزء الثاني بنجاح! ارسلي 3 عشان أعطيك السكريبت البرمجي الأخير مع تعديل الـ Ghost Mode الحقيقي.")
 -- [[ سكريبت أيهم الأسطوري - الجزء الثالث: تشغيل وبرمجة ميزات اللاعب كاملة ]]
 if not _G.WSBtn then print("يرجى تشغيل الجزء الثاني أولاً!") return end
 
@@ -204,9 +204,10 @@ local Camera = workspace.CurrentCamera
 local noclip = false
 local infJump = false
 local flying = false
-local invisible = false
+local ghostMode = false
 local savedCheckpoint = nil
 local flySpeed = 50
+local localClone = nil
 
 -- دالة للحصول على الكاركتر الحالي
 local function getChar() return Player.Character or Player.CharacterAdded:Wait() end
@@ -268,7 +269,7 @@ _G.NoclipBtn.MouseButton1Click:Connect(function()
     _G.NoclipBtn.BackgroundColor3 = noclip and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 150, 20)
 end)
 RunService.Stepped:Connect(function()
-    if noclip then
+    if noclip or ghostMode then
         local char = Player.Character
         if char then
             for _, child in pairs(char:GetDescendants()) do
@@ -292,58 +293,57 @@ game:GetService("UserInputService").JumpRequest:Connect(function()
     end
 end)
 
--- 7. ميزة الاختفاء الاحترافية (تثبيت وتتبع الكاميرا على الجسد الوهمي الشفاف)
-local cloneChar = nil
+-- 7. ميزة الاختفاء بنظام Ghost Mode وتعديل الكاميرا الذكي
 _G.InvisBtn.MouseButton1Click:Connect(function()
-    invisible = not invisible
-    _G.InvisBtn.BackgroundColor3 = invisible and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 150, 20)
+    ghostMode = not ghostMode
+    _G.InvisBtn.BackgroundColor3 = ghostMode and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(180, 150, 20)
     
     local char = getChar()
-    if invisible then
-        -- إنشاء النسخة الشفافة محلياً
-        char.Archivable = true
-        cloneChar = char:Clone()
-        cloneChar.Parent = workspace
+    
+    if ghostMode then
+        -- إخفاء جسمك الحقيقي بالكامل عن السيرفر وبقية اللاعبين
+        for _, part in pairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then part.Transparency = 1 end
+        end
         
-        for _, part in pairs(cloneChar:GetDescendants()) do
-            if part:IsA("BasePart") or part:IsA("Decal") then
-                part.Transparency = 0.6 -- شفافية خفيفة واحترافية مثل الصورة
-                if part:IsA("BasePart") then part.CanCollide = false end
+        -- إنشاء النسخة الوهمية الشفافة محلياً عندك
+        char.Archivable = true
+        localClone = char:Clone()
+        localClone.Name = "AihamGhost"
+        localClone.Parent = workspace
+        
+        for _, part in pairs(localClone:GetDescendants()) do
+            if part:IsA("BasePart") then 
+                part.Transparency = 0.5 
+                part.CanCollide = false
             end
         end
         
-        -- تحويل هدف الكاميرا ليتبع الهيومنايد الخاص بالجسد الوهمي فوراً
-        if cloneChar:FindFirstChild("Humanoid") then
-            Camera.CameraSubject = cloneChar.Humanoid
+        -- إجبار الكاميرا على تتبع الجسد الوهمي الشفاف فوراً
+        if localClone:FindFirstChild("Humanoid") then
+            Camera.CameraSubject = localClone.Humanoid
         end
         
-        -- إخفاء الكاركتر الحقيقي في السيرفر ومزامنة حركة الجسد الشفاف معه
+        -- مزامنة وربط حركة الجسد الوهمي مع حركة تحكمك بجسمك الحقيقي في كل فريم
         task.spawn(function()
-            while invisible and char and char:FindFirstChild("HumanoidRootPart") do
-                char.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame * CFrame.new(0, -9999, 0)
-                if cloneChar and cloneChar:FindFirstChild("HumanoidRootPart") then
-                    cloneChar.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame * CFrame.new(0, 9999, 0)
-                end
-                task.wait()
+            while ghostMode and char and char:FindFirstChild("HumanoidRootPart") and localClone and localClone:FindFirstChild("HumanoidRootPart") do
+                localClone.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame
+                RunService.RenderStepped:Wait()
             end
         end)
+        print("[Ghost Mode]: تم التفعيل! الكاميرا الآن تتبع الجسد الشفاف وتتحرك معه.")
     else
-        -- إلغاء الاختفاء وإرجاع هدف الكاميرا للاعب الطبيعي الأصلي
+        -- عند إلغاء الاختفاء: إرجاع الكاميرا وحذف الجسد الوهمي وإظهار الجسم الحقيقي
+        if localClone then localClone:Destroy() localClone = nil end
+        
         if char and char:FindFirstChild("Humanoid") then
             Camera.CameraSubject = char.Humanoid
         end
         
-        if cloneChar then cloneChar:Destroy() cloneChar = nil end
-        
-        local root = char:FindFirstChild("HumanoidRootPart")
-        if root then
-            root.CFrame = root.CFrame * CFrame.new(0, 9999, 0)
-        end
         for _, part in pairs(char:GetDescendants()) do
-            if part:IsA("BasePart") or part:IsA("Decal") then
-                part.Transparency = 0
-            end
+            if part:IsA("BasePart") then part.Transparency = 0 end
         end
+        print("[Ghost Mode]: تم إلغاء التفعيل وعاد كل شيء لطبيعته.")
     end
 end)
 
@@ -387,4 +387,4 @@ _G.TPToolBtn.MouseButton1Click:Connect(function()
     tool.Parent = Player.Backpack
 end)
 
-print("--- تم تشغيل السكريبت كاملاً بنجاح مع إصلاح الكاميرا بنسبة 100%! ---")
+print("--- تم تشغيل السكريبت كاملاً بنجاح! ---")
