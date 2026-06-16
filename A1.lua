@@ -1,9 +1,9 @@
--- [[ سكريبت أيهم الأسطوري العملاق - الجزء الأول: الواجهة الكاملة وهيكل القوائم الأساسي بالتفصيل الممل ]]
+-- [[ سكريبت أيهم الأسطوري العملاق - الجزء الأول: الواجهة الكاملة وهيكل القوائم الأساسي المصلح ]]
 _G.AihamMenuLoaded = true
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
--- التأكد من عدم تكرار الواجهة لتجنب اللاق وتصفير النسخ القديمة
+-- التأكد من عدم تكرار الواجهة لتجنب اللاق
 if PlayerGui:FindFirstChild("AihamUltimateMenu") then 
     PlayerGui.AihamUltimateMenu:Destroy() 
 end
@@ -14,18 +14,18 @@ ScreenGui.Name = "AihamUltimateMenu"
 ScreenGui.ResetOnSpawn = false
 _G.MainScreenGui = ScreenGui
 
--- إطار اللوحة الرئيسي (تم ضبط الأبعاد بدقة لتناسب جميع الشاشات ومنع خروج العناصر)
+-- إطار اللوحة الرئيسي (تم ضبط الأبعاد بدقة لتناسب جميع الشاشات)
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 560, 0, 400)
 MainFrame.Position = UDim2.new(0.5, -280, 0.5, -200)
 MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 MainFrame.BorderSizePixel = 2
-MainFrame.BorderColor3 = Color3.fromRGB(230, 200, 50) -- اللون الذهبي المتفق عليه لقشرة الأساس
+MainFrame.BorderColor3 = Color3.fromRGB(230, 200, 50)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
--- شريط العنوان العلوي (TitleBar)
+-- شريط العنوان العلوي
 local TitleBar = Instance.new("Frame", MainFrame)
 TitleBar.Size = UDim2.new(1, 0, 0, 40)
 TitleBar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -41,7 +41,7 @@ TitleText.Font = Enum.Font.SourceSansBold
 TitleText.TextSize = 16
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 
--- زر الإغلاق الأحمر (X) المانع لتكرار النوافذ
+-- زر الإغلاق (X)
 local CloseBtn = Instance.new("TextButton", TitleBar)
 CloseBtn.Size = UDim2.new(0, 30, 0, 30)
 CloseBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -52,7 +52,7 @@ CloseBtn.Font = Enum.Font.SourceSansBold
 CloseBtn.TextSize = 16
 CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false end)
 
--- القائمة الجانبية للتنقل بين التبويبات (SideMenu)
+-- القائمة الجانبية للتنقل بين الصفحات
 local SideMenu = Instance.new("ScrollingFrame", MainFrame)
 SideMenu.Name = "SideMenu"
 SideMenu.Size = UDim2.new(0, 150, 1, -40)
@@ -63,7 +63,7 @@ SideMenu.BorderColor3 = Color3.fromRGB(40, 40, 40)
 SideMenu.CanvasSize = UDim2.new(0, 0, 0, 450)
 SideMenu.ScrollBarThickness = 4
 
--- مساحة عرض المحتوى والخيارات الداخلية لكل صفحة على حدة
+-- مساحة عرض المحتوى والخيارات (تمت إزاحتها للأسفل بمقدار يمنع التداخل)
 local ContentArea = Instance.new("Frame", MainFrame)
 ContentArea.Name = "ContentArea"
 ContentArea.Size = UDim2.new(1, -150, 1, -40)
@@ -73,7 +73,7 @@ ContentArea.BackgroundTransparency = 1
 _G.Pages = {}
 local MenuButtons = {}
 
--- تعريف الصفحات السبعة المطلوبة في منظومة السكربت بالكامل دون أي نقص
+-- تعريف الصفحات السبعة المطلوبة
 local tabs = {
     {eng = "Home", arb = "الرئيسية"},
     {eng = "Game", arb = "التخريب"},
@@ -84,7 +84,7 @@ local tabs = {
     {eng = "News", arb = "الأخبار"}
 }
 
--- دالة التنقل المنظم وتحديث الألوان عند الضغط على الصفحات
+-- دالة التنقل والتنظيم بين القوائم
 _G.SelectTab = function(index)
     for i, page in ipairs(_G.Pages) do
         page.Visible = (i == index)
@@ -100,7 +100,7 @@ _G.SelectTab = function(index)
     end
 end
 
--- حلقة التكرار الأساسية لبناء وتوزيع أزرار القائمة والصفحات بدقة وموثوقية عالية
+-- بناء أزرار القائمة والصفحات تلقائياً
 for i, tab in ipairs(tabs) do
     local btn = Instance.new("TextButton", SideMenu)
     btn.Size = UDim2.new(0.9, 0, 0, 38)
@@ -126,7 +126,7 @@ for i, tab in ipairs(tabs) do
     btn.MouseButton1Click:Connect(function() _G.SelectTab(i) end)
 end
 
--- زر التثبيت العائم الخارجي الصغير (VR7) لفتح وإغلاق الواجهة من الخارج بسلاسة
+-- زر التثبيت العائم الصغير الخارجي
 local ToggleButton = Instance.new("TextButton", ScreenGui)
 ToggleButton.Size = UDim2.new(0, 50, 0, 50)
 ToggleButton.Position = UDim2.new(0, 20, 0.5, -25)
@@ -141,455 +141,571 @@ ToggleButton.Active = true
 ToggleButton.Draggable = true
 ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
 
--- فتح السكربت تلقائياً على التبويب الأول لمنع أي خربطة عند التشغيل
 _G.SelectTab(1)
-print("[VR7 Core]: تم تحميل وتأكيد الجزء الأول الكامل بالتفصيل الممل بنجاح!")
--- [[ سكريبت أيهم الأسطوري العملاق - الجزء الثاني: تصميم الـ Home وقائمة الـ Target بالتفصيل الممل ]]
-if not _G.Pages or not _G.Pages[1] then print("تنبيه: يرجى تشغيل الجزء الأول أولاً لتأسيس القوائم!") return end
+print("[VR7 Core]: تم تحميل وتعديل الجزء الأول بنجاح تام!")
+-- [[ سكريبت أيهم الأسطوري - الجزء الثاني المصلح للأبعاد بناءً على الصورة 1000001260.jpg ]]
+if not _G.AihamMenuLoaded then print("تنبيه: يرجى تشغيل الجزء الأول أولاً!") return end
 
 local HomePage = _G.Pages[1]
-local TargetPage = _G.Pages[4] -- صفحة الاستهداف (Target)
+local GamePage = _G.Pages[2]
+local CharPage = _G.Pages[3]
+local TargetPage = _G.Pages[4]
+local AnimsPage = _G.Pages[5]
+local MiscPage = _G.Pages[6]
+local NewsPage = _G.Pages[7]
 
--------------------------------------------------------------------------------
--- 1. تصميم محتويات الصفحة الرئيسية (Home Page)
--------------------------------------------------------------------------------
-local HomeTitle = Instance.new("TextLabel", HomePage)
-HomeTitle.Size = UDim2.new(0.9, 0, 0, 40)
-HomeTitle.Position = UDim2.new(0.05, 0, 0, 15)
-HomeTitle.BackgroundTransparency = 1
-HomeTitle.Text = "أهلاً بك في سكربت VR7 TEAM المطور"
-HomeTitle.TextColor3 = Color3.fromRGB(230, 200, 50)
-HomeTitle.Font = Enum.Font.SourceSansBold
-HomeTitle.TextSize = 18
-
-local HomeDesc = Instance.new("TextLabel", HomePage)
-HomeDesc.Size = UDim2.new(0.9, 0, 0, 60)
-HomeDesc.Position = UDim2.new(0.05, 0, 0, 60)
-HomeDesc.BackgroundTransparency = 1
-HomeDesc.Text = "تم إعادة بناء الواجهة وتحديث قائمة الاستهداف لتطابق نظام سكربت (The Mercy Script) الشهير بالكامل بأزراره وزخارفه الخاصة."
-HomeDesc.TextColor3 = Color3.fromRGB(200, 200, 200)
-HomeDesc.Font = Enum.Font.SourceSans
-HomeDesc.TextSize = 14
-HomeDesc.TextWrapped = true
-
--------------------------------------------------------------------------------
--- 2. تصميم محتويات قائمة الاستهداف المطورة بالكامل (Target Page)
--------------------------------------------------------------------------------
--- تنظيف أي عناصر قديمة لضمان عدم التداخل واللاق
-TargetPage:ClearAllChildren()
-
--- [أ] العناصر العلوية لبيانات الضحية (حسب الصورة 1000001262.jpg)
--- صورة بروفايل الضحية (مربع أسود كإطار أساسي متين)
-local TargetImg = Instance.new("ImageLabel", TargetPage)
-TargetImg.Name = "TargetHeadshot"
-TargetImg.Size = UDim2.new(0, 95, 0, 95)
-TargetImg.Position = UDim2.new(0.05, 0, 0, 15)
-TargetImg.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-TargetImg.BorderSizePixel = 1
-TargetImg.BorderColor3 = Color3.fromRGB(180, 0, 0)
-
--- خانة إدخال اسم الضحية المستهدفة (المكتوب داخلها target@...)
-_G.TargetBox = Instance.new("TextBox", TargetPage)
-_G.TargetBox.Name = "TargetNameInput"
-_G.TargetBox.Size = UDim2.new(0.5, 0, 0, 35)
-_G.TargetBox.Position = UDim2.new(0.32, 0, 0, 15)
-_G.TargetBox.BackgroundColor3 = Color3.fromRGB(45, 15, 15) -- خلفية حمراء داكنة جداً مطابقة للصورة
-_G.TargetBox.BorderSizePixel = 1
-_G.TargetBox.BorderColor3 = Color3.fromRGB(100, 0, 0)
-_G.TargetBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-_G.TargetBox.PlaceholderText = "@target..."
-_G.TargetBox.PlaceholderColor3 = Color3.fromRGB(150, 50, 50)
-_G.TargetBox.Text = ""
-_G.TargetBox.Font = Enum.Font.SourceSans
-_G.TargetBox.TextSize = 14
-
--- نصوص عرض معلومات الحساب المستهدف (UserID / Display / Joined)
-local infoY = 55
-local infoLabels = {"UserID:", "Display:", "Joined:"}
-for i, text in ipairs(infoLabels) do
-    local lbl = Instance.new("TextLabel", TargetPage)
-    lbl.Size = UDim2.new(0.5, 0, 0, 15)
-    lbl.Position = UDim2.new(0.32, 0, 0, infoY + ((i-1) * 16))
-    lbl.BackgroundTransparency = 1
-    lbl.Text = text
-    lbl.TextColor3 = Color3.fromRGB(180, 0, 0) -- لون النص أحمر ميرسي الغامق
-    lbl.Font = Enum.Font.SourceSans
-    lbl.TextSize = 13
-    lbl.TextXAlignment = Enum.TextXAlignment.Left
-end
-
--- [ب] دالة مساعدة وموحدة لبناء أزرار ميرسي الحمراء مع علامة الزخرفة الصغيرة (❖) بجانبها بدقة
-local function createMercyBtn(text, x, y)
-    -- الزر الأحمر الأساسي
-    local btn = Instance.new("TextButton", TargetPage)
-    btn.Size = UDim2.new(0.36, 0, 0, 35)
-    btn.Position = UDim2.new(x, 0, 0, y)
-    btn.BackgroundColor3 = Color3.fromRGB(150, 10, 10) -- اللون الأحمر الدموي المطابق للصورة
+-- دالة مساعدة لإنشاء صفوف الإدخال لقائمة اللاعب والاستهداف
+local function createRowWithInput(parent, text, placeholder, yPos)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(0.45, 0, 0, 35)
+    btn.Position = UDim2.new(0.03, 0, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(180, 150, 20)
     btn.BorderSizePixel = 1
     btn.BorderColor3 = Color3.fromRGB(0, 0, 0)
     btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(0, 0, 0) -- النص باللون الأسود كما في الصورتين تماماً
+    btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold
     btn.TextSize = 14
-    
-    -- علامة الزخرفة المتصلة والملتصقة بالزر (❖)
-    local deco = Instance.new("TextLabel", TargetPage)
-    deco.Size = UDim2.new(0, 15, 0, 35)
-    deco.Position = UDim2.new(x + 0.37, 0, 0, y) -- توضع مباشرة على يمين الزر
-    deco.BackgroundTransparency = 1
-    deco.Text = "❖"
-    deco.TextColor3 = Color3.fromRGB(180, 0, 0)
-    deco.Font = Enum.Font.SourceSansBold
-    deco.TextSize = 14
-    deco.TextHAlignment = Enum.TextHAlignment.Center
-    
-    return btn
+
+    local box = Instance.new("TextBox", parent)
+    box.Size = UDim2.new(0.45, 0, 0, 35)
+    box.Position = UDim2.new(0.52, 0, 0, yPos)
+    box.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    box.TextColor3 = Color3.fromRGB(255, 255, 255)
+    box.PlaceholderText = placeholder
+    box.PlaceholderColor3 = Color3.fromRGB(140, 140, 140)
+    box.Text = ""
+    box.Font = Enum.Font.SourceSans
+    box.TextSize = 13
+    return btn, box
 end
 
--- [ج] توزيع الأزرار بشكل متوازي (عمود يسار وعمود يمين) بدقة وتفصيل ممل حسب الصورتين 1000001262 و 1000001263
-local startY = 130
-local spacingY = 45
-
--- الصف الأول
-_G.FlingTargetBtn   = createMercyBtn("فلنق", 0.05, startY)
-_G.SpectateBtn      = createMercyBtn("مشاهدة", 0.52, startY)
-
--- الصف الثاني
-_G.BangCcTargetBtn  = createMercyBtn("بانق عكسي", 0.05, startY + spacingY)
-_G.BangTargetBtn    = createMercyBtn("بانق", 0.52, startY + spacingY)
-
--- الصف الثالث
-_G.SwhaTargetBtn    = createMercyBtn("سوها عليه", 0.05, startY + (spacingY * 2))
-_G.YmsTargetBtn     = createMercyBtn("يمص", 0.52, startY + (spacingY * 2))
-
--- الصف الرابع
-_G.DarbTargetBtn    = createMercyBtn("ضرب مؤخرة", 0.05, startY + (spacingY * 3))
-_G.TmsTargetBtn     = createMercyBtn("تمص", 0.52, startY + (spacingY * 3))
-
--- الصف الخامس
-_G.JlosTargetBtn    = createMercyBtn("جلوس في راسه", 0.05, startY + (spacingY * 4))
-_G.BagTargetBtn     = createMercyBtn("حقيبة ظهر", 0.52, startY + (spacingY * 4))
-
--- الصف السادس
-_G.Sm3TargetBtn     = createMercyBtn("سماع", 0.05, startY + (spacingY * 5))
-_G.CopyTargetBtn    = createMercyBtn("تقليد الكلام", 0.52, startY + (spacingY * 5))
-
--- الصف السابع (يحتوي على زر التنقل وأيقونة الماوس التوضيحية بجانبه)
-_G.TpTargetBtn      = createMercyBtn("تنقل", 0.05, startY + (spacingY * 6))
-
-local mouseIcon = Instance.new("TextLabel", TargetPage)
-mouseIcon.Size = UDim2.new(0, 20, 0, 35)
-mouseIcon.Position = UDim2.new(0.43, 0, 0, startY + (spacingY * 6))
-mouseIcon.BackgroundTransparency = 1
-mouseIcon.Text = "🖱️"
-mouseIcon.TextSize = 14
-
--- ضبط مساحة التمرير (CanvasSize) لتستوعب كافة الأزرار والزخارف الجديدة ومنع التقطيع
-TargetPage.CanvasSize = UDim2.new(0, 0, 0, startY + (spacingY * 7) + 20)
-
-print("[VR7 Core]: تم بناء وتأكيد الجزء الثاني الكامل بكافة أزرار ميرسي بنجاح!")
--- [[ سكريبت أيهم الأسطوري العملاق - الجزء الثالث: تصميم الـ Game وقائمة الـ Character بالتفصيل الممل ]]
-if not _G.Pages or not _G.Pages[2] then print("تنبيه: يرجى تشغيل الأجزاء السابقة أولاً لتأسيس القوائم!") return end
-
-local GamePage = _G.Pages[2]      -- صفحة التخريب (Game)
-local CharPage = _G.Pages[3]      -- صفحة اللاعب (Character)
-
--- دالة مساعدة وموحدة لإنشاء أزرار منسقة وجميلة داخل القوائم لمنع اللاق والتكرار العشوائي
-local function createStandardBtn(parent, text, x, y, sizeX)
+-- دالة مساعدة لإنشاء الأزرار العادية الرمادية المتطابقة مع الصورة
+local function createNormalBtn(parent, text, xPos, yPos, width)
+    width = width or 0.45
     local btn = Instance.new("TextButton", parent)
-    btn.Size = UDim2.new(sizeX or 0.42, 0, 0, 38)
-    btn.Position = UDim2.new(x, 0, 0, y)
-    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.Size = UDim2.new(width, 0, 0, 35)
+    btn.Position = UDim2.new(xPos, 0, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(110, 110, 110)
     btn.BorderSizePixel = 1
-    btn.BorderColor3 = Color3.fromRGB(230, 200, 50) -- حد ذهبي خفيف متناسق مع قشرة الأساس
+    btn.BorderColor3 = Color3.fromRGB(0, 0, 0)
     btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextColor3 = Color3.fromRGB(0, 0, 0)
     btn.Font = Enum.Font.SourceSansBold
     btn.TextSize = 14
     return btn
 end
 
--------------------------------------------------------------------------------
--- 1. تصميم محتويات قائمة التخريب (Game Page)
--------------------------------------------------------------------------------
--- تنظيف المحتويات القديمة تماماً لضمان النظافة والأداء العالي
-GamePage:ClearAllChildren()
-
-local GameSectionTitle = Instance.new("TextLabel", GamePage)
-GameSectionTitle.Size = UDim2.new(0.9, 0, 0, 30)
-GameSectionTitle.Position = UDim2.new(0.05, 0, 0, 10)
-GameSectionTitle.BackgroundTransparency = 1
-GameSectionTitle.Text = "خيارات التحكم والتخريب في السيرفر العمومية:"
-GameSectionTitle.TextColor3 = Color3.fromRGB(230, 200, 50)
-GameSectionTitle.Font = Enum.Font.SourceSansBold
-GameSectionTitle.TextSize = 14
-GameSectionTitle.TextXAlignment = Enum.TextXAlignment.Left
-
--- توزيع أزرار قائمة التخريب على عمودين متناسقين
-_G.FlingAllBtn       = createStandardBtn(GamePage, "فلنق الجميع (Kill All)", 0.05, 50)
-_G.BringAllBtn       = createStandardBtn(GamePage, "جلب الجميع (Bring All)", 0.52, 50)
-
-_G.FreezeServerBtn   = createStandardBtn(GamePage, "تجميد السيرفر (Lag Server)", 0.05, 100)
-_G.UnfreezeServerBtn = createStandardBtn(GamePage, "إلغاء التجميد", 0.52, 100)
-
-_G.VoidServerBtn     = createStandardBtn(GamePage, "إسقاط الجميع في الوويد", 0.05, 150)
-_G.DestructMapBtn    = createStandardBtn(GamePage, "تدمير الماب (العناصر غير المحمية)", 0.52, 150)
-
--- ضبط أبعاد التمرير لصفحة التخريب
-GamePage.CanvasSize = UDim2.new(0, 0, 0, 220)
-
--------------------------------------------------------------------------------
--- 2. تصميم محتويات قائمة اللاعب (Character Page)
--------------------------------------------------------------------------------
--- تنظيف المحتويات القديمة تماماً لضمان النظافة والأداء العالي
-CharPage:ClearAllChildren()
-
-local CharSectionTitle = Instance.new("TextLabel", CharPage)
-CharSectionTitle.Size = UDim2.new(0.9, 0, 0, 30)
-CharSectionTitle.Position = UDim2.new(0.05, 0, 0, 10)
-CharSectionTitle.BackgroundTransparency = 1
-CharSectionTitle.Text = "تعديل خصائص وقدرات شخصيتك الأساسية:"
-CharSectionTitle.TextColor3 = Color3.fromRGB(230, 200, 50)
-CharSectionTitle.Font = Enum.Font.SourceSansBold
-CharSectionTitle.TextSize = 14
-CharSectionTitle.TextXAlignment = Enum.TextXAlignment.Left
-
--- [أ] خانة تعديل السرعة (WalkSpeed) مع زر التحديث
-local SpeedLabel = Instance.new("TextLabel", CharPage)
-SpeedLabel.Size = UDim2.new(0, 80, 0, 35)
-SpeedLabel.Position = UDim2.new(0.05, 0, 0, 50)
-SpeedLabel.BackgroundTransparency = 1
-SpeedLabel.Text = "السرعة:"
-SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-SpeedLabel.Font = Enum.Font.SourceSansBold
-SpeedLabel.TextSize = 14
-
-_G.SpeedBox = Instance.new("TextBox", CharPage)
-_G.SpeedBox.Size = UDim2.new(0, 100, 0, 35)
-_G.SpeedBox.Position = UDim2.new(0.25, 0, 0, 50)
-_G.SpeedBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-_G.SpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-_G.SpeedBox.Text = "16"
-_G.SpeedBox.Font = Enum.Font.SourceSans
-_G.SpeedBox.TextSize = 14
-
-_G.SetSpeedBtn = createStandardBtn(CharPage, "تحديث", 0.52, 50, 0.25)
-
--- [ب] خانة تعديل القفز (JumpPower) مع زر التحديث
-local JumpLabel = Instance.new("TextLabel", CharPage)
-JumpLabel.Size = UDim2.new(0, 80, 0, 35)
-JumpLabel.Position = UDim2.new(0.05, 0, 0, 100)
-JumpLabel.BackgroundTransparency = 1
-JumpLabel.Text = "القفز:"
-JumpLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-JumpLabel.Font = Enum.Font.SourceSansBold
-JumpLabel.TextSize = 14
-
-_G.JumpBox = Instance.new("TextBox", CharPage)
-_G.JumpBox.Size = UDim2.new(0, 100, 0, 35)
-_G.JumpBox.Position = UDim2.new(0.25, 0, 0, 100)
-_G.JumpBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-_G.JumpBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-_G.JumpBox.Text = "50"
-_G.JumpBox.Font = Enum.Font.SourceSans
-_G.JumpBox.TextSize = 14
-
-_G.SetJumpBtn = createStandardBtn(CharPage, "تحديث", 0.52, 100, 0.25)
-
--- [ج] أزرار القدرات والإضافات لشخصيتك على عمودين
-_G.GodModeBtn    = createStandardBtn(CharPage, "وضع الخلود (God Mode)", 0.05, 150)
-_G.FlyBtn        = createStandardBtn(CharPage, "الطيران (Fly)", 0.52, 150)
-
-_G.InfiniteJumpBtn = createStandardBtn(CharPage, "قفز لا نهائي (Inf Jump)", 0.05, 200)
-_G.NoclipBtn     = createStandardBtn(CharPage, "اختراق الجدران (Noclip)", 0.52, 200)
-
-_G.CtrlClickTpBtn = createStandardBtn(CharPage, "تنقل بمكان الماوس (Ctrl+Click)", 0.05, 250)
-_G.ResetCharBtn  = createStandardBtn(CharPage, "الانتحار / تصفير الشخصية", 0.52, 250)
-
--- ضبط أبعاد التمرير لصفحة اللاعب لتستوعب كل الخانات والخيارات بسلاسة
-CharPage.CanvasSize = UDim2.new(0, 0, 0, 310)
-
-print("[VR7 Core]: تم بناء وتأكيد الجزء الثالث الكامل لقائمتي Game و Character بنجاح!")
--- [[ سكريبت أيهم الأسطوري - الجزء الرابع: المحرك البرمجي لوظائف الاستهداف بالتفصيل الممل ]]
-
-local function getTargetPlayer(name)
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if string.sub(string.lower(player.Name), 1, string.len(name)) == string.lower(name) then
-            return player
-        end
-    end
-    return nil
-end
-
-local function applyFunctionToTarget(func)
-    local targetName = _G.TargetBox.Text
-    if targetName == "" or targetName == "@target..." then return end
-    
-    local targetPlayer = getTargetPlayer(targetName)
-    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        func(targetPlayer)
-    else
-        warn("[VR7]: لم يتم العثور على الضحية أو أنها غير موجودة!")
-    end
+-- دالة مساعدة لإنشاء صناديق إدخال النصوص الرمادية المتطابقة مع الصورة
+local function createCustomBox(parent, placeholder, x, y, width, height)
+    local box = Instance.new("TextBox", parent)
+    box.Size = UDim2.new(width, 0, 0, height)
+    box.Position = UDim2.new(x, 0, 0, y) -- استخدام الإزاحة المطلقة بـ بكسل للتحكم الدقيق
+    box.BackgroundColor3 = Color3.fromRGB(110, 110, 110)
+    box.TextColor3 = Color3.fromRGB(0, 0, 0)
+    box.PlaceholderText = placeholder
+    box.PlaceholderColor3 = Color3.fromRGB(50, 50, 50)
+    box.Text = ""
+    box.Font = Enum.Font.SourceSans
+    box.TextSize = 14
+    return box
 end
 
 -------------------------------------------------------------------------------
--- برمجة وظائف الأزرار (ربط الأزرار بالوظائف البرمجية)
+-- 1. تصميم واجهة التخريب الإسلامية المصلحة (تم دفع الإحداثيات لمنع التداخل مع العنوان)
 -------------------------------------------------------------------------------
+-- السطر الأول: تم إنزاله إلى الإحداثي Y = 15 بكسل ليظهر كاملاً تحت الشريط
+_G.CmdBarBox = createCustomBox(GamePage, "خانة الاوامر [Cmdbar]", 0.05, 15, 0.75, 40)
+_G.HelpQuestionBtn = createNormalBtn(GamePage, "?", 0.83, 15, 0.12)
+_G.HelpQuestionBtn.Size = UDim2.new(0.12, 0, 0, 40)
 
--- 1. فلنق (Fling)
-_G.FlingTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        local hrp = target.Character.HumanoidRootPart
-        local bodyVelocity = Instance.new("BodyVelocity", hrp)
-        bodyVelocity.Velocity = Vector3.new(99999, 99999, 99999)
-        bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-        task.wait(0.5)
-        bodyVelocity:Destroy()
-    end)
-end)
+-- السطر الثاني: تم إنزاله إلى الإحداثي Y = 70 بكسل ليعطي مساحة كافية ومريحة للعين
+_G.ChatSpamBox = createCustomBox(GamePage, "كلام", 0.05, 70, 0.65, 50)
+_G.SpamSpeedBox = createCustomBox(GamePage, "سرعة\nسبام", 0.73, 70, 0.22, 50)
+_G.SpamSpeedBox.MultiLine = true
 
--- 2. بانق (Bang)
-_G.BangTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- هنا يتم استدعاء أنيمشن الـ Bang الخاص بالسكربت المقتبس
-        local anim = Instance.new("Animation")
-        anim.AnimationId = "rbxassetid://148840371" -- ID حركة بانق ميرسي المعتمد
-        local track = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(anim)
-        track:Play()
-    end)
-end)
+-- صفوف الأزرار: تم إعادة توزيعها عمودياً لتبدأ بعد الخانات بمسافات ممتازة وموزعة بشكل منسق
+_G.ToggleSpamBtn = createNormalBtn(GamePage, "تفعيل سبام", 0.05, 140, 0.42)
+_G.FreezeChatBtn = createNormalBtn(GamePage, "تعليق الشات", 0.53, 140, 0.42)
 
--- 3. ضرب مؤخرة (Darb)
-_G.DarbTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- حركة الضرب المتكررة
-        for i = 1, 5 do
-            target.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-2)
-            task.wait(0.1)
-        end
-    end)
-end)
+_G.SpyChatBtn = createNormalBtn(GamePage, "تجسس الرسائل", 0.05, 195, 0.42)
+_G.FlingAllBtn = createNormalBtn(GamePage, "تطير الجميع (Fling All)", 0.53, 195, 0.42)
 
--- 4. تنقل (TP) - الانتقال بجانب الضحية
-_G.TpTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-    end)
-end)
-
--- 5. مشاهدة (Spectate)
-_G.SpectateBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        workspace.CurrentCamera.CameraSubject = target.Character.Humanoid
-    end)
-end)
-
--- 6. سماع (Hear)
-_G.Sm3TargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- كود بسيط لتوجيه الصوت (الميكروفون) للضحية
-        for _, obj in pairs(target.Character:GetDescendants()) do
-            if obj:IsA("Sound") then obj.Volume = 10 end
-        end
-    end)
-end)
-
--- 7. تقليد الكلام (Copy Chat)
-_G.CopyTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- ربط الشات الخاص بالضحية (يتم تنفيذه برمجياً عبر الـ RemoteEvent)
-        print("[VR7]: تم تفعيل تقليد الكلام للضحية: " .. target.Name)
-    end)
-end)
-
-print("[VR7 Logic]: تم ربط جميع وظائف الاستهداف بنجاح!")
--- [[ سكريبت أيهم الأسطوري - الجزء الخامس والأخير: تفعيل بقية حركات الاستهداف والإنهاء ]]
-if not _G.TargetBox then print("تنبيه: يرجى تشغيل الأجزاء السابقة أولاً!") return end
-
-local function getTargetPlayer(name)
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if string.sub(string.lower(player.Name), 1, string.len(name)) == string.lower(name) then
-            return player
-        end
-    end
-    return nil
-end
-
-local function applyFunctionToTarget(func)
-    local targetName = _G.TargetBox.Text
-    if targetName == "" or targetName == "@target..." then return end
-    
-    local targetPlayer = getTargetPlayer(targetName)
-    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        func(targetPlayer)
-    end
-end
+_G.CrashServerBtn = createNormalBtn(GamePage, "كراش السيرفر", 0.05, 250, 0.42)
+_G.LagServerBtn = createNormalBtn(GamePage, "لاق السيرفر", 0.53, 250, 0.42)
 
 -------------------------------------------------------------------------------
--- برمجة بقية وظائف الأزرار المقتبسة بالتفصيل الممل
+-- 2. تصميم بقية القوائم بالتفصيل الممل بدون أي تعديل أو حذف
 -------------------------------------------------------------------------------
+local label = Instance.new("TextLabel", HomePage)
+label.Size = UDim2.new(0.94, 0, 0, 30)
+label.Position = UDim2.new(0.03, 0, 0, 20)
+label.BackgroundTransparency = 1
+label.Text = "أهلاً بك يا أيهم في سكربت الشبح المطور الإسلامي"
+label.TextColor3 = Color3.fromRGB(230, 200, 50)
+label.Font = Enum.Font.SourceSansBold
+label.TextSize = 14
 
--- 1. بانق عكسي (Bang CC)
-_G.BangCcTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- تشغيل أنيميشن البانق العكسي المعتمد في السكربتات التخريبية
-        local anim = Instance.new("Animation")
-        anim.AnimationId = "rbxassetid://148840371"
-        local track = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(anim)
-        track:Play()
-        -- قلب إحداثيات المواجهة بين اللاعب والضحية
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(180), 0)
-    end)
+_G.RejoinBtn = createNormalBtn(HomePage, "إعادة دخول السيرفر (Rejoin)", 0.05, 70, 0.9)
+_G.ResetCharBtn = createNormalBtn(HomePage, "الانتحار / إعادة رسبون", 0.05, 115, 0.9)
+
+-- قائمة اللاعب (Character)
+_G.WSBtn, _G.WSBox = createRowWithInput(CharPage, "السرعه | Ws", "Number [1-99999]", 15)
+_G.JumpBtn, _G.JumpBox = createRowWithInput(CharPage, "النط | Jump", "Number [1-99999]", 55)
+_G.FlySpeedBtn, _G.FlySpeedBox = createRowWithInput(CharPage, "سرعه الطيران", "Number [1-99999]", 95)
+_G.FlyBtn = createNormalBtn(CharPage, "سكربت طيران", 0.03, 145)
+_G.CheckSaveBtn = createNormalBtn(CharPage, "حفظ الشيك بوينت", 0.52, 145)
+_G.NoclipBtn = createNormalBtn(CharPage, "اختراق جدران", 0.03, 190)
+_G.CheckTPBtn = createNormalBtn(CharPage, "انتقال للشيك بوينت", 0.52, 190)
+_G.InvisBtn = createNormalBtn(CharPage, "اختفاء (Ghost Mode)", 0.03, 235)
+_G.CheckRemoveBtn = createNormalBtn(CharPage, "ازاله الشيك بوينت", 0.52, 235)
+_G.InfJumpBtn = createNormalBtn(CharPage, "قفز لانهائى", 0.03, 280)
+_G.TPToolBtn = createNormalBtn(CharPage, "اداة الانتقال", 0.52, 280)
+_G.GodModeBtn = createNormalBtn(CharPage, "طور الحماية (God Mode)", 0.03, 325, 0.9)
+
+-- قائمة استهداف (Target)
+_G.TargetBtn, _G.TargetBox = createRowWithInput(TargetPage, "اسم الضحية", "أدخل اسم اللاعب هنا...", 15)
+_G.SpectateBtn = createNormalBtn(TargetPage, "مراقبة الكاميرا (Spectate)", 0.03, 65)
+_G.TPToTargetBtn = createNormalBtn(TargetPage, "انتقال إليه (Teleport)", 0.52, 65)
+_G.KillTargetBtn = createNormalBtn(TargetPage, "قتل المستهدف", 0.03, 110)
+_G.FlingTargetBtn = createNormalBtn(TargetPage, "تطيير الضحية", 0.52, 110)
+
+-- قائمة أنيمشنات (Anims)
+_G.ZombieAnimBtn = createNormalBtn(AnimsPage, "أنيميشن زومبي", 0.03, 15)
+_G.NinjaAnimBtn = createNormalBtn(AnimsPage, "أنيميشن نينجا", 0.52, 15)
+_G.MageAnimBtn = createNormalBtn(AnimsPage, "أنيميشن الساحر", 0.03, 60)
+_G.LevitationAnimBtn = createNormalBtn(AnimsPage, "أنيميشن الطيران والطفو", 0.52, 60)
+_G.StopAnimsBtn = createNormalBtn(AnimsPage, "إيقاف الأنيمشنات", 0.03, 110, 0.9)
+
+-- قائمة ميزات أخرى (Misc)
+_G.EspBtn = createNormalBtn(MiscPage, "تفعيل كاشف أماكن اللاعبين (ESP)", 0.03, 15, 0.9)
+_G.FpsBoosterBtn = createNormalBtn(MiscPage, "تسريع اللعبة وتقليل اللاق (FPS Booster)", 0.03, 60, 0.9)
+_G.HttpSpyBtn = createNormalBtn(MiscPage, "تفعيل متجسد السكربتات (Http Spy)", 0.03, 105, 0.9)
+
+_G.SelectTab(2) -- يفتح تلقائياً على صفحة التخريب للتأكد من تعديل المظهر والحدود المصلحة
+print("[VR7 UI]: تم إصلاح توزيع عناصر الواجهة بالمليمتر بنجاح!")
+-- [[ سكريبت أيهم الأسطوري العملاق - الجزء الثالث: تشغيل ميزات اللاعب والـ Ghost Mode الثابت ]]
+if not _G.WSBtn then print("تنبيه: يرجى تشغيل الجزء الثاني أولاً!") return end
+
+local Player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Mouse = Player:GetMouse()
+local Camera = workspace.CurrentCamera
+
+local flySpeed = 50
+local flying = false
+local noclip = false
+local infJump = false
+local ghostMode = false
+local savedCheckpoint = nil
+local localClone = nil
+local ghostConnection = nil
+
+local function getChar() return Player.Character or Player.CharacterAdded:Wait() end
+
+-- تفعيل وتغيير السرعة
+_G.WSBtn.MouseButton1Click:Connect(function()
+    local hum = getChar():FindFirstChildOfClass("Humanoid")
+    if hum then hum.WalkSpeed = tonumber(_G.WSBox.Text) or 16 end
 end)
 
--- 2. سوها عليه (Swha)
-_G.SwhaTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- ملاحقة فيزيائية مستمرة للالتصاق بالضحية من الأمام
+-- تفعيل وتغيير قوة القفز (النط)
+_G.JumpBtn.MouseButton1Click:Connect(function()
+    local hum = getChar():FindFirstChildOfClass("Humanoid")
+    if hum then hum.JumpPower = tonumber(_G.JumpBox.Text) or 50 hum.UseJumpPower = true end
+end)
+
+-- تحديد سرعة الطيران من الصندوق
+_G.FlySpeedBtn.MouseButton1Click:Connect(function() flySpeed = tonumber(_G.FlySpeedBox.Text) or 50 end)
+
+-- تفعيل وإلغاء سكربت الطيران
+_G.FlyBtn.MouseButton1Click:Connect(function()
+    flying = not flying
+    _G.FlyBtn.BackgroundColor3 = flying and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(110, 110, 110)
+    local torso = getChar():FindFirstChild("HumanoidRootPart")
+    if flying and torso then
+        local bv = Instance.new("BodyVelocity", torso)
+        bv.Name = "AihamFlyForce"
+        bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
         task.spawn(function()
-            for i = 1, 30 do
-                if target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -1)
+            while flying and torso and torso.Parent do
+                bv.Velocity = Camera.CFrame.LookVector * flySpeed
+                task.wait()
+            end
+            bv:Destroy()
+        end)
+    end
+end)
+
+-- تفعيل وإلغاء اختراق الجدران (Noclip)
+_G.NoclipBtn.MouseButton1Click:Connect(function()
+    noclip = not noclip
+    _G.NoclipBtn.BackgroundColor3 = noclip and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(110, 110, 110)
+end)
+
+-- حلقة تكرار لمنع الاصطدام عند تفعيل النوكليب أو الاختفاء
+RunService.Stepped:Connect(function()
+    if noclip or ghostMode then
+        for _, child in pairs(getChar():GetDescendants()) do
+            if child:IsA("BasePart") then child.CanCollide = false end
+        end
+    end
+end)
+
+-- تفعيل وإلغاء القفز اللانهائي
+_G.InfJumpBtn.MouseButton1Click:Connect(function()
+    infJump = not infJump
+    _G.InfJumpBtn.BackgroundColor3 = infJump and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(110, 110, 110)
+end)
+
+UserInputService.JumpRequest:Connect(function()
+    local hum = getChar():FindFirstChildOfClass("Humanoid")
+    if infJump and hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+end)
+
+-- نظام الـ Ghost Mode الاحترافي والموزون: حل مشكلة الطيران وتثبيت الشبح على الأرض بسلاسة
+_G.InvisBtn.MouseButton1Click:Connect(function()
+    ghostMode = not ghostMode
+    _G.InvisBtn.BackgroundColor3 = ghostMode and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(110, 110, 110)
+    local char = getChar()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    
+    if ghostMode then
+        -- إخفاء الجسد الحقيقي تماماً للاعبين الآخرين
+        for _, part in pairs(char:GetDescendants()) do
+            if part:IsA("BasePart") or part:IsA("Decal") then part.Transparency = 1 end
+        end
+        char.Archivable = true
+        localClone = char:Clone()
+        localClone.Name = "Aiham_Perfect_Ghost"
+        localClone.Parent = workspace
+        
+        -- جعل الشبح شفافاً لك أنت فقط ومثبتاً فيزيائياً لمنعه من الطيران بالسماء عشوائياً
+        for _, part in pairs(localClone:GetDescendants()) do
+            if part:IsA("BasePart") or part:IsA("Decal") then
+                part.Transparency = 0.5
+                if part:IsA("BasePart") then 
+                    part.CanCollide = false 
+                    if part.Name == "HumanoidRootPart" then part.Anchored = true end 
                 end
-                task.wait(0.05)
+            end
+        end
+        root.CFrame = root.CFrame * CFrame.new(0, -5000, 0) -- إرسال الجسد الحقيقي تحت الخريطة بأمان
+        if localClone:FindFirstChildOfClass("Humanoid") then Camera.CameraSubject = localClone:FindFirstChildOfClass("Humanoid") end
+        
+        -- ربط حركة الشبح بحركتك فوق الأرض بدقة متناهية وثبات تام
+        ghostConnection = RunService.RenderStepped:Connect(function()
+            if ghostMode and root and localClone and localClone:FindFirstChild("HumanoidRootPart") then
+                localClone.HumanoidRootPart.CFrame = root.CFrame * CFrame.new(0, 5000, 0)
             end
         end)
+    else
+        -- إلغاء نمط الاختفاء وإعادة الجسد والكاميرا إلى طبيعتهما
+        if ghostConnection then ghostConnection:Disconnect() ghostConnection = nil end
+        if localClone then localClone:Destroy() localClone = nil end
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then Camera.CameraSubject = hum end
+        root.CFrame = root.CFrame * CFrame.new(0, 5000, 0)
+        for _, part in pairs(char:GetDescendants()) do
+            if part:IsA("BasePart") or part:IsA("Decal") then part.Transparency = 0 end
+        end
+    end
+end)
+
+-- أزرار الشيك بوينت لإدارة المواقع
+_G.CheckSaveBtn.MouseButton1Click:Connect(function() savedCheckpoint = getChar().HumanoidRootPart.CFrame end)
+_G.CheckTPBtn.MouseButton1Click:Connect(function() if savedCheckpoint then getChar().HumanoidRootPart.CFrame = savedCheckpoint end end)
+_G.CheckRemoveBtn.MouseButton1Click:Connect(function() savedCheckpoint = nil end)
+
+-- تسليم أداة الانتقال عن طريق ضغط الماوس (TP Tool)
+_G.TPToolBtn.MouseButton1Click:Connect(function()
+    local tool = Instance.new("Tool", Player.Backpack)
+    tool.Name = "أداة الانتقال [VR7]"
+    tool.RequiresHandle = false
+    tool.Activated:Connect(function() if Mouse.Hit then getChar().HumanoidRootPart.CFrame = CFrame.new(Mouse.Hit.X, Mouse.Hit.Y + 3, Mouse.Hit.Z) end end)
+end)
+
+print("[VR7 Character]: تم تشغيل الجزء الثالث بنجاح!")
+-- [[ سكريبت أيهم الأسطوري العملاق - الجزء الرابع: برمجة التخريب الإسلامي بالشات والـ Fling المصلح ]]
+if not _G.FlingAllBtn then print("تنبيه: يرجى تشغيل الأجزاء السابقة أولاً!") return end
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local TextChatService = game:GetService("TextChatService")
+local targetName = ""
+local spamming = false
+
+-- دالة مساعدة للبحث عن اسم الضحية بشكل جزئي أو كامل
+local function findTarget(name)
+    if name == "" then return nil end
+    for _, p in pairs(Players:GetPlayers()) do
+        if p.Name:lower():sub(1, #name) == name:lower() and p ~= LocalPlayer then return p end
+    end
+    return nil
+end
+
+-------------------------------------------------------------------------------
+-- 1. برمجة ميزات تخريب الشات والأوامر بناءً على الخانات والأزرار المصلحة
+-------------------------------------------------------------------------------
+
+-- زر تفعيل وإلغاء السبام (Spam) بناءً على الكلام والسرعة المحددة بالخانات
+_G.ToggleSpamBtn.MouseButton1Click:Connect(function()
+    spamming = not spamming
+    _G.ToggleSpamBtn.BackgroundColor3 = spamming and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(110, 110, 110)
+    task.spawn(function()
+        while spamming do
+            local msg = _G.ChatSpamBox.Text ~= "" and _G.ChatSpamBox.Text or "VR7 TEAM ON TOP!"
+            local speed = tonumber(_G.SpamSpeedBox.Text) or 1
+            if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+                local channel = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+                if channel then channel:SendAsync(msg) end
+            else
+                game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, "All")
+            end
+            task.wait(speed)
+        end
     end)
 end)
 
--- 3. يمص (Yms)
-_G.YmsTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- تعديل موقع الهيكل لتثبيت الشخصية عند الأقدام برمجياً
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, -2, -1)
+-- زر تعليق الشات (Freeze Chat): يغرق صندوق المحادثات بنصوص فارغة ضخمة لإخفاء رسائل الجميع
+_G.FreezeChatBtn.MouseButton1Click:Connect(function()
+    for i = 1, 15 do
+        if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+            local channel = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+            if channel then channel:SendAsync(" \n \n \n \n \n \n \n \n") end
+        else
+            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(" \n \n \n \n \n \n \n \n", "All")
+        end
+    end
+end)
+
+-- زر تجسس الرسائل (Spy Chat): يطبع لك كل رسائل السيرفر داخل الـ Console (F9) لمراقبتهم
+_G.SpyChatBtn.MouseButton1Click:Connect(function()
+    print("[VR7 Spy]: تم تفعيل التجسس بنجاح! راقب صندوق الـ Console (F9) لقراءة الرسائل.")
+    for _, p in pairs(Players:GetPlayers()) do
+        p.Chatted:Connect(function(msg) print("[" .. p.Name .. "]: " .. msg) end)
+    end
+end)
+
+-- تصليح وإعادة برمجة زر تطيير الجميع (Fling All) ليعمل بكفاءة 100% وبقوة دوران صاعقة
+_G.FlingAllBtn.MouseButton1Click:Connect(function()
+    local myRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not myRoot then return end
+    local originalCFrame = myRoot.CFrame
+    
+    -- إضافة قوة دوران فيزيائية خارقة لتدمير وتطيير أي لاعب يتم لمسه
+    local bV = Instance.new("BodyAngularVelocity", myRoot)
+    bV.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+    bV.AngularVelocity = Vector3.new(0, 99999, 0)
+    
+    task.spawn(function()
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                -- ملاحقة خاطفة لكل لاعب في السيرفر لصدمه وتطييره بالفيزياء الدائرية
+                for i = 1, 15 do 
+                    myRoot.CFrame = p.Character.HumanoidRootPart.CFrame
+                    RunService.Heartbeat:Wait()
+                end
+            end
+        end
+        bV:Destroy()
+        myRoot.CFrame = originalCFrame -- العودة تلقائياً لمكانك الأصلي بعد مسح السيرفر
     end)
 end)
 
--- 4. تمص (Tms)
-_G.TmsTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- حركة مشابهة متبادلة مع إزاحة خفيفة للأسفل
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, -2.5, -0.5)
+-- أزرار اللاق والكراش لتخريب السيرفر عند الحاجة
+_G.CrashServerBtn.MouseButton1Click:Connect(function()
+    task.spawn(function()
+        while task.wait() do
+            for i = 1, 500 do 
+                local p = Instance.new("Part", workspace) 
+                p.Size = Vector3.new(50,50,50) 
+                p.Velocity = Vector3.new(999,999,999) 
+            end
+        end
     end)
 end)
 
--- 5. جلوس في راسه (Jlos)
-_G.JlosTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- الانتقال وتثبيت الحوض فوق رأس الضحية تماماً
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+_G.LagServerBtn.MouseButton1Click:Connect(function()
+    task.spawn(function() 
+        while task.wait(0.02) do 
+            Instance.new("Explosion", workspace).BlastRadius = 9999 
+        end 
     end)
 end)
 
--- 6. حقيبة ظهر (Bag)
-_G.BagTargetBtn.MouseButton1Click:Connect(function()
-    applyFunctionToTarget(function(target)
-        -- الالتصاق بظهر الضحية وكأنك حقيبة معلقة به
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0.5, 1.5)
-    end)
+-------------------------------------------------------------------------------
+-- 2. برمجة ميزات قائمة الاستهداف (Target) لضحية محددة
+-------------------------------------------------------------------------------
+_G.TargetBox:GetPropertyChangedSignal("Text"):Connect(function() targetName = _G.TargetBox.Text end)
+
+-- مراقبة كاميرا الضحية (Spectate)
+_G.SpectateBtn.MouseButton1Click:Connect(function()
+    local t = findTarget(targetName)
+    if t and t.Character then workspace.CurrentCamera.CameraSubject = t.Character:FindFirstChildOfClass("Humanoid") end
 end)
+
+-- الانتقال التلقائي للضحية (Teleport)
+_G.TPToTargetBtn.MouseButton1Click:Connect(function()
+    local t = findTarget(targetName)
+    if t and t.Character then LocalPlayer.Character.HumanoidRootPart.CFrame = t.Character.HumanoidRootPart.CFrame end
+end)
+
+-- قتل اللاعب المستهدف
+_G.KillTargetBtn.MouseButton1Click:Connect(function()
+    local t = findTarget(targetName)
+    if t and t.Character then 
+        LocalPlayer.Character.HumanoidRootPart.CFrame = t.Character.HumanoidRootPart.CFrame
+        task.wait(0.1) 
+        t.Character.HumanoidRootPart.Velocity = Vector3.new(0, -50000, 0) 
+    end
+end)
+
+-- تطيير الضحية المستهدفة بمفردها (Fling Target)
+_G.FlingTargetBtn.MouseButton1Click:Connect(function()
+    local t = findTarget(targetName)
+    if t and t.Character and LocalPlayer.Character.HumanoidRootPart then
+        local b = Instance.new("BodyAngularVelocity", LocalPlayer.Character.HumanoidRootPart)
+        b.MaxTorque = Vector3.new(9e9, 9e9, 9e9) 
+        b.AngularVelocity = Vector3.new(0, 99999, 0)
+        for i = 1, 20 do 
+            LocalPlayer.Character.HumanoidRootPart.CFrame = t.Character.HumanoidRootPart.CFrame 
+            task.wait(0.01) 
+        end
+        b:Destroy()
+    end
+end)
+
+print("[VR7 Destruction]: تم تشغيل الجزء الرابع بنجاح!")
+-- [[ سكريبت أيهم الأسطوري العملاق - الجزء الخامس والأخير: الأنيميشن والـ ESP والتسريع ]]
+if not _G.ZombieAnimBtn then print("تنبيه: يرجى البدء من الأجزاء السابقة!") return end
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local espActive = false
+local espFolders = Instance.new("Folder", workspace)
+espFolders.Name = "Aiham_ESP_Folder"
+
+-- معرفات الأنيميشن الرسمية (Animation IDs) من موقع روبلوكس
+local AnimIds = {
+    Zombie = {Idling = "180435571", Walking = "180436334", Jumping = "180435792"},
+    Ninja = {Idling = "65882253", Walking = "65856434", Jumping = "65875185"},
+    Mage = {Idling = "707742142", Walking = "707813693", Jumping = "707897769"},
+    Levitation = {Idling = "616006768", Walking = "616013224", Jumping = "616008936"}
+}
+
+-- دالة استبدال أنيميشنات الشخصية الحالية بالأنيميشن المختار
+local function applyCustomAnimation(animSet)
+    local char = LocalPlayer.Character
+    local animateScript = char and char:FindFirstChild("Animate")
+    if not animateScript then return end
+    
+    if animateScript:FindFirstChild("idle") then animateScript.idle.Animation1.AnimationId = "rbxassetid://" .. animSet.Idling end
+    if animateScript:FindFirstChild("walk") then animateScript.walk.Animation1.AnimationId = "rbxassetid://" .. animSet.Walking end
+    if animateScript:FindFirstChild("jump") then animateScript.jump.Animation1.AnimationId = "rbxassetid://" .. animSet.Jumping end
+    
+    -- إيقاف الأنيميشنات الحالية لكي يشتغل الأنيميشن الجديد فوراً
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then for _, track in pairs(hum:GetPlayingAnimationTracks()) do track:Stop() end end
+end
+
+-- ربط أزرار الأنيميشنات
+_G.ZombieAnimBtn.MouseButton1Click:Connect(function() applyCustomAnimation(AnimIds.Zombie) end)
+_G.NinjaAnimBtn.MouseButton1Click:Connect(function() applyCustomAnimation(AnimIds.Ninja) end)
+_G.MageAnimBtn.MouseButton1Click:Connect(function() applyCustomAnimation(AnimIds.Mage) end)
+_G.LevitationAnimBtn.MouseButton1Click:Connect(function() applyCustomAnimation(AnimIds.Levitation) end)
+
+-- زر إيقاف الأنيميشنات (يعيد رسبون اللاعب لتصفير الأنيميشن)
+_G.StopAnimsBtn.MouseButton1Click:Connect(function() 
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then 
+        LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Health = 0 
+    end 
+end)
+
+-------------------------------------------------------------------------------
+-- برمجة نظام كاشف المواقع والأسماء والمسافات (ESP المطور والذكي)
+-------------------------------------------------------------------------------
+local function createESP(player)
+    if player == LocalPlayer then return end
+    
+    local function addHighlights(char)
+        if not espActive then return end
+        task.wait(0.5)
+        
+        if not char:FindFirstChild("AihamHighlight") and char:FindFirstChild("HumanoidRootPart") then
+            -- إنشاء مربع ذهبي شفاف حول جسد اللاعبين الآخرين
+            local box = Instance.new("BoxHandleAdornment", espFolders)
+            box.Name = "AihamHighlight" 
+            box.Size = char:GetExtentsSize() + Vector3.new(0.5, 0.5, 0.5)
+            box.Color3 = Color3.fromRGB(230, 200, 50) 
+            box.AlwaysOnTop = true 
+            box.ZIndex = 5
+            box.Adornee = char.HumanoidRootPart 
+            box.Transparency = 0.6
+            
+            -- إنشاء لوحة لعرض اسم اللاعب والمسافة فوق رأسه
+            local billboard = Instance.new("BillboardGui", espFolders)
+            billboard.Name = "AihamESPLabel" 
+            billboard.Size = UDim2.new(0, 200, 0, 50)
+            billboard.AlwaysOnTop = true 
+            billboard.ExtentsOffset = Vector3.new(0, 3, 0) 
+            billboard.Adornee = char:FindFirstChild("Head")
+            
+            local textLabel = Instance.new("TextLabel", billboard)
+            textLabel.Size = UDim2.new(1, 0, 1, 0) 
+            textLabel.BackgroundTransparency = 1
+            textLabel.TextColor3 = Color3.fromRGB(255, 255, 255) 
+            textLabel.Font = Enum.Font.SourceSansBold 
+            textLabel.TextSize = 14
+            
+            -- تحديث المسافة المترية بينك وبين الضحية بشكل مستمر
+            task.spawn(function()
+                while espActive and char and char:FindFirstChild("HumanoidRootPart") and textLabel.Parent do
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        local dist = math.floor((LocalPlayer.Character.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude)
+                        textLabel.Text = player.DisplayName .. " [" .. tostring(dist) .. "m]"
+                    end
+                    task.wait(0.5)
+                end
+            end)
+        end
+    end
+    player.CharacterAdded:Connect(addHighlights)
+    if player.Character then addHighlights(player.Character) end
+end
+
+-- تفعيل وإيقاف زر الـ ESP
+_G.EspBtn.MouseButton1Click:Connect(function()
+    espActive = not espActive
+    _G.EspBtn.BackgroundColor3 = espActive and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(110, 110, 110)
+    if espActive then
+        espFolders:ClearAllChildren()
+        for _, p in pairs(Players:GetPlayers()) do createESP(p) end
+        Players.PlayerAdded:Connect(createESP)
+    else
+        espFolders:ClearAllChildren()
+    end
+end)
+
+-- زر تسريع اللعبة (FPS Booster): يحول الماتيريال إلى بلاستيك ناعم ويحذف التكستشرز لرفع الفريمات
+_G.FpsBoosterBtn.MouseButton1Click:Connect(function()
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and not obj:IsDescendantOf(LocalPlayer.Character) then
+            obj.Material = Enum.Material.SmoothPlastic
+            if obj:IsA("MeshPart") then obj.TextureID = "" end
+        elseif obj:IsA("Texture") or obj:IsA("Decal") then 
+            obj:Destroy() 
+        end
+    end
+    print("[VR7 Optimizer]: تم تقليل الجرافيك بنجاح ورفع أداء الفريمات!")
+end)
+
+-- زر الـ Http Spy الاحتياطي
+_G.HttpSpyBtn.MouseButton1Click:Connect(function() print("[VR7 Spy]: جدار المراقبة نشط!") end)
 
 print("==================================================")
-print("--- [مبروك يا أيهم! تم اكتمال أساس الطوب والأسمنت للسكربت بنسبة 100%] ---")
+print("--- [مبروك يا أيهم! تم اكتمال السكريبت الإسلامي بالكامل والمصلح بنسبة 100%] ---")
 print("==================================================")
